@@ -1,8 +1,19 @@
-# alarm_clock_app
+# Challenging Alarm Clock App
 
 Alarm clock app
 
 ## Getting Started
+
+
+To run and debug the app, 
+run ```main.dart``` on a device like on a physically available smartphone, 
+on a virtually created smartphone
+or on the Chrome browser for example.
+To refresh the project, it's possible to use the hot reload function. 
+
+To see the wireframe of the app, click on "Open Flutter DevTools" in the debug window below 
+while running the debug mode.
+
 
 This project is a starting point for a Flutter application.
 
