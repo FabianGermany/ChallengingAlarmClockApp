@@ -40,21 +40,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
+  // Declare vars for the time
+  DateTime? now; //todo is late the right keyword to declare var?
+  String? date_string; //todo dafür sorgen dass das in echtzeit geupdated wird
+  String? time_string;
+
+
+
+  void _updateTime() {
     setState(() {
       // setState is needed to tell the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values.
-      _counter++;
+      now = DateTime.now();
+      date_string = DateFormat("MMMM, dd, yyyy").format(DateTime.now()); //todo dafür sorgen dass das in echtzeit geupdated wird
+      time_string = DateFormat("HH:mm:ss").format(DateTime.now());
     });
   }
+
+
+  // run the time update at least every second
+  // run the date update at least every minute...todo doesnt make sense
+  // _updateTime();
+
+
 
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // by the _updateTime method above.
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -73,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: 'Add a new alarm',
                     color: Colors.deepPurple,
                     iconSize: 50.0,
-                    onPressed: _incrementCounter, //todo
+                    onPressed: _updateTime, //todo change to my desired function
                   ),
               ),
 
@@ -83,10 +98,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center, //center vertically
                   children: <Widget>[
                     const Text(
-                      'You have pushed the button this many times:',
+                      'The current time is',
                     ),
                     Text(
-                      '$_counter',
+                      '$time_string',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    const Text(
+                      'The current date is',
+                    ),
+                    Text(
+                      '$date_string',
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     // Already set alarms
