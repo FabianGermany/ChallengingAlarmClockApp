@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import  'package:intl/intl.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -45,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime? now; //todo is late the right keyword to declare var?
   String? date_string; //todo dafür sorgen dass das in echtzeit geupdated wird
   String? time_string;
+  static const everySecond = Duration(seconds:1);
+
 
 
 
@@ -60,14 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  // run the time update at least every second
-  // run the date update at least every minute...todo doesnt make sense
-  // _updateTime();
-
-
 
   @override
   Widget build(BuildContext context) {
+    Timer.periodic(everySecond, (Timer t) => _updateTime()); //This will cause that the updateTime() function will be exected every second; todo I'm not sure why it only runs in the build function...
     // This method is rerun every time setState is called, for instance as done
     // by the _updateTime method above.
     return Scaffold(
@@ -88,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: 'Add a new alarm',
                     color: Colors.deepPurple,
                     iconSize: 50.0,
-                    onPressed: _updateTime, //todo change to my desired function
+                    onPressed: null, //todo change to my desired function to _addNewAlarm etc.
                   ),
               ),
 
