@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import  'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -57,28 +59,46 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        // Layout widget taking a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget
-          mainAxisAlignment: MainAxisAlignment.center, //center vertically
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body:
+        Container(
+        margin: const EdgeInsets.all(20.0),
+        child:
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child:
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    tooltip: 'Add a new alarm',
+                    color: Colors.deepPurple,
+                    iconSize: 50.0,
+                    onPressed: _incrementCounter, //todo
+                  ),
+              ),
+
+              Center(
+                child: Column(
+                  // Column is also a layout widget
+                  mainAxisAlignment: MainAxisAlignment.center, //center vertically
+                  children: <Widget>[
+                    const Text(
+                      'You have pushed the button this many times:',
+                    ),
+                    Text(
+                      '$_counter',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    // Already set alarms
+                    Text(
+                      'Here the already set alarms will be displayed.'
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment the counter',
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
