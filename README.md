@@ -29,3 +29,4 @@ samples, guidance on mobile development, and a full API reference.
 
 ### To Do LT
 - Handle time zone issue
+- For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).

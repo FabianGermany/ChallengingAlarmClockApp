@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
   // This widget is the homepage of the app. It has different states.
 
   // This class is the configuration for the state. It holds the values (in this
@@ -34,7 +33,6 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -48,9 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String? time_string;
   static const everySecond = Duration(seconds:1);
 
-
-
-
   void _updateTime() {
     setState(() {
       // setState is needed to tell the Flutter framework that something has
@@ -61,8 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
       time_string = DateFormat("HH:mm:ss").format(DateTime.now());
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: 'Add a new alarm',
                     color: Colors.deepPurple,
                     iconSize: 50.0,
-                    onPressed: null, //todo change to my desired function to _addNewAlarm etc.
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddAlarmPage()),
+                      );
+                    }
                   ),
               ),
 
@@ -123,3 +121,37 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
+// Second page for adding the alarm
+class AddAlarmPage extends StatelessWidget { //todo ist das state myhomepage??
+  const AddAlarmPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add an alarm'),
+      ),
+      body:
+      Container(
+        margin: const EdgeInsets.all(20.0),
+        child:
+        const Text(
+          'Test',
+        ),
+      ),
+
+    );
+  }
+}
+
+
+//todo add somehow this for going back
+//ElevatedButton(
+//onPressed: () {
+//Navigator.pop(context);
+//},
+//child: const Text('Cancel'),
+//),
