@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:english_words/english_words.dart';
 import  'package:intl/intl.dart';
 import 'dart:async';
@@ -41,8 +41,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   // Declare vars for the time
-  DateTime? now; //todo is late the right keyword to declare var?
-  String? date_string; //todo dafür sorgen dass das in echtzeit geupdated wird
+  DateTime? now;
+  String? date_string;
   String? time_string;
   static const everySecond = Duration(seconds:1);
 
@@ -52,8 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values.
       now = DateTime.now();
-      date_string = DateFormat("MMMM, dd, yyyy").format(DateTime.now()); //todo dafür sorgen dass das in echtzeit geupdated wird
+      date_string = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
       time_string = DateFormat("HH:mm:ss").format(DateTime.now());
+      // time_string = DateFormat('hh:mm:ss a').format(DateTime.now());
+
     });
   }
 
@@ -71,62 +73,113 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: const EdgeInsets.all(20.0),
         child:
           Column(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child:
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    tooltip: 'Add a new alarm',
-                    color: Colors.deepPurple,
-                    iconSize: 50.0,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AddAlarmPage()),
-                      );
-                    }
-                  ),
-              ),
-
-              Center(
-                child: Column(
-                  // Column is also a layout widget
-                  mainAxisAlignment: MainAxisAlignment.center, //center vertically
-                  children: <Widget>[
-                    const Text(
-                      'The current time is',
+            children: <Widget>[ // I need this single column to allow multiple rows
+            Row( // First row
+              children: <Widget>[
+                Expanded(
+                  flex: 7, // 70%
+                  child:
+                    Center(
+                      child: Column(
+                        // Column is also a layout widget
+                        mainAxisAlignment: MainAxisAlignment.center, //center vertically
+                        children: <Widget>[
+                          const Text(
+                            'The current time is',
+                          ),
+                          Text(
+                            '$time_string',
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                          const Text(
+                            'The current date is',
+                          ),
+                          Text(
+                            '$date_string',
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                          // Already set alarms
+                        ],
+                      ),
                     ),
-                    Text(
-                      '$time_string',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    const Text(
-                      'The current date is',
-                    ),
-                    Text(
-                      '$date_string',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    // Already set alarms
-                    Text(
-                      'Here the already set alarms will be displayed.'
-                    )
-                  ],
                 ),
-              ),
-            ],
-          ),
+                Expanded(
+                  flex: 1, // 10%
+                  child:
+                    Text('') //empty
+                ),
+                Expanded(
+                  flex: 2, // 20%
+                  child:
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child:
+                    IconButton(
+                        icon: const Icon(Icons.add),
+                        tooltip: 'Add a new alarm',
+                        color: Colors.deepPurple,
+                        iconSize: 50.0,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AddAlarmPage()),
+                          );
+                        }
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row( // Second row
+              mainAxisAlignment: MainAxisAlignment.center, //center vertically
+              children: <Widget>[
+                SizedBox(height: 70), // Add some distance between the next row
+                Align(
+                alignment: Alignment.center,
+                child:
+                  Text(
+                  'Here the already set alarms will be displayed.'
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
+      ),
     );
   }
 }
 
 
 
+
+
+
 // Second page for adding the alarm
-class AddAlarmPage extends StatelessWidget {
+class AddAlarmPage extends StatefulWidget {
   const AddAlarmPage({Key? key}) : super(key: key);
+
+  @override
+  State<AddAlarmPage> createState() => _MyAddAlarmPageState();
+}
+
+class _MyAddAlarmPageState extends State<AddAlarmPage> {
+
+  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+
+  void _selectTime() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,12 +196,26 @@ class AddAlarmPage extends StatelessWidget {
               const Text(
                 'Test',
               ),
+
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: _selectTime,
+                    child: Text('SELECT TIME'),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Selected time: ${_time.format(context)}',
+                  ),
+                ],
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child:
-                  const Text('Cancel'),
+                const Text('Cancel'),
               ),
             ],
           ),
@@ -156,3 +223,6 @@ class AddAlarmPage extends StatelessWidget {
     );
   }
 }
+
+
+
