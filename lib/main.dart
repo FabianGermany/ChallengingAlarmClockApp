@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:english_words/english_words.dart';
-import  'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 
 void main() {
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
+
   // This widget is the homepage of the app. It has different states.
 
   // This class is the configuration for the state. It holds the values (in this
@@ -39,12 +40,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   // Declare vars for the time
   DateTime? now;
   String? date_string;
   String? time_string;
-  static const everySecond = Duration(seconds:1);
+  static const everySecond = Duration(seconds: 1);
 
   void _updateTime() {
     setState(() {
@@ -55,66 +55,65 @@ class _MyHomePageState extends State<MyHomePage> {
       date_string = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
       time_string = DateFormat("HH:mm:ss").format(DateTime.now());
       // time_string = DateFormat('hh:mm:ss a').format(DateTime.now());
-
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(everySecond, (Timer t) => _updateTime()); //This will cause that the updateTime() function will be exected every second; todo I'm not sure why it only runs in the build function...
+    Timer.periodic(
+        everySecond,
+        (Timer t) =>
+            _updateTime()); //This will cause that the updateTime() function will be exected every second; todo I'm not sure why it only runs in the build function...
     // This method is rerun every time setState is called, for instance as done
     // by the _updateTime method above.
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body:
-        Container(
+      body: Container(
         margin: const EdgeInsets.all(20.0),
-        child:
-          Column(
-            children: <Widget>[ // I need this single column to allow multiple rows
-            Row( // First row
+        child: Column(
+          children: <Widget>[
+            // I need this single column to allow multiple rows
+            Row(
+              // First row
               children: <Widget>[
                 Expanded(
                   flex: 7, // 70%
-                  child:
-                    Center(
-                      child: Column(
-                        // Column is also a layout widget
-                        mainAxisAlignment: MainAxisAlignment.center, //center vertically
-                        children: <Widget>[
-                          const Text(
-                            'The current time is',
-                          ),
-                          Text(
-                            '$time_string',
-                            style: Theme.of(context).textTheme.headline5,
-                          ),
-                          const Text(
-                            'The current date is',
-                          ),
-                          Text(
-                            '$date_string',
-                            style: Theme.of(context).textTheme.headline5,
-                          ),
-                          // Already set alarms
-                        ],
-                      ),
+                  child: Center(
+                    child: Column(
+                      // Column is also a layout widget
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      //center vertically
+                      children: <Widget>[
+                        const Text(
+                          'The current time is',
+                        ),
+                        Text(
+                          '$time_string',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const Text(
+                          'The current date is',
+                        ),
+                        Text(
+                          '$date_string',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        // Already set alarms
+                      ],
                     ),
+                  ),
                 ),
                 Expanded(
-                  flex: 1, // 10%
-                  child:
-                    Text('') //empty
-                ),
+                    flex: 1, // 10%
+                    child: Text('') //empty
+                    ),
                 Expanded(
                   flex: 2, // 20%
-                  child:
-                  Align(
+                  child: Align(
                     alignment: Alignment.centerRight,
-                    child:
-                    IconButton(
+                    child: IconButton(
                         icon: const Icon(Icons.add),
                         tooltip: 'Add a new alarm',
                         color: Colors.deepPurple,
@@ -122,24 +121,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const AddAlarmPage()),
+                            MaterialPageRoute(
+                                builder: (context) => const AddAlarmPage()),
                           );
-                        }
-                    ),
+                        }),
                   ),
                 ),
               ],
             ),
-            Row( // Second row
+            Row(
+              // Second row
               mainAxisAlignment: MainAxisAlignment.center, //center vertically
               children: <Widget>[
                 SizedBox(height: 70), // Add some distance between the next row
                 Align(
-                alignment: Alignment.center,
-                child:
-                  Text(
-                  'Here the already set alarms will be displayed.'
-                  ),
+                  alignment: Alignment.center,
+                  child: Text('Here the already set alarms will be displayed.'),
                 ),
               ],
             ),
@@ -150,11 +147,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-
-
-
-
 // Second page for adding the alarm
 class AddAlarmPage extends StatefulWidget {
   const AddAlarmPage({Key? key}) : super(key: key);
@@ -164,7 +156,6 @@ class AddAlarmPage extends StatefulWidget {
 }
 
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
-
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
 
   void _selectTime() async {
@@ -179,50 +170,83 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add an alarm'),
       ),
-      body:
-      Container(
+      body: Container(
         margin: const EdgeInsets.all(20.0),
-        child:
-          Column(
-            children: <Widget>[
-              const Text(
-                'Test',
-              ),
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: ElevatedButton(
                     onPressed: _selectTime,
-                    child: Text('SELECT TIME'),
+                    child: Text('Select time'),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Selected time: ${_time.format(context)}',
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Selected time:',
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              SizedBox(height: 6),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                '${_time.format(context)}',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child:
+                  const Text(
+                    '\nPlease chose either a concrete date for the alarm or - if it is repetitive - choose the desired weekdays.\n',
+                  ),
+                ),
                 ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child:
-                const Text('Cancel'),
-              ),
-            ],
-          ),
+            ),
+            Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
