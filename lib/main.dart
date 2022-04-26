@@ -157,6 +157,7 @@ class AddAlarmPage extends StatefulWidget {
 
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+  DateTime _date = DateTime.now(); // DateTime(2022, 1, 1);
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -166,6 +167,22 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     if (newTime != null) {
       setState(() {
         _time = newTime;
+      });
+    }
+  }
+
+
+  void _selectDate() async {
+    final DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime.now(), // today;
+      lastDate: DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day), // today plus later
+      helpText: 'Select a date',
+    );
+    if (newDate != null) {
+      setState(() {
+        _date = newDate;
       });
     }
   }
@@ -224,6 +241,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                 ),
               ],
             ),
+
+
+
+
             Row(
               children: <Widget>[
                 Expanded(
@@ -232,11 +253,60 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     '\nPlease chose either a concrete date for the alarm or - if it is repetitive - choose the desired weekdays.\n',
                   ),
                 ),
-                ],
+              ],
             ),
+
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: ElevatedButton(
+                    onPressed: _selectDate,
+                    child: Text('Select date'),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Selected date:',
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              SizedBox(height: 6),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                //'${_time.format(context)}', todo remove
+                                //'$_date',
+                                '${DateFormat('yMMMEd').format(_date)}',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
             Row(
               children: <Widget>[
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
