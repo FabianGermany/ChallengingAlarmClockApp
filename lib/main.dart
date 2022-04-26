@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 // Second page for adding the alarm
-class AddAlarmPage extends StatelessWidget { //todo ist das state myhomepage??
+class AddAlarmPage extends StatelessWidget {
   const AddAlarmPage({Key? key}) : super(key: key);
 
   @override
@@ -138,20 +138,21 @@ class AddAlarmPage extends StatelessWidget { //todo ist das state myhomepage??
       Container(
         margin: const EdgeInsets.all(20.0),
         child:
-        const Text(
-          'Test',
-        ),
+          Column(
+            children: <Widget>[
+              const Text(
+                'Test',
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child:
+                  const Text('Cancel'),
+              ),
+            ],
+          ),
       ),
-
     );
   }
 }
-
-
-//todo add somehow this for going back
-//ElevatedButton(
-//onPressed: () {
-//Navigator.pop(context);
-//},
-//child: const Text('Cancel'),
-//),
