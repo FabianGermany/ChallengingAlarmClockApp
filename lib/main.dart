@@ -6,8 +6,68 @@ import 'package:weekday_selector/weekday_selector.dart';
 
 void main() {
   runApp(const MyApp());
+
+
+  // todo this should only be done once when the app is launched for the first time...reset function etc.
+  final customAlarm firstDefaultAlarm = customAlarm(
+      true, //isActive
+      false, //isRinging
+      "Weekly meeting", //nameOfAlarm
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour + 2, DateTime.now().minute), //alarmTime
+      false, //isRecurrent
+      [false, false, false, false, false, false, false], //weekdayRecurrence
+      false //challengeMode
+  ); // create one default alarm
+
+
+
+
+
+
+
 }
 
+
+// Define the class for a alarm and define default values
+// todo das ggf. moven
+class customAlarm {
+  bool isActive = false;
+  bool isRinging = false;
+  String nameOfAlarm = "New alarm";
+  DateTime alarmTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour + 2, DateTime.now().minute); // default alarm is going off in 2 hours
+  bool isRecurrent = false; //default value is single time alarm
+  List<bool> weekdayRecurrence = [false, false, false, false, false, false, false]; //from Monday to Sunday
+  bool challengeMode = false;
+  //todo: alarm sound, vibration pattern, snooze, ...
+
+  void someFunction()
+  {
+    //todo
+  }
+
+  // constructor
+  customAlarm(
+      bool isActive,
+      bool isRinging,
+      String nameOfAlarm,
+      DateTime alarmTime,
+      bool isRecurrent,
+      List<bool> weekdayRecurrence,
+      bool challengeMode
+      )
+  {
+    this.isActive = isActive;
+    this.isRinging = isRinging;
+    this.nameOfAlarm = nameOfAlarm;
+    this.alarmTime = alarmTime;
+    this.isRecurrent = isRecurrent;
+    this.weekdayRecurrence = weekdayRecurrence;
+    this.challengeMode = challengeMode;
+  }
+
+
+
+}
 
 
 
