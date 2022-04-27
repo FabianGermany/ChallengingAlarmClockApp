@@ -2,13 +2,19 @@ import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:english_words/english_words.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:weekday_selector/weekday_selector.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+
+
+
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
 
   // This widget is the root of your application.
   @override
@@ -75,10 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             // I need this single column to allow multiple rows
-            Row(
-              // First row
+            Row( // Row for the current date/time and the add alarm button
               children: <Widget>[
-                Expanded(
+                Expanded( // Col/Expanded for showing the current time and date
                   flex: 7, // 70%
                   child: Center(
                     child: Column(
@@ -105,11 +110,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                Expanded(
+                Expanded( // Col/Expanded for adding some space
                     flex: 1, // 10%
                     child: Text('') //empty
                     ),
-                Expanded(
+                Expanded( // Col/Expanded for the add alarm button
                   flex: 2, // 20%
                   child: Align(
                     alignment: Alignment.centerRight,
@@ -129,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            Row(
+            Row( // Row for the set alarms
               // Second row
               mainAxisAlignment: MainAxisAlignment.center, //center vertically
               children: <Widget>[
@@ -158,6 +163,9 @@ class AddAlarmPage extends StatefulWidget {
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
   DateTime _date = DateTime.now(); // DateTime(2022, 1, 1);
+
+  final chosen_weekdays = List.filled(7, false); // for weekday picker
+
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -197,7 +205,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
         margin: const EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            Row(
+
+            Row( // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
@@ -245,7 +254,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 
 
 
-            Row(
+            Row( // Info text
               children: <Widget>[
                 Expanded(
                   child:
@@ -257,7 +266,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
             ),
 
 
-            Row(
+            Row( // Date selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
@@ -288,9 +297,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           ),
                           Row(
                             children: <Widget>[
-                              Text(
-                                //'${_time.format(context)}', todo remove
-                                //'$_date',
+                              Text( // todo flexible geht hier irgendwie nicht...
                                 '${DateFormat('yMMMEd').format(_date)}',
                                 style: Theme.of(context).textTheme.headline6,
                               ),
@@ -304,14 +311,68 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
               ],
             ),
 
-            Row(
+            Row( // Add some space
               children: <Widget>[
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
+                SizedBox(height: 10),
+              ],
+            ),
+
+            Row( // Weekday picker
+              children: <Widget>[
+                Expanded(
+                  child:
+                    WeekdaySelector(
+                      onChanged: (int day) {
+                        setState(() {
+                          final index = day % 7;
+                          chosen_weekdays[index] = !chosen_weekdays[index];
+                        });
+                      },
+                      values: chosen_weekdays,
+                    ),
+                  ),
+              ],
+            ),
+
+            Row( // Add some space
+              children: <Widget>[
+                SizedBox(height: 10),
+              ],
+            ),
+
+            Row( // Cancel and confirm buttons
+              children: <Widget>[
+                // Cancel button
+                Expanded(
+                  flex: 30,
+                  child: Center(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                  ),
                 ),
+                Expanded( // Some space
+                  flex: 40,
+                  child: Center(
+                  ),
+                ),
+
+                Expanded( // Confirm button
+                  flex: 30, // 30%
+                  child: Center(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        //todo hier noch speichern!
+                      },
+                      child: const Text('Confirm'),
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ],
