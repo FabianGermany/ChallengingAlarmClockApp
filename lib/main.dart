@@ -3,71 +3,21 @@ import 'package:english_words/english_words.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
+import 'globals.dart' as globals; //global variables and stuff from other .dart file
 
 void main() {
+  print("App is being started...");
   runApp(const MyApp());
 
 
   // todo this should only be done once when the app is launched for the first time...reset function etc.
-  final customAlarm firstDefaultAlarm = customAlarm(
-      true, //isActive
-      false, //isRinging
-      "Weekly meeting", //nameOfAlarm
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour + 2, DateTime.now().minute), //alarmTime
-      false, //isRecurrent
-      [false, false, false, false, false, false, false], //weekdayRecurrence
-      false //challengeMode
-  ); // create one default alarm
-
-
-
-
-
-
-
+  globals.customAlarm? firstDefaultAlarm = globals.customAlarm(); // create one default alarm
+  firstDefaultAlarm.nameOfAlarm = "Weekly meeting";
+  globals.customAlarm? SavedCreatedAlarm;
+  globals.customAlarm? newCreatedAlarm;
+  print("App has been fully loaded...");
 }
 
-
-// Define the class for a alarm and define default values
-// todo das ggf. moven
-class customAlarm {
-  bool isActive = false;
-  bool isRinging = false;
-  String nameOfAlarm = "New alarm";
-  DateTime alarmTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour + 2, DateTime.now().minute); // default alarm is going off in 2 hours
-  bool isRecurrent = false; //default value is single time alarm
-  List<bool> weekdayRecurrence = [false, false, false, false, false, false, false]; //from Monday to Sunday
-  bool challengeMode = false;
-  //todo: alarm sound, vibration pattern, snooze, ...
-
-  void someFunction()
-  {
-    //todo
-  }
-
-  // constructor
-  customAlarm(
-      bool isActive,
-      bool isRinging,
-      String nameOfAlarm,
-      DateTime alarmTime,
-      bool isRecurrent,
-      List<bool> weekdayRecurrence,
-      bool challengeMode
-      )
-  {
-    this.isActive = isActive;
-    this.isRinging = isRinging;
-    this.nameOfAlarm = nameOfAlarm;
-    this.alarmTime = alarmTime;
-    this.isRecurrent = isRecurrent;
-    this.weekdayRecurrence = weekdayRecurrence;
-    this.challengeMode = challengeMode;
-  }
-
-
-
-}
 
 
 
@@ -184,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.deepPurple,
                         iconSize: 50.0,
                         onPressed: () {
+                          //globals.newCreatedAlarm = customAlarm();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -409,6 +360,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        // todo destruct object
                       },
                       child: const Text('Cancel'),
                     ),
@@ -426,6 +378,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        // save object
+                        //SavedCreatedAlarm = newCreatedAlarm;
                         //todo hier noch speichern!
                       },
                       child: const Text('Confirm'),
