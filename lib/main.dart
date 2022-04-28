@@ -5,22 +5,13 @@ import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'globals.dart' as globals; //global variables and stuff from other .dart file
 
-void main() {
+void main()
+{
   print("App is being started...");
   runApp(const MyApp());
-
-
-  // todo this should only be done once when the app is launched for the first time...reset function etc.
-  globals.customAlarm? firstDefaultAlarm = globals.customAlarm(); // create one default alarm
-  firstDefaultAlarm.nameOfAlarm = "Weekly meeting";
-  globals.customAlarm? SavedCreatedAlarm;
-  globals.customAlarm? newCreatedAlarm;
+  globals.listOfSavedAlarms = globals.initApp(); //init the app; creating default alarms etc. and store into a globally available list
   print("App has been fully loaded...");
 }
-
-
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -134,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.deepPurple,
                         iconSize: 50.0,
                         onPressed: () {
-                          //globals.newCreatedAlarm = customAlarm();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -174,8 +164,28 @@ class AddAlarmPage extends StatefulWidget {
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
   DateTime _date = DateTime.now(); // DateTime(2022, 1, 1);
+  final _chosen_weekdays = List.filled(7, false); // for weekday picker
 
-  final chosen_weekdays = List.filled(7, false); // for weekday picker
+
+  /// function to save alarm (meaning to set isFullyCreated to true)
+  void _saveAlarm(List<globals.customAlarm?> currentAlarmList)
+  {
+    List<globals.customAlarm?> AlarmList = currentAlarmList;
+    globals.customAlarm? NewCreatedAlarm; //todo oder var xxxx
+
+    NewCreatedAlarm?.isFullyCreated = true;
+    NewCreatedAlarm?.isActive = true;
+    //NewCreatedAlarm?.nameOfAlarm = "New alarm";
+    NewCreatedAlarm?.alarmTime = _time;
+    NewCreatedAlarm?.alarmDate = _date;
+    //NewCreatedAlarm?.isRecurrent = false;
+    NewCreatedAlarm?.weekdayRecurrence = _chosen_weekdays; //todo schauen ob das passt mit meiner liste vom datentyp her
+    //NewCreatedAlarm?.challengeMode = false;
+    AlarmList.add(NewCreatedAlarm); //add the alarm to the list
+    print("Alarm has been created!");
+    print(AlarmList);
+
+  } //todo das hier alles anpassen und lesen
 
 
   void _selectTime() async {
@@ -336,10 +346,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                       onChanged: (int day) {
                         setState(() {
                           final index = day % 7;
-                          chosen_weekdays[index] = !chosen_weekdays[index];
+                          _chosen_weekdays[index] = !_chosen_weekdays[index];
                         });
                       },
-                      values: chosen_weekdays,
+                      values: _chosen_weekdays,
                     ),
                   ),
               ],
@@ -360,7 +370,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        // todo destruct object
+                        // No need to destroy the object since isFullyCreated remains false; //todo
                       },
                       child: const Text('Cancel'),
                     ),
@@ -376,12 +386,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   flex: 30, // 30%
                   child: Center(
                     child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        // save object
-                        //SavedCreatedAlarm = newCreatedAlarm;
-                        //todo hier noch speichern!
-                      },
+                      //on pressed save the alarm and close the menu at the same time
+                      onPressed: ()=>[_saveAlarm(globals.listOfSavedAlarms),Navigator.pop(context)], //TODO this doesnt work yet
                       child: const Text('Confirm'),
                     ),
                   ),
