@@ -2,7 +2,6 @@ import 'package:flutter/material.dart'; //Google Material Design assets
 
 // data structure / class for one alarm
 class customAlarm {
-  bool isFullyCreated = false;
   bool isActive = false;
   bool isRinging = false;
   String nameOfAlarm = "New alarm";
@@ -12,19 +11,6 @@ class customAlarm {
   List<bool> weekdayRecurrence = [false, false, false, false, false, false, false]; //from Monday to Sunday
   bool challengeMode = false;
   //todo: alarm sound, vibration pattern, snooze, ...
-
-  //todo getter and setter methods; I dont think I need this
-  void setNameOfAlarm(String var_nameOfAlarm)
-  {
-    nameOfAlarm = var_nameOfAlarm;
-  }
-
-  String getNameOfAlarm()
-  {
-    return nameOfAlarm;
-  }
-
-
 }
 
 List<customAlarm?> listOfSavedAlarms = []; // list including all the saved alarms

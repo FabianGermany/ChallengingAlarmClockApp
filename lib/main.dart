@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? date_string;
   String? time_string;
   static const everySecond = Duration(seconds: 1);
+  bool _alarmActive = false;
 
   void _updateTime() {
     setState(() {
@@ -146,6 +147,74 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            Row( // Row for the set alarms
+              children: <Widget>[
+                Expanded(
+                flex: 5,
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    //todo dafür sorgen dass ALLE alarmde dargestellt werden
+                    //todo schauen ob AlarmList und ListOf...ob das passt.
+                    Text(
+                      "${globals.listOfSavedAlarms[0]?.nameOfAlarm}",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                  ],
+                ),
+                ),
+                Expanded( // Col/Expanded for the add alarm button
+                  flex: 5,
+                  child: Row(), //empty
+                ),
+              ],
+            ),
+            // some space
+            Row(
+              children: <Widget>[
+                SizedBox(height: 9),
+              ],
+            ),
+            Row( // Row for the set alarms II
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      //todo dafür sorgen dass ALLE alarmde dargestellt werden
+                      //todo schauen ob AlarmList und ListOf...ob das passt.
+                      Text(
+                        "${globals.listOfSavedAlarms[0]?.alarmTime.hour}: ${globals.listOfSavedAlarms[0]?.alarmTime.minute}",
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded( // Show date or weekdays
+                  flex: 3,
+                  child: Row(
+                    //todo here dann flexibel anzeigen...
+                  ),
+                ),
+                Expanded( // Toggle/Switch
+                  flex: 2,
+                  child: Row(
+                    children: <Widget>[
+                      Switch(
+                        value: _alarmActive,
+                        activeColor: Color(0xFF6200EE),
+                        onChanged: (bool value) {
+                          setState(() {
+                            _alarmActive = value;
+                          });
+                        },
+                      ),
+                  ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -167,23 +236,24 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   final _chosen_weekdays = List.filled(7, false); // for weekday picker
 
 
-  /// function to save alarm (meaning to set isFullyCreated to true)
-  void _saveAlarm(List<globals.customAlarm?> currentAlarmList)
+  /// function to save alarm
+  List<globals.customAlarm?> _saveAlarm(List<globals.customAlarm?> currentAlarmList)
   {
     List<globals.customAlarm?> AlarmList = currentAlarmList;
-    globals.customAlarm? NewCreatedAlarm; //todo oder var xxxx
+    globals.customAlarm? NewCreatedAlarm = globals.customAlarm(); // create a new default alarm
 
-    NewCreatedAlarm?.isFullyCreated = true;
-    NewCreatedAlarm?.isActive = true;
-    //NewCreatedAlarm?.nameOfAlarm = "New alarm";
-    NewCreatedAlarm?.alarmTime = _time;
-    NewCreatedAlarm?.alarmDate = _date;
-    //NewCreatedAlarm?.isRecurrent = false;
-    NewCreatedAlarm?.weekdayRecurrence = _chosen_weekdays; //todo schauen ob das passt mit meiner liste vom datentyp her
-    //NewCreatedAlarm?.challengeMode = false;
+    // overwrite the default values
+    NewCreatedAlarm.isActive = true;
+    //NewCreatedAlarm.nameOfAlarm = "New alarm";
+    NewCreatedAlarm.alarmTime = _time;
+    NewCreatedAlarm.alarmDate = _date;
+    //NewCreatedAlarm.isRecurrent = false;
+    NewCreatedAlarm.weekdayRecurrence = _chosen_weekdays; //todo schauen ob das passt mit meiner liste vom datentyp her
+    //NewCreatedAlarm.challengeMode = false;
     AlarmList.add(NewCreatedAlarm); //add the alarm to the list
     print("Alarm has been created!");
-    print(AlarmList);
+    globals.listOfSavedAlarms = AlarmList; //save the local list back to the global one
+    return AlarmList;
 
   } //todo das hier alles anpassen und lesen
 
@@ -370,7 +440,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        // No need to destroy the object since isFullyCreated remains false; //todo
                       },
                       child: const Text('Cancel'),
                     ),
@@ -387,12 +456,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child: Center(
                     child: OutlinedButton(
                       //on pressed save the alarm and close the menu at the same time
-                      onPressed: ()=>[_saveAlarm(globals.listOfSavedAlarms),Navigator.pop(context)], //TODO this doesnt work yet
+                      onPressed: ()=>[_saveAlarm(globals.listOfSavedAlarms),Navigator.pop(context)],
                       child: const Text('Confirm'),
                     ),
                   ),
                 ),
-
               ],
             ),
           ],
