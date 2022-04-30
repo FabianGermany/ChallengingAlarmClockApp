@@ -233,8 +233,9 @@ class AddAlarmPage extends StatefulWidget {
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
   TimeOfDay _chosenTime = TimeOfDay(hour: 7, minute: 15);
   DateTime _chosenDate = DateTime.now(); // DateTime(2022, 1, 1);
-  final _chosenWeekdays = List.filled(7, false); // for weekday picker
+  List<bool> _chosenWeekdays = List.filled(7, false); // for weekday picker
   bool _challengingModeActive = false;
+  bool _recurrentMode = false;
 
   /// function to save alarm
   List<globals.customAlarm?> _saveAlarm(List<globals.customAlarm?> currentalarmList)
@@ -279,9 +280,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       lastDate: DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day), // today plus later
       helpText: 'Select a date',
     );
-    if (newDate != null) {
+    if (newDate != null) { //close the menu and save
       setState(() {
         _chosenDate = newDate;
+        _recurrentMode = false; // if date is chosen and saved, set recurrent mode to false
+        _chosenWeekdays = List.filled(7, false);// if date is chosen and saved, also make the recurrent buttons default again
       });
     }
   }
@@ -378,6 +381,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                             children: <Widget>[
                               Text(
                                 'Selected date:',
+                                style:TextStyle(color: _recurrentMode == false ? Colors.black : Colors.black26), //change color depending on the current recurrence mode
                               ),
                             ],
                           ),
@@ -390,7 +394,12 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                             children: <Widget>[
                               Text( // todo flexible geht hier irgendwie nicht...
                                 '${DateFormat('yMMMEd').format(_chosenDate)}',
-                                style: Theme.of(context).textTheme.headline6,
+                                style:
+                                //Theme.of(context).textTheme.headline6,
+                                TextStyle(
+                                        color: _recurrentMode == false ? Colors.black : Colors.black26 , //change color depending on the current recurrence mode
+                                        fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
+                                      ),
                               ),
                             ],
                           ),
@@ -417,6 +426,18 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                         setState(() {
                           final index = day % 7;
                           _chosenWeekdays[index] = !_chosenWeekdays[index];
+
+                          // if any weekday is active, activate recurrent mode, otherwise not
+                          if (_chosenWeekdays.any((e) => e == true))
+                          {
+                            _recurrentMode = true;
+                          }
+                          else {
+                            _recurrentMode = false;
+                          }
+
+
+
                         });
                       },
                       values: _chosenWeekdays,
