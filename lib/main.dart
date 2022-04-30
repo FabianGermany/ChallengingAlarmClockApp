@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
-import 'package:english_words/english_words.dart';
+//import 'package:english_words/english_words.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
@@ -48,21 +48,21 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // Declare vars for the time
-  DateTime? now;
-  String? date_string;
-  String? time_string;
   static const everySecond = Duration(seconds: 1);
-  bool _alarmActive = false;
+  DateTime? _now;
+  String? _dateString;
+  String? _timeString;
+  bool _alarmActive = false; //todo das in Liste etc. für alle alarme...
 
   void _updateTime() {
     setState(() {
       // setState is needed to tell the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values.
-      now = DateTime.now();
-      date_string = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
-      time_string = DateFormat("HH:mm:ss").format(DateTime.now());
-      // time_string = DateFormat('hh:mm:ss a').format(DateTime.now());
+      _now = DateTime.now();
+      _dateString = DateFormat("MMMM, dd, yyyy").format(_now!);
+      _timeString = DateFormat("HH:mm:ss").format(_now!);
+      // _timeString = DateFormat('hh:mm:ss a').format(DateTime.now());
     });
   }
 
@@ -97,14 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           'The current time is',
                         ),
                         Text(
-                          '$time_string',
+                          '$_timeString',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         const Text(
                           'The current date is',
                         ),
                         Text(
-                          '$date_string',
+                          '$_dateString',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         // Already set alarms
@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     //todo dafür sorgen dass ALLE alarmde dargestellt werden
-                    //todo schauen ob AlarmList und ListOf...ob das passt.
+                    //todo schauen ob alarmList und ListOf...ob das passt.
                     Text(
                       "${globals.listOfSavedAlarms[0]?.nameOfAlarm}",
                       style: Theme.of(context).textTheme.headline6,
@@ -183,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       //todo dafür sorgen dass ALLE alarmde dargestellt werden
-                      //todo schauen ob AlarmList und ListOf...ob das passt.
+                      //todo schauen ob alarmList und ListOf...ob das passt.
                       Text(
                         "${globals.listOfSavedAlarms[0]?.alarmTime.hour}: ${globals.listOfSavedAlarms[0]?.alarmTime.minute}",
                         style: Theme.of(context).textTheme.headline5,
@@ -231,29 +231,29 @@ class AddAlarmPage extends StatefulWidget {
 }
 
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
-  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
-  DateTime _date = DateTime.now(); // DateTime(2022, 1, 1);
-  final _chosen_weekdays = List.filled(7, false); // for weekday picker
-
+  TimeOfDay _chosenTime = TimeOfDay(hour: 7, minute: 15);
+  DateTime _chosenDate = DateTime.now(); // DateTime(2022, 1, 1);
+  final _chosenWeekdays = List.filled(7, false); // for weekday picker
+  bool _challengingModeActive = false;
 
   /// function to save alarm
-  List<globals.customAlarm?> _saveAlarm(List<globals.customAlarm?> currentAlarmList)
+  List<globals.customAlarm?> _saveAlarm(List<globals.customAlarm?> currentalarmList)
   {
-    List<globals.customAlarm?> AlarmList = currentAlarmList;
-    globals.customAlarm? NewCreatedAlarm = globals.customAlarm(); // create a new default alarm
+    List<globals.customAlarm?> alarmList = currentalarmList;
+    globals.customAlarm? newCreatedAlarm = globals.customAlarm(); // create a new default alarm
 
     // overwrite the default values
-    NewCreatedAlarm.isActive = true;
-    //NewCreatedAlarm.nameOfAlarm = "New alarm";
-    NewCreatedAlarm.alarmTime = _time;
-    NewCreatedAlarm.alarmDate = _date;
-    //NewCreatedAlarm.isRecurrent = false;
-    NewCreatedAlarm.weekdayRecurrence = _chosen_weekdays; //todo schauen ob das passt mit meiner liste vom datentyp her
-    //NewCreatedAlarm.challengeMode = false;
-    AlarmList.add(NewCreatedAlarm); //add the alarm to the list
+    newCreatedAlarm.isActive = true; // if saved, then automatically make active
+    //newCreatedAlarm.nameOfAlarm = "New alarm"; // This feature won't be available in this version
+    newCreatedAlarm.alarmTime = _chosenTime;
+    newCreatedAlarm.alarmDate = _chosenDate;
+    //newCreatedAlarm.isRecurrent = false; // todo abhängig was zuletzt aktiviert wurde
+    newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
+    newCreatedAlarm.challengeMode = _challengingModeActive;
+    alarmList.add(newCreatedAlarm); //add the alarm to the list
     print("Alarm has been created!");
-    globals.listOfSavedAlarms = AlarmList; //save the local list back to the global one
-    return AlarmList;
+    globals.listOfSavedAlarms = alarmList; //save the local list back to the global one
+    return alarmList;
 
   } //todo das hier alles anpassen und lesen
 
@@ -261,11 +261,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: _time,
+      initialTime: _chosenTime,
     );
     if (newTime != null) {
       setState(() {
-        _time = newTime;
+        _chosenTime = newTime;
       });
     }
   }
@@ -274,14 +274,14 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   void _selectDate() async {
     final DateTime? newDate = await showDatePicker(
       context: context,
-      initialDate: _date,
+      initialDate: _chosenDate,
       firstDate: DateTime.now(), // today;
       lastDate: DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day), // today plus later
       helpText: 'Select a date',
     );
     if (newDate != null) {
       setState(() {
-        _date = newDate;
+        _chosenDate = newDate;
       });
     }
   }
@@ -329,7 +329,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           Row(
                             children: <Widget>[
                               Text(
-                                '${_time.format(context)}',
+                                '${_chosenTime.format(context)}',
                                 style: Theme.of(context).textTheme.headline6,
                               ),
                             ],
@@ -389,7 +389,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           Row(
                             children: <Widget>[
                               Text( // todo flexible geht hier irgendwie nicht...
-                                '${DateFormat('yMMMEd').format(_date)}',
+                                '${DateFormat('yMMMEd').format(_chosenDate)}',
                                 style: Theme.of(context).textTheme.headline6,
                               ),
                             ],
@@ -416,10 +416,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                       onChanged: (int day) {
                         setState(() {
                           final index = day % 7;
-                          _chosen_weekdays[index] = !_chosen_weekdays[index];
+                          _chosenWeekdays[index] = !_chosenWeekdays[index];
                         });
                       },
-                      values: _chosen_weekdays,
+                      values: _chosenWeekdays,
                     ),
                   ),
               ],
@@ -428,6 +428,37 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
             Row( // Add some space
               children: <Widget>[
                 SizedBox(height: 10),
+              ],
+            ),
+
+            Row( // Toggle/Switch for Challenge Mode
+              children: <Widget>[
+                Expanded(
+                  flex: 8,
+                  child:
+                      Text
+                      ('Challenge mode',
+                        style: Theme.of(context).textTheme.subtitle1
+                  ),
+                ),
+                 Expanded(
+                   flex: 2,
+                   child:
+                      Switch(
+                        value: _challengingModeActive,
+                        activeColor: Color(0xFF6200EE),
+                        onChanged: (bool value) {
+                          setState(() {
+                            _challengingModeActive = value;
+                          });
+                        },
+                      ),
+                  ),
+              ],
+            ),
+            Row( // Add some space
+              children: <Widget>[
+                SizedBox(height: 30),
               ],
             ),
 

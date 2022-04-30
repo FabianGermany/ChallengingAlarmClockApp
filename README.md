@@ -1,6 +1,6 @@
 # Challenging Alarm Clock App
 
-Alarm clock app
+This repo is about creating an alarm clock app that is challenging the user by making him/her to solve a problem before the alarm sound stops.
 
 ## Getting Started
 
@@ -15,20 +15,10 @@ To see the wireframe of the app, click on "Open Flutter DevTools" in the debug w
 while running the debug mode.
 
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-### To Do MT
+## To Do MT
 - Use Expanded etc. to avoid text overflow
 
-### To Do LT
+## To Do LT
 - Handle time zone issue
 - For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).

@@ -8,7 +8,7 @@ class customAlarm {
   TimeOfDay alarmTime = TimeOfDay(hour: 9, minute: 45); // default value
   DateTime alarmDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1); // default today plus 1 day later
   bool isRecurrent = false; //default value is single time alarm
-  List<bool> weekdayRecurrence = [false, false, false, false, false, false, false]; //from Monday to Sunday
+  List<bool> weekdayRecurrence = List.filled(7, false); //from Monday to Sunday // = [false, false, false, false, false, false, false];
   bool challengeMode = false;
   //todo: alarm sound, vibration pattern, snooze, ...
 }
