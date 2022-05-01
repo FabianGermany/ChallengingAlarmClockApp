@@ -98,14 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Text(
                           '$_timeString',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         const Text(
                           'The current date is',
                         ),
                         Text(
                           '$_dateString',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         // Already set alarms
                       ],
@@ -158,7 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     //todo schauen ob alarmList und ListOf...ob das passt.
                     Text(
                       "${globals.listOfSavedAlarms[0]?.nameOfAlarm}",
-                      style: Theme.of(context).textTheme.headline6,
+                      style:TextStyle(
+                          color: (_alarmActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
+                          fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
+                      ),
                     ),
                   ],
                 ),
@@ -185,9 +188,32 @@ class _MyHomePageState extends State<MyHomePage> {
                       //todo dafür sorgen dass ALLE alarmde dargestellt werden
                       //todo schauen ob alarmList und ListOf...ob das passt.
                       Text(
-                        "${globals.listOfSavedAlarms[0]?.alarmTime.hour}: ${globals.listOfSavedAlarms[0]?.alarmTime.minute}",
-                        style: Theme.of(context).textTheme.headline5,
+                        "${globals.listOfSavedAlarms[0]?.alarmTime.hour}:${globals.listOfSavedAlarms[0]?.alarmTime.minute}",
+                        style:TextStyle(
+                            color: (_alarmActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
+                            fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
+                        ),
                       ),
+                      Text("  "),
+                      //todo if newCreatedAlarm.isActive true dann schwarz, sonst ausgrauen.
+
+                      //Display the date / the recurring weekdays
+                      (globals.listOfSavedAlarms[0]?.isRecurrent == true) ? // check for the mode via a?b:c
+
+                      // case one: recurrence mode
+                      Text
+                      (
+                          "${globals.weekdayBoolListToString(globals.listOfSavedAlarms[0]!.weekdayRecurrence)}",
+                          style:TextStyle(color: (_alarmActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
+                      ):
+
+                      // case two: date mode
+                      Text
+                      (
+                          "${DateFormat('EEE, d MMM').format(globals.listOfSavedAlarms[0]!.alarmDate)}",
+                          style:TextStyle(color: (_alarmActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
+                      ),
+
                     ],
                   ),
                 ),
@@ -197,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //todo here dann flexibel anzeigen...
                   ),
                 ),
-                Expanded( // Toggle/Switch
+                Expanded( // Toggle/Switch for active/inactive
                   flex: 2,
                   child: Row(
                     children: <Widget>[
@@ -248,7 +274,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     //newCreatedAlarm.nameOfAlarm = "New alarm"; // This feature won't be available in this version
     newCreatedAlarm.alarmTime = _chosenTime;
     newCreatedAlarm.alarmDate = _chosenDate;
-    //newCreatedAlarm.isRecurrent = false; // todo abhängig was zuletzt aktiviert wurde
+    newCreatedAlarm.isRecurrent = _recurrentMode;
     newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
     newCreatedAlarm.challengeMode = _challengingModeActive;
     alarmList.add(newCreatedAlarm); //add the alarm to the list
@@ -435,9 +461,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           else {
                             _recurrentMode = false;
                           }
-
-
-
                         });
                       },
                       values: _chosenWeekdays,

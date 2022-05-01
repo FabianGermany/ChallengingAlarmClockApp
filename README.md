@@ -22,3 +22,4 @@ while running the debug mode.
 ## To Do LT
 - Handle time zone issue
 - For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).
+- Design Changes (e.g. display weekdays etc on both pages)
