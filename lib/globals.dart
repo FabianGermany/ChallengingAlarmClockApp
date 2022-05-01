@@ -28,8 +28,17 @@ List<customAlarm?> initApp()
   firstDefaultAlarm.isRecurrent = true;
   firstDefaultAlarm.weekdayRecurrence = [false, false, true, true, false, false, false];
   listOfSavedAlarms.add(firstDefaultAlarm); // add this alarm to the list
-  return listOfSavedAlarms;
+
+  // create another default alamrm with some settings
+  customAlarm? secondDefaultAlarm = customAlarm();
+  secondDefaultAlarm.nameOfAlarm = "Dentist";
+  secondDefaultAlarm.isActive = true;
+  secondDefaultAlarm.isRecurrent = false;
+  secondDefaultAlarm.weekdayRecurrence = [false, false, false, false, false, false, false];
+  listOfSavedAlarms.add(secondDefaultAlarm); // add this alarm to the list
   print("App has been initialized...");
+  return listOfSavedAlarms;
+
 }
 
 /// Convert weekday number to weekday string

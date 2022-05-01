@@ -137,7 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             Row( // Row for the set alarms
-              // Second row
               mainAxisAlignment: MainAxisAlignment.center, //center vertically
               children: <Widget>[
                 SizedBox(height: 70), // Add some distance between the next row
@@ -147,100 +146,123 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            Row( // Row for the set alarms
-              children: <Widget>[
-                Expanded(
-                flex: 5,
-                child: Row(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    //todo dafür sorgen dass ALLE alarmde dargestellt werden
-                    //todo schauen ob alarmList und ListOf...ob das passt.
-                    Text(
-                      "${globals.listOfSavedAlarms[0]?.nameOfAlarm}",
-                      style:TextStyle(
-                          color: (_alarmActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
-                          fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
-                      ),
-                    ),
-                  ],
-                ),
-                ),
-                Expanded( // Col/Expanded for the add alarm button
-                  flex: 5,
-                  child: Row(), //empty
-                ),
-              ],
-            ),
-            // some space
-            Row(
-              children: <Widget>[
-                SizedBox(height: 9),
-              ],
-            ),
-            Row( // Row for the set alarms II
-              children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.center,
+
+
+            // List of alarms (for loop)
+            for (final alarm_element in globals.listOfSavedAlarms) //todo klammern //todo zugehörigkeit alles
+              Row( // Row for the set alarms I
+                children: <Widget>[
+                  Expanded(child:
+                  Column(children: <Widget>[
+
+                  Row( // Row for the set alarms I
                     children: <Widget>[
-                      //todo dafür sorgen dass ALLE alarmde dargestellt werden
-                      //todo schauen ob alarmList und ListOf...ob das passt.
-                      Text(
-                        "${globals.listOfSavedAlarms[0]?.alarmTime.hour}:${globals.listOfSavedAlarms[0]?.alarmTime.minute}",
-                        style:TextStyle(
-                            color: (_alarmActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
-                            fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
-                        ),
+                      Expanded(
+                      flex: 5,
+                      child: Row(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          //todo dafür sorgen dass ALLE alarmde dargestellt werden
+                          //todo schauen ob alarmList und ListOf...ob das passt.
+                          Text(
+                            "${alarm_element?.nameOfAlarm}",
+                            style:TextStyle(
+                                color: (alarm_element?.isActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
+                                fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
+                            ),
+                          ),
+                        ],
                       ),
-                      Text("  "),
-                      //todo if newCreatedAlarm.isActive true dann schwarz, sonst ausgrauen.
-
-                      //Display the date / the recurring weekdays
-                      (globals.listOfSavedAlarms[0]?.isRecurrent == true) ? // check for the mode via a?b:c
-
-                      // case one: recurrence mode
-                      Text
-                      (
-                          "${globals.weekdayBoolListToString(globals.listOfSavedAlarms[0]!.weekdayRecurrence)}",
-                          style:TextStyle(color: (_alarmActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
-                      ):
-
-                      // case two: date mode
-                      Text
-                      (
-                          "${DateFormat('EEE, d MMM').format(globals.listOfSavedAlarms[0]!.alarmDate)}",
-                          style:TextStyle(color: (_alarmActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
                       ),
-
+                      Expanded( // Col/Expanded for the add alarm button
+                        flex: 5,
+                        child: Row(), //empty
+                      ),
                     ],
                   ),
-                ),
-                Expanded( // Show date or weekdays
-                  flex: 3,
-                  child: Row(
-                    //todo here dann flexibel anzeigen...
-                  ),
-                ),
-                Expanded( // Toggle/Switch for active/inactive
-                  flex: 2,
-                  child: Row(
+                  // some space
+                  Row(
                     children: <Widget>[
-                      Switch(
-                        value: _alarmActive,
-                        activeColor: Color(0xFF6200EE),
-                        onChanged: (bool value) {
-                          setState(() {
-                            _alarmActive = value;
-                          });
-                        },
-                      ),
-                  ],
+                      SizedBox(height: 9),
+                    ],
                   ),
-                ),
-              ],
+                  Row( // Row for the set alarms II
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child: Row(
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            //todo dafür sorgen dass ALLE alarmde dargestellt werden
+                            //todo schauen ob alarmList und ListOf...ob das passt.
+                            Text(
+                              "${alarm_element?.alarmTime.hour}:${alarm_element?.alarmTime.minute}",
+                              style:TextStyle(
+                                  color: (alarm_element?.isActive == true) ? Colors.black : Colors.black38 , //change color depending on the current recurrence mode
+                                  fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
+                              ),
+                            ),
+                            Text("  "), // add some space
+
+                            //Display the date / the recurring weekdays
+                            (alarm_element?.isRecurrent == true) ? // check for the mode via a?b:c
+
+                            // case one: recurrence mode
+                            Text
+                            (
+                                "${globals.weekdayBoolListToString(alarm_element!.weekdayRecurrence)}",
+                                style:TextStyle(color: (alarm_element.isActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
+                            ):
+
+                            // case two: date mode
+                            Text
+                            (
+                                "${DateFormat('EEE, d MMM').format(alarm_element!.alarmDate)}",
+                                style:TextStyle(color: (alarm_element.isActive == true) ? Colors.black : Colors.black38), //change color depending on the current recurrence mode
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      Expanded( // Show date or weekdays
+                        flex: 3,
+                        child: Row(
+                          //todo here dann flexibel anzeigen...
+                        ),
+                      ),
+                      Expanded( // Toggle/Switch for active/inactive
+                        flex: 2,
+                        child: Row(
+                          children: <Widget>[
+                            Switch(
+                              value: alarm_element.isActive,
+                              activeColor: Color(0xFF6200EE),
+                              onChanged: (bool value) {
+                                setState(() {
+                                  alarm_element.isActive = value;
+                                });
+                              },
+                            ),
+                        ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                    // some space
+                    Row(
+                      children: <Widget>[
+                        SizedBox(height: 25),
+                      ],
+                    ),
+                ],
+              ),
             ),
+          ],
+        ),
+
+  //}, // end of the for loop todo brauche ich was
+
           ],
         ),
       ),
@@ -281,8 +303,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     print("Alarm has been created!");
     globals.listOfSavedAlarms = alarmList; //save the local list back to the global one
     return alarmList;
-
-  } //todo das hier alles anpassen und lesen
+  }
 
 
   void _selectTime() async {
@@ -359,7 +380,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                             children: <Widget>[
                               Text(
                                 '${_chosenTime.format(context)}',
-                                style: Theme.of(context).textTheme.headline6,
+                                style: Theme.of(context).textTheme.headline6, //textTheme.subtitle1
                               ),
                             ],
                           ),
@@ -419,9 +440,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           Row(
                             children: <Widget>[
                               Text( // todo flexible geht hier irgendwie nicht...
-                                '${DateFormat('yMMMEd').format(_chosenDate)}',
+                                '${DateFormat('MMMEd').format(_chosenDate)}',
                                 style:
-                                //Theme.of(context).textTheme.headline6,
                                 TextStyle(
                                         color: _recurrentMode == false ? Colors.black : Colors.black26 , //change color depending on the current recurrence mode
                                         fontSize: 20, fontWeight: FontWeight.w500//, spacing...: 0.15
@@ -482,9 +502,12 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child:
                       Text
                       ('Challenge mode',
-                        style: Theme.of(context).textTheme.subtitle1
+                        style:
+                        TextStyle(
+                            color: (_challengingModeActive == true) ? Colors.black : Colors.black38
+                        ), //change color depending on the current recurrence mode
+                      ),
                   ),
-                ),
                  Expanded(
                    flex: 2,
                    child:
