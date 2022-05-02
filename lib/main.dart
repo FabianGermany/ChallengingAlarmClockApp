@@ -350,6 +350,18 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   bool _challengingModeActive = false;
   bool _recurrentMode = false;
 
+
+  // Create a text controller and use it to retrieve the current value
+  // of the Alarm TextField.
+  final myAlarmNameController = TextEditingController(text: 'My personal alarm');
+
+  @override
+  void dispose() {
+  // Clean up the controller when the widget is disposed.
+    myAlarmNameController.dispose();
+  super.dispose();
+  }
+
   /// function to save the alarm
   List<globals.CustomAlarm?> _saveAlarm(
       List<globals.CustomAlarm?> currentAlarmList) {
@@ -359,7 +371,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 
     // overwrite the default values
     newCreatedAlarm.isActive = true; // if saved, then automatically make active
-    //newCreatedAlarm.nameOfAlarm = "New alarm"; // This feature won't be available in this version
+    newCreatedAlarm.nameOfAlarm = myAlarmNameController.text;
     newCreatedAlarm.alarmTime = _chosenTime;
     newCreatedAlarm.alarmDate = _chosenDate;
     newCreatedAlarm.isRecurrent = _recurrentMode;
@@ -406,6 +418,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       });
     }
   }
+
+  // This is a GlobalKey<FormState>, not a GlobalKey<MyCustomFormState>.
+  // It's needed for the input of the alarm name
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -568,6 +584,46 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                 SizedBox(height: 10),
               ],
             ),
+
+            // Type of alarm
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 8,
+                  child:
+                  Form(
+                    key: _formKey,
+                      child:
+                        TextFormField(
+                        controller: myAlarmNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Name of alarm',
+                          //errorText: , //todo show only if == "" or if more than 18;
+                          border: OutlineInputBorder(),
+                          //suffixIcon: Icon( //todo show only if == "";
+                           // Icons.error,
+                          //),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty || value.length > 18) { //todo check 18 charcs.
+                          return 'Please use between 1 and 18 characters.';
+                        }
+                        return null;
+                      },
+                    ),
+
+                  ),
+                ),
+
+              ],
+            ),
+
+            Row(
+              // Add some space
+              children: <Widget>[
+                SizedBox(height: 10),
+              ],
+            ),
             Row(
               // Toggle/Switch for Challenge Mode
               children: <Widget>[
@@ -629,10 +685,15 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child: Center(
                     child: OutlinedButton(
                       //on pressed save the alarm and close the menu at the same time
-                      onPressed: () => [
+                      // Validate returns true if the form is valid, or false otherwise.
+                      onPressed: //(_formKey.currentState!.validate())?  //todo null value error
+                    () =>
+                      [
                         _saveAlarm(globals.listOfSavedAlarms),
                         Navigator.pop(context)
-                      ],
+                      ],//:
+                         // () {},
+
                       child: const Text('Confirm'),
                     ),
                   ),
