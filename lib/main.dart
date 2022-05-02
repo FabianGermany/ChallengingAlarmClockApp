@@ -162,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
 
+
             // List of alarms (for loop)
             for (int i = 0; i < globals.listOfSavedAlarms.length; i++)
             //for (final alarm_element in globals.listOfSavedAlarms)
@@ -200,7 +201,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ? Colors.black38
                                           : Colors.black26,
                                       iconSize: 20.0,
-                                      onPressed: ()=>_deleteAlarm(globals.listOfSavedAlarms, i),
+                                       onPressed:
+                                       () => showDialog<String>(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                          //todo move it somewhere else; use a builder or something
+                                          AlertDialog(
+                                            title: Text('Delete alarm?'),
+                                            content: Text('You are about to delete this alarm.'),
+                                            actions: [
+                                              FlatButton(
+                                                textColor: Color(0xFF6200EE),
+                                                onPressed: () => Navigator.pop(context, 'CANCEL'), //close dialog
+                                                child: Text('CANCEL'),
+                                              ),
+                                              FlatButton(
+                                                textColor: Color(0xFF6200EE),
+                                                onPressed: ()=> [ //close dialog and delete alarm at the same time
+                                                  _deleteAlarm(globals.listOfSavedAlarms, i),
+                                                  Navigator.pop(context, 'DELETE'),
+                                                ],
+                                                  child: Text('DELETE'),
+                                              ),
+                                            ],
+                                          ),
+                                  ),
                                   ),
                                 ],
                               ),
