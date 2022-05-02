@@ -25,6 +25,7 @@ List<customAlarm?> initApp()
   // create one default alarm with some settings
   customAlarm? firstDefaultAlarm = customAlarm();
   firstDefaultAlarm.nameOfAlarm = "Weekly meeting";
+  firstDefaultAlarm.alarmTime = TimeOfDay(hour: 16, minute: 00);
   firstDefaultAlarm.isRecurrent = true;
   firstDefaultAlarm.weekdayRecurrence = [false, false, true, true, false, false, false];
   listOfSavedAlarms.add(firstDefaultAlarm); // add this alarm to the list
@@ -32,13 +33,12 @@ List<customAlarm?> initApp()
   // create another default alamrm with some settings
   customAlarm? secondDefaultAlarm = customAlarm();
   secondDefaultAlarm.nameOfAlarm = "Dentist";
+  secondDefaultAlarm.alarmTime = TimeOfDay(hour: 14, minute: 45);
   secondDefaultAlarm.isActive = true;
   secondDefaultAlarm.isRecurrent = false;
-  secondDefaultAlarm.weekdayRecurrence = [false, false, false, false, false, false, false];
   listOfSavedAlarms.add(secondDefaultAlarm); // add this alarm to the list
   print("App has been initialized...");
   return listOfSavedAlarms;
-
 }
 
 /// Convert weekday number to weekday string
