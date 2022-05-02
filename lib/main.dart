@@ -686,13 +686,16 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     child: OutlinedButton(
                       //on pressed save the alarm and close the menu at the same time
                       // Validate returns true if the form is valid, or false otherwise.
-                      onPressed: //(_formKey.currentState!.validate())?  //todo null value error
-                    () =>
-                      [
-                        _saveAlarm(globals.listOfSavedAlarms),
-                        Navigator.pop(context)
-                      ],//:
-                         // () {},
+                      onPressed:() {   if (_formKey.currentState!.validate()) {
+                        // for multiple commands in onPressed this form should be used:
+                        // () =>[command1, command2]
+                        // but in if statement, it seems to be not necessary
+                        _saveAlarm(globals.listOfSavedAlarms);
+                        Navigator.pop(context);
+                      } else {
+                            //don't save it
+                          }
+                      },
 
                       child: const Text('Confirm'),
                     ),
