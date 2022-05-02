@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 
 // data structure / class for one alarm
-class customAlarm {
+class CustomAlarm {
   bool isActive = false;
   bool isRinging = false;
   String nameOfAlarm = "New alarm";
-  TimeOfDay alarmTime = TimeOfDay(hour: 9, minute: 45); // default value
+  TimeOfDay alarmTime = const TimeOfDay(hour: 9, minute: 45); // default value
   DateTime alarmDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1); // default today plus 1 day later
   bool isRecurrent = false; //default value is single time alarm
   List<bool> weekdayRecurrence = List.filled(7, false); //from Monday to Sunday // = [false, false, false, false, false, false, false];
@@ -13,31 +13,31 @@ class customAlarm {
   //todo: alarm sound, vibration pattern, snooze, ...
 }
 
-List<customAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
+List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
 
 /// Init app function
 // todo this should only be done once when the app is launched for the first time...reset button function etc.
-List<customAlarm?> initApp()
+List<CustomAlarm?> initApp()
 {
   // Data structure / list for a collection of saved alarms
-  List<customAlarm?> listOfSavedAlarms = [];
+  List<CustomAlarm?> listOfSavedAlarms = [];
 
   // create one default alarm with some settings
-  customAlarm? firstDefaultAlarm = customAlarm();
+  CustomAlarm? firstDefaultAlarm = CustomAlarm();
   firstDefaultAlarm.nameOfAlarm = "Weekly meeting";
-  firstDefaultAlarm.alarmTime = TimeOfDay(hour: 16, minute: 00);
+  firstDefaultAlarm.alarmTime = const TimeOfDay(hour: 16, minute: 00);
   firstDefaultAlarm.isRecurrent = true;
   firstDefaultAlarm.weekdayRecurrence = [false, false, true, true, false, false, false];
   listOfSavedAlarms.add(firstDefaultAlarm); // add this alarm to the list
 
-  // create another default alamrm with some settings
-  customAlarm? secondDefaultAlarm = customAlarm();
+  // create another default alarm with some settings
+  CustomAlarm? secondDefaultAlarm = CustomAlarm();
   secondDefaultAlarm.nameOfAlarm = "Dentist";
-  secondDefaultAlarm.alarmTime = TimeOfDay(hour: 14, minute: 45);
+  secondDefaultAlarm.alarmTime = const TimeOfDay(hour: 14, minute: 45);
   secondDefaultAlarm.isActive = true;
   secondDefaultAlarm.isRecurrent = false;
   listOfSavedAlarms.add(secondDefaultAlarm); // add this alarm to the list
-  print("App has been initialized...");
+  debugPrint("App has been initialized...");
   return listOfSavedAlarms;
 }
 

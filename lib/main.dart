@@ -7,11 +7,11 @@ import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 
 void main() {
-  print("App is being started...");
+  debugPrint("App is being started...");
   runApp(const MyApp());
   globals.listOfSavedAlarms = globals
       .initApp(); //init the app; creating default alarms etc. and store into a globally available list
-  print("App has been fully loaded...");
+  debugPrint("App has been fully loaded...");
 }
 
 class MyApp extends StatelessWidget {
@@ -66,11 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// function to delete the alarm //todo dialog
-  void _deleteAlarm(List<globals.customAlarm?> currentAlarmList, int itemNumberToBeRemoved)
+  void _deleteAlarm(List<globals.CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved)
   {
     setState(() {
       currentAlarmList.removeAt(itemNumberToBeRemoved);
-      print("Alarm has been deleted!");
+      debugPrint("Alarm has been deleted!");
     });
   }
 
@@ -210,13 +210,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                             title: Text('Delete alarm?'),
                                             content: Text('You are about to delete this alarm.'),
                                             actions: [
-                                              FlatButton(
-                                                textColor: Color(0xFF6200EE),
+                                              TextButton(
                                                 onPressed: () => Navigator.pop(context, 'CANCEL'), //close dialog
                                                 child: Text('CANCEL'),
                                               ),
-                                              FlatButton(
-                                                textColor: Color(0xFF6200EE),
+                                              TextButton(
                                                 onPressed: ()=> [ //close dialog and delete alarm at the same time
                                                   _deleteAlarm(globals.listOfSavedAlarms, i),
                                                   Navigator.pop(context, 'DELETE'),
@@ -271,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                       // case one: recurrence mode
                                       Text(
-                                          "${globals.weekdayBoolListToString(globals.listOfSavedAlarms[i]!.weekdayRecurrence)}",
+                                          globals.weekdayBoolListToString(globals.listOfSavedAlarms[i]!.weekdayRecurrence),
                                           style: TextStyle(
                                               color: (globals.listOfSavedAlarms[i]?.isActive == true)
                                                   ? Colors.black
@@ -281,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                       // case two: date mode
                                       Text(
-                                          "${DateFormat('EEE, d MMM').format(globals.listOfSavedAlarms[i]!.alarmDate)}",
+                                          DateFormat('EEE, d MMM').format(globals.listOfSavedAlarms[i]!.alarmDate),
                                           style: TextStyle(
                                               color: (globals.listOfSavedAlarms[i]?.isActive == true)
                                                   ? Colors.black
@@ -353,11 +351,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   bool _recurrentMode = false;
 
   /// function to save the alarm
-  List<globals.customAlarm?> _saveAlarm(
-      List<globals.customAlarm?> currentAlarmList) {
-    List<globals.customAlarm?> alarmList = currentAlarmList;
-    globals.customAlarm? newCreatedAlarm =
-        globals.customAlarm(); // create a new default alarm
+  List<globals.CustomAlarm?> _saveAlarm(
+      List<globals.CustomAlarm?> currentAlarmList) {
+    List<globals.CustomAlarm?> alarmList = currentAlarmList;
+    globals.CustomAlarm? newCreatedAlarm =
+        globals.CustomAlarm(); // create a new default alarm
 
     // overwrite the default values
     newCreatedAlarm.isActive = true; // if saved, then automatically make active
@@ -368,7 +366,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
     newCreatedAlarm.challengeMode = _challengingModeActive;
     alarmList.add(newCreatedAlarm); //add the alarm to the list
-    print("Alarm has been created!");
+    debugPrint("Alarm has been created!");
     globals.listOfSavedAlarms =
         alarmList; //save the local list back to the global one
     return alarmList;
@@ -452,7 +450,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           Row(
                             children: <Widget>[
                               Text(
-                                '${_chosenTime.format(context)}',
+                                _chosenTime.format(context),
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6, //textTheme.subtitle1
@@ -515,7 +513,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                             children: <Widget>[
                               Text(
                                 // todo flexible geht hier irgendwie nicht...
-                                '${DateFormat('MMMEd').format(_chosenDate)}',
+                                DateFormat('MMMEd').format(_chosenDate),
                                 style: TextStyle(
                                     color: _recurrentMode == false
                                         ? Colors.black
