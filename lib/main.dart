@@ -49,10 +49,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Declare vars for the time
   static const everySecond = Duration(seconds: 1);
+  static const every2Seconds = Duration(seconds: 30);
   DateTime? _now;
   String? _dateString;
   String? _timeString;
 
+  /// refresh the presented strings for the current time etc.
   void _updateTime() {
     setState(() {
       // setState is needed to tell the Flutter framework that something has
@@ -62,6 +64,46 @@ class _MyHomePageState extends State<MyHomePage> {
       _dateString = DateFormat("MMMM, dd, yyyy").format(_now!);
       _timeString = DateFormat("HH:mm:ss").format(_now!);
       // _timeString = DateFormat('hh:mm:ss a').format(DateTime.now());
+    });
+  }
+
+  /// check whether one of the alarms is triggered
+  void _alarmChecker(List<globals.CustomAlarm?> currentAlarmList)
+  {
+    //todo bug geht erst sehr spät los...
+    setState(() {
+    // check whether there is any alarm that is the past and is not set to isRinging=False yet
+      for (int i = 0; i < currentAlarmList.length; i++)
+        {
+          // first checker whether the alarm is active
+          if(currentAlarmList[i]!.isActive == true)
+            {
+            // case 1: single time alarm
+            if(currentAlarmList[i]!.isRecurrent == false)
+              {
+              // the day has passed //todo only compare date
+              if(currentAlarmList[i]!.alarmDate.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1))) // +1 day because also the same day should be included
+                  {
+                      // the time has passed
+                    double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0; //conversion function
+                    if(toDouble(currentAlarmList[i]!.alarmTime) <= (toDouble(TimeOfDay.now())))
+                    {
+                      currentAlarmList[i]!.isRinging = true; // alarm will ring //todo another function onChange isRinging. //todo alarm ringing page
+                      debugPrint("Single alarm is going off!");
+                      break; // break first for letting ring only one alarm if there are multiple
+                    }
+                  }
+              }
+
+            // case 2: recurring alarm
+            else if(currentAlarmList[i]!.isRecurrent == true)
+            {
+              //todo that's a bit more complicated
+              //debugPrint("Recurrent alarm is going off!");
+            }
+
+          }
+        }
     });
   }
 
@@ -76,12 +118,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // update shown times regularly
     Timer.periodic(
         everySecond,
         (Timer t) =>
             _updateTime()); //This will cause that the updateTime() function will be exected every second; todo I'm not sure why it only runs in the build function...
     // This method is rerun every time setState is called, for instance as done
     // by the _updateTime method above.
+
+    // check for alarm status regularly
+    Timer.periodic(
+        every2Seconds,
+            (Timer t) =>
+                _alarmChecker(globals.listOfSavedAlarms));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -605,8 +656,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           //),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty || value.length > 18) { //todo check 18 charcs.
-                          return 'Please use between 1 and 18 characters.';
+                        if (value == null || value.isEmpty || value.length > 20) {
+                          return 'Please use a name between 1 and 20 characters.';
                         }
                         return null;
                       },
