@@ -53,17 +53,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Declare vars for the time
   static const everySecond = Duration(seconds: 1);
-  static const every2Seconds = Duration(seconds: 30);
+  static const every2Seconds = Duration(seconds: 2);
   DateTime? _now;
   String? _dateString;
   String? _timeString;
 
+  late Timer _refreshTimer; //timer to refresh the screen like for the current time
+  late Timer _alarmCheckerTimer; //timer to check for the alarm trigger status
+
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
-    setState(() {
-      // setState is needed to tell the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values.
+    // debugPrint("Let me update the time...");
+    setState(() { // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
       _now = DateTime.now();
       _dateString = DateFormat("MMMM, dd, yyyy").format(_now!);
       _timeString = DateFormat("HH:mm:ss").format(_now!);
@@ -74,12 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
   /// check whether one of the alarms is triggered
   void _alarmChecker(List<globals.CustomAlarm?> currentAlarmList)
   {
-    //todo bug geht erst sehr spät los...
     setState(() {
+      // debugPrint("Let me check the alarm state...");
+      //todo bug geht erst sehr spät los...
     // check whether there is any alarm that is the past and is not set to isRinging=False yet
       for (int i = 0; i < currentAlarmList.length; i++)
         {
-          // first checker whether the alarm is active
+          // first check whether the alarm is active
           if(currentAlarmList[i]!.isActive == true)
             {
             // case 1: single time alarm
@@ -94,6 +96,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     {
                       currentAlarmList[i]!.isRinging = true; // alarm will ring //todo another function onChange isRinging. //todo alarm ringing page
                       debugPrint("Single alarm is going off!");
+
+                      // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
+                      // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
+                      // todo die funtion auslagern, soll auch bei status addalarm gemacht werden
+
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ShowAlarmPage()),
+                        );
+
                       break; // break first for letting ring only one alarm if there are multiple
                     }
                   }
@@ -120,22 +134,31 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
 
+
+  @override
+  void initState() { //the timers will be run here, otherwise thousands of timers will be generated
     // update shown times regularly
-    Timer.periodic(
-        everySecond,
-        (Timer t) =>
-            _updateTime()); //This will cause that the updateTime() function will be exected every second; todo I'm not sure why it only runs in the build function...
-    // This method is rerun every time setState is called, for instance as done
-    // by the _updateTime method above.
+    _refreshTimer = Timer.periodic(everySecond, (Timer t) => _updateTime());
+    //This will cause that the updateTime() function will be exected every second;
 
     // check for alarm status regularly
-    Timer.periodic(
-        every2Seconds,
-            (Timer t) =>
-                _alarmChecker(globals.listOfSavedAlarms));
+    _alarmCheckerTimer = Timer.periodic(every2Seconds, (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
+
+    super.initState();
+  }
+
+
+  @override
+  void dispose() { //after timer is done, dispose it and it can be reused
+    _refreshTimer.cancel();
+    _alarmCheckerTimer.cancel();
+    super.dispose();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
@@ -236,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 //mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                               GestureDetector( // I need this for the clicking on the text function to edit the alarm
-                              onTap: () { //Todo EditAlarm: I tried this in another branch, but it's a lot of work, so I didn't implement it here
+                              onTap: () { //Todo EditAlarm
                                     // Navigator.push(
                                     //   context,
                                     //   MaterialPageRoute(
@@ -667,11 +690,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                         controller: myAlarmNameController,
                         decoration: InputDecoration(
                           labelText: 'Name of alarm',
-                          //errorText: , //todo show only if == "" or if more than 18;
                           border: OutlineInputBorder(),
-                          //suffixIcon: Icon( //todo show only if == "";
-                           // Icons.error,
-                          //),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty || value.length > 20) {
@@ -770,6 +789,106 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     ),
                   ),
                 ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// *********************************
+// This is the third page for showing the alarm
+// *********************************
+class ShowAlarmPage extends StatefulWidget {
+  const ShowAlarmPage({Key? key}) : super(key: key);
+
+  @override
+  State<ShowAlarmPage> createState() => _MyShowAlarmPageState();
+}
+
+class _MyShowAlarmPageState extends State<ShowAlarmPage> {
+  //vars here
+  //functions here
+
+  //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              // Time selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// *********************************
+// This is the fourth page for the challenge
+// *********************************
+class ShowChallengePage extends StatefulWidget {
+  const ShowChallengePage({Key? key}) : super(key: key);
+
+  @override
+  State<ShowChallengePage> createState() => _MyShowChallengePageState();
+}
+
+class _MyShowChallengePageState extends State<ShowChallengePage> {
+  //vars here
+  //functions here
+
+  //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              // Time selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
               ],
             ),
           ],

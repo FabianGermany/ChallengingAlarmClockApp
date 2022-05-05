@@ -24,3 +24,7 @@ while running the debug mode.
 - For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).
 - Design Changes (e.g. display weekdays etc on both pages)
 - Exceptions: e.g. Text Input too long for displaying it etc.
+- Edit alarm via GestureDetector; I tried this in another branch, but it's a lot of work, so I didn't implement it in the main branch
+- Snooze function
+- Functions to change sound, vibration, volume etc.
+- Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
