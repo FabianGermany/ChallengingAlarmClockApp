@@ -52,11 +52,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // Declare vars for the time
-  static const everySecond = Duration(seconds: 1);
-  static const every2Seconds = Duration(seconds: 2);
-  DateTime? _now;
-  String? _dateString;
-  String? _timeString;
+  DateTime _now = DateTime.now(); // init it once, otherwise it will show NULL in the beginning
+  String _dateString = DateFormat("MMMM dd, yyyy").format(DateTime.now()); // init it once, otherwise it will show NULL in the beginning
+  String _timeString = DateFormat("HH:mm:ss").format(DateTime.now()); // init it once, otherwise it will show NULL in the beginning
 
   late Timer _refreshTimer; //timer to refresh the screen like for the current time
   late Timer _alarmCheckerTimer; //timer to check for the alarm trigger status
@@ -66,18 +64,17 @@ class _MyHomePageState extends State<MyHomePage> {
     // debugPrint("Let me update the time...");
     setState(() { // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
       _now = DateTime.now();
-      _dateString = DateFormat("MMMM, dd, yyyy").format(_now!);
-      _timeString = DateFormat("HH:mm:ss").format(_now!);
+      _dateString = DateFormat("MMMM dd, yyyy").format(_now);
+      _timeString = DateFormat("HH:mm:ss").format(_now);
       // _timeString = DateFormat('hh:mm:ss a').format(DateTime.now());
     });
   }
 
   /// check whether one of the alarms is triggered
-  void _alarmChecker(List<globals.CustomAlarm?> currentAlarmList)
+  _alarmChecker(List<globals.CustomAlarm?> currentAlarmList)
   {
     setState(() {
       // debugPrint("Let me check the alarm state...");
-      //todo bug geht erst sehr spät los...
     // check whether there is any alarm that is the past and is not set to isRinging=False yet
       for (int i = 0; i < currentAlarmList.length; i++)
         {
@@ -94,21 +91,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0; //conversion function
                     if(toDouble(currentAlarmList[i]!.alarmTime) <= (toDouble(TimeOfDay.now())))
                     {
-                      currentAlarmList[i]!.isRinging = true; // alarm will ring //todo another function onChange isRinging. //todo alarm ringing page
-                      debugPrint("Single alarm is going off!");
+                      //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
+                      if(currentAlarmList[i]!.isRinging == false)
+                        {
+                          debugPrint("Single alarm is going off!");
 
-                      // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
-                      // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
-                      // todo die funtion auslagern, soll auch bei status addalarm gemacht werden
+                          // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
+                          // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
+                          // todo die funtion auslagern, soll auch bei  addalarm route gemacht werden
 
+                          currentAlarmList[i]!.isRinging = true; // set to true for next time todo outsource to another function onChange isRinging. //todo alarm ringing page
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ShowAlarmPage()),
-                        );
-
-                      break; // break first for letting ring only one alarm if there are multiple
+                          Navigator.push(  // alarm will ring
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ShowAlarmPage(currentAlarmList[i])), // return details about current alarm since parts of it will be displayed
+                          );
+                          break; // break first for letting ring only one alarm if there are multiple
+                          //return;
+                        }
                     }
                   }
               }
@@ -139,11 +140,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() { //the timers will be run here, otherwise thousands of timers will be generated
     // update shown times regularly
-    _refreshTimer = Timer.periodic(everySecond, (Timer t) => _updateTime());
+    _refreshTimer = Timer.periodic(globals.everySecond, (Timer t) => _updateTime());
     //This will cause that the updateTime() function will be exected every second;
 
     // check for alarm status regularly
-    _alarmCheckerTimer = Timer.periodic(every2Seconds, (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
+    _alarmCheckerTimer = Timer.periodic(globals.every2Seconds, (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
 
     super.initState();
   }
@@ -231,13 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
 
-            Row(
-              // Row for the set alarms
-              mainAxisAlignment: MainAxisAlignment.center, //center vertically
-              children: <Widget>[
-                SizedBox(height: 70), // Add some distance between the next row
-              ],
-            ),
+            Row(children: <Widget>[SizedBox(height: 70)],), // Add some distance between the next row
 
 
 
@@ -275,8 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 : Colors.black38,
                                             //change color depending on the current recurrence mode
                                             fontSize: 20,
-                                            fontWeight:
-                                            FontWeight.w500 //, spacing...: 0.15
+                                            fontWeight: FontWeight.w500 //, spacing...: 0.15
                                         ),
                                       ),
                                   ),
@@ -344,8 +338,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             : Colors.black38,
                                         //change color depending on the current recurrence mode
                                         fontSize: 20,
-                                        fontWeight:
-                                            FontWeight.w500 //, spacing...: 0.15
+                                        fontWeight: FontWeight.w500 //, spacing...: 0.15
                                         ),
                                   ),
                                   Text("  "), // add some space
@@ -628,8 +621,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                                         : Colors.black26,
                                     //change color depending on the current recurrence mode
                                     fontSize: 20,
-                                    fontWeight:
-                                        FontWeight.w500 //, spacing...: 0.15
+                                    fontWeight: FontWeight.w500 //, spacing...: 0.15
                                     ),
                               ),
                             ],
@@ -815,7 +807,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 // This is the third page for showing the alarm
 // *********************************
 class ShowAlarmPage extends StatefulWidget {
-  const ShowAlarmPage({Key? key}) : super(key: key);
+  final globals.CustomAlarm? TriggeredAlarm;
+  const ShowAlarmPage(this.TriggeredAlarm);
 
   @override
   State<ShowAlarmPage> createState() => _MyShowAlarmPageState();
@@ -825,23 +818,141 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
   //vars here
   //functions here
 
+
+  DateTime _now = DateTime.now(); // init it once, otherwise it will show NULL in the beginning
+  String _dateString = DateFormat("EEEE, MMMM dd").format(DateTime.now()); // init it once, otherwise it will show NULL in the beginning
+  String _timeStringShort = DateFormat("HH:mm").format(DateTime.now()); // init it once, otherwise it will show NULL in the beginning
+
+  late Timer _refreshTimer; //timer to refresh the screen like for the current time
+
+  /// refresh the presented strings for the current time etc.
+  void _updateTime() {
+    // debugPrint("Let me update the time...");
+    setState(() { // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
+      _now = DateTime.now();
+      _dateString = DateFormat("EEEE, MMMM dd").format(_now);
+      _timeStringShort = DateFormat("HH:mm").format(_now);
+    });
+  }
+
+
+
+  @override
+  void initState() {
+    _refreshTimer = Timer.periodic(globals.everySecond, (Timer t) => _updateTime());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer.cancel();
+    super.dispose();
+  }
+
+
+
   //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE4DAFC),
       body: Container(
         margin: const EdgeInsets.all(20.0),
-        child: Column(
+        child: Column( //todo maybe use Flexible/Expanded
           children: <Widget>[
+            Row(children: <Widget>[SizedBox(height: 70)],), // Add some distance between the next row
             Row(
-              // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Text(
+                  "Alarm",
+                  style: Theme.of(context).textTheme.headline6,),
               ],
             ),
-          ],
-        ),
+            Row(children: <Widget>[SizedBox(height: 10)],), // Add some distance between the next row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "${widget.TriggeredAlarm?.nameOfAlarm}",
+                  style: TextStyle(
+                  color: Colors.deepPurple,
+                  //change color depending on the current recurrence mode
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500 //, spacing...: 0.15
+                ),
+              ),
+            ],
+            ),
+            Row(children: <Widget>[SizedBox(height: 100)],), // Add some distance between the next row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "It's",
+                  style: TextStyle(
+                      color: Colors.black54,
+                      //change color depending on the current recurrence mode
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500 //, spacing...: 0.15
+                  ),
+                ),
+              ],
+            ),
+            Row(children: <Widget>[SizedBox(height: 5)],), // Add some distance between the next row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "${_timeStringShort}",
+                  style: TextStyle(
+                      color: Colors.black,
+                      //change color depending on the current recurrence mode
+                      fontSize: 60,
+                      fontWeight: FontWeight.w600 //, spacing...: 0.15
+                  ),
+                ),
+              ],
+            ),
+            Row(children: <Widget>[SizedBox(height: 10)],), // Add some distance between the next row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "${_dateString}",
+                  style: TextStyle(
+                      color: Colors.black54,
+                      //change color depending on the current recurrence mode
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400 //, spacing...: 0.15
+                  ),
+                ),
+              ],
+            ),
+      Row(children: <Widget>[SizedBox(height: 80)],), // Add some distance between the next row
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ShowChallengePage()),
+                );
+              },
+            child: const Text('Stop'),
+            //
+          ),
+            ],
+          ),
+        ],
+      ),
+
+
+
+
       ),
     );
   }
@@ -881,6 +992,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE4DAFC),
       body: Container(
         margin: const EdgeInsets.all(20.0),
         child: Column(

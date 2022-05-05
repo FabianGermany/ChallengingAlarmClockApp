@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 
+
+// global vars
+const everySecond = Duration(seconds: 1);
+const every2Seconds = Duration(seconds: 2);
+
 // data structure / class for one alarm
 class CustomAlarm {
   bool isActive = false;

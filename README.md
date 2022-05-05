@@ -28,3 +28,4 @@ while running the debug mode.
 - Snooze function
 - Functions to change sound, vibration, volume etc.
 - Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
+- The app is not really responsive so far; heights etc. are partially absolute
