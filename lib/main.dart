@@ -30,6 +30,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+// *********************************
+// This is the homepage
+// *********************************
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -231,17 +235,27 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Row(
                                 //mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    "${globals.listOfSavedAlarms[i]?.nameOfAlarm}",
-                                    style: TextStyle(
-                                        color: (globals.listOfSavedAlarms[i]?.isActive == true)
-                                            ? Colors.black
-                                            : Colors.black38,
-                                        //change color depending on the current recurrence mode
-                                        fontSize: 20,
-                                        fontWeight:
+                              GestureDetector( // I need this for the clicking on the text function to edit the alarm
+                              onTap: () { //todo dafür sorgen, dass dataframe geladen wird und nur überschrieben wird, kein neuer! oder komplette zweite seite dafür machen?
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditAlarmPage(globals.listOfSavedAlarms[i], i)), //not const
+                                      );
+                                    },
+                                    child:
+                                      Text(
+                                        "${globals.listOfSavedAlarms[i]?.nameOfAlarm}",
+                                        style: TextStyle(
+                                            color: (globals.listOfSavedAlarms[i]?.isActive == true)
+                                                ? Colors.black
+                                                : Colors.black38,
+                                            //change color depending on the current recurrence mode
+                                            fontSize: 20,
+                                            fontWeight:
                                             FontWeight.w500 //, spacing...: 0.15
                                         ),
+                                      ),
                                   ),
 
                                   //Delete the alarm
@@ -386,7 +400,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Second page for adding/editing the alarm
+
+
+
+// *********************************
+// This is the second page for adding the alarm
+// *********************************
 class AddAlarmPage extends StatefulWidget {
   const AddAlarmPage({Key? key}) : super(key: key);
 
@@ -447,7 +466,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
-  void _selectDate() async {
+  void _selectDate() async {  //todo das und andere sachen vll.t auslagern weil doppelt gemoppelt?
     final DateTime? newDate = await showDatePicker(
       context: context,
       initialDate: _chosenDate,
@@ -478,7 +497,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add or edit an alarm'),
+        title: const Text('Add an alarm'),
       ),
       body: Container(
         margin: const EdgeInsets.all(20.0),
@@ -749,6 +768,526 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                       },
 
                       child: const Text('Confirm'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TODO the edit thing is still a big mess
+// challenge mode toggle doesnt work
+// alarmcontroller for alarmname and chosen weekdays is harder
+// also it's hard to save the edited alarm cause we first load it from a dataframe and write into the widget
+// and the widget should show the new chosen one...it's harder then I thought
+// that why I pushed this into that branch
+
+// *********************************
+// This is the third page for adding/editing the alarm //todo
+// *********************************
+class EditAlarmPage extends StatefulWidget {
+  final int alarmNumber;
+  final globals.CustomAlarm? importedAlarm;
+  const EditAlarmPage(this.importedAlarm, this.alarmNumber);
+
+  //EditAlarmPage({Key? key}) : super(key: key); //not const //todo das raus...
+
+
+  @override
+  State<EditAlarmPage> createState() => _MyEditAlarmPageState();
+}
+
+class _MyEditAlarmPageState extends State<EditAlarmPage> { //todo hier alles anpassen; wie sicherstellen, dass richtige Reihe angezeigt wird
+  TimeOfDay _chosenTime = globals.listOfSavedAlarms[0]!.alarmTime; //todo nicht 0 sondern... i von GestureDetector; todo vllt. nur deklarieren und dann load alarm und dann zuweisen; globals.listOfSavedAlarms[i] übergeben beim State builden?
+  DateTime _chosenDate = DateTime.now(); // DateTime(2022, 1, 1);
+  List<bool> _chosenWeekdays = List.filled(7, false); // for weekday picker
+  bool _challengingModeActive = false;
+  bool _recurrentMode = false;
+
+
+  // Create a text controller and use it to retrieve the current value
+  // of the Alarm TextField.
+  final myAlarmNameController = TextEditingController(text: 'My personal alarm');
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myAlarmNameController.dispose();
+    super.dispose();
+  }
+
+  /// function to save the edited alarm
+  List<globals.CustomAlarm?> _saveEditedAlarm(
+      List<globals.CustomAlarm?> currentAlarmList) {
+    List<globals.CustomAlarm?> alarmList = currentAlarmList;
+    globals.CustomAlarm? newCreatedAlarm =
+    globals.CustomAlarm(); // create a new default alarm
+
+    // overwrite the default values
+    newCreatedAlarm.isActive = true; // if saved, then automatically make active
+    newCreatedAlarm.nameOfAlarm = myAlarmNameController.text;
+    newCreatedAlarm.alarmTime = _chosenTime;
+    newCreatedAlarm.alarmDate = _chosenDate;
+    newCreatedAlarm.isRecurrent = _recurrentMode;
+    newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
+    newCreatedAlarm.challengeMode = _challengingModeActive;
+    alarmList.add(newCreatedAlarm); //add the alarm to the list //todo adapt
+    debugPrint("Alarm has been edited!");
+    globals.listOfSavedAlarms =
+        alarmList; //save the local list back to the global one
+    return alarmList;
+  }
+
+  void _selectTime() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _chosenTime,
+    );
+    if (newTime != null) {
+      setState(() {
+        _chosenTime = newTime;
+      });
+    }
+  }
+
+  void _selectDate() async {  //todo das und andere sachen vll.t auslagern weil doppelt gemoppelt?
+    final DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: _chosenDate,
+      firstDate: DateTime.now(),
+      // today;
+      lastDate: DateTime(
+          DateTime.now().year + 5, DateTime.now().month, DateTime.now().day),
+      // today plus later
+      helpText: 'Select a date',
+    );
+    if (newDate != null) {
+      //close the menu and save
+      setState(() {
+        _chosenDate = newDate;
+        _recurrentMode =
+        false; // if date is chosen and saved, set recurrent mode to false
+        _chosenWeekdays = List.filled(7,
+            false); // if date is chosen and saved, also make the recurrent buttons default again
+      });
+    }
+  }
+
+  // This is a GlobalKey<FormState>, not a GlobalKey<MyCustomFormState>.
+  // It's needed for the input of the alarm name
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit the alarm'),
+      ),
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              // Time selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: ElevatedButton(
+                    onPressed: _selectTime,
+                    child: Text('Select time'),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Selected time:',
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              SizedBox(height: 6),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                "${widget.importedAlarm?.alarmTime.format(context)}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6, //textTheme.subtitle1
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // Info text
+              children: <Widget>[
+                Expanded(
+                  child: const Text(
+                    '\nPlease chose either a concrete date for the alarm or - if it is repetitive - choose the desired weekdays.\n',
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // Date selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: ElevatedButton(
+                    onPressed: _selectDate,
+                    child: Text('Select date'),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Selected date:',
+                                style: TextStyle(
+                                    color: _recurrentMode == false
+                                        ? Colors.black
+                                        : Colors
+                                        .black26), //change color depending on the current recurrence mode
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              SizedBox(height: 6),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                // todo flexible geht hier irgendwie nicht...
+                                "${DateFormat('MMMEd').format(widget.importedAlarm!.alarmDate)}",
+                                style: TextStyle(
+                                    color: _recurrentMode == false
+                                        ? Colors.black
+                                        : Colors.black26,
+                                    //change color depending on the current recurrence mode
+                                    fontSize: 20,
+                                    fontWeight:
+                                    FontWeight.w500 //, spacing...: 0.15
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // Add some space
+              children: <Widget>[
+                SizedBox(height: 10),
+              ],
+            ),
+            Row(
+              // Weekday picker
+              children: <Widget>[
+                Expanded(
+                  child: WeekdaySelector(
+                    onChanged: (int day) {
+                      setState(() {
+                        final index = day % 7;
+                        _chosenWeekdays[index] = !_chosenWeekdays[index];
+
+                        // if any weekday is active, activate recurrent mode, otherwise not
+                        if (_chosenWeekdays.any((e) => e == true)) {
+                          _recurrentMode = true;
+                        } else {
+                          _recurrentMode = false;
+                        }
+                      });
+                    },
+                    values: _chosenWeekdays,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // Add some space
+              children: <Widget>[
+                SizedBox(height: 10),
+              ],
+            ),
+
+            // Type of alarm
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 8,
+                  child:
+                  Form(
+                    key: _formKey,
+                    child:
+                    TextFormField(
+                      controller: myAlarmNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name of alarm',
+                        //errorText: , //todo show only if == "" or if more than 18;
+                        border: OutlineInputBorder(),
+                        //suffixIcon: Icon( //todo show only if == "";
+                        // Icons.error,
+                        //),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty || value.length > 20) {
+                          return 'Please use a name between 1 and 20 characters.';
+                        }
+                        return null;
+                      },
+                    ),
+
+                  ),
+                ),
+
+              ],
+            ),
+
+            Row(
+              // Add some space
+              children: <Widget>[
+                SizedBox(height: 10),
+              ],
+            ),
+            Row(
+              // Toggle/Switch for Challenge Mode
+              children: <Widget>[
+                Expanded(
+                  flex: 8,
+                  child: Text(
+                    'Challenge mode',
+                    style: TextStyle(
+                        color: (_challengingModeActive == true)
+                            ? Colors.black
+                            : Colors
+                            .black38), //change color depending on the current recurrence mode
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Switch(
+                    value: widget.importedAlarm!.challengeMode,
+                    activeColor: Color(0xFF6200EE),
+                    onChanged: (bool value) {
+                      setState(() {
+                        _challengingModeActive = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // Add some space
+              children: <Widget>[
+                SizedBox(height: 30),
+              ],
+            ),
+            Row(
+              // Cancel and confirm buttons
+              children: <Widget>[
+                // Cancel button
+                Expanded(
+                  flex: 30,
+                  child: Center(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  // Some space
+                  flex: 40,
+                  child: Center(),
+                ),
+
+                Expanded(
+                  // Confirm button
+                  flex: 30, // 30%
+                  child: Center(
+                    child: OutlinedButton(
+                      //on pressed save the alarm and close the menu at the same time
+                      // Validate returns true if the form is valid, or false otherwise.
+                      onPressed:() {   if (_formKey.currentState!.validate()) {
+                        // for multiple commands in onPressed this form should be used:
+                        // () =>[command1, command2]
+                        // but in if statement, it seems to be not necessary
+                        _saveEditedAlarm(globals.listOfSavedAlarms); //todo wir brauchen i
+                        Navigator.pop(context);
+                      } else {
+                        //don't save it
+                      }
+                      },
+
+                      child: const Text('Save'),
                     ),
                   ),
                 ),
