@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Navigator.push(  // alarm will ring
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ShowAlarmPage(currentAlarmList[i])), // return details about current alarm since parts of it will be displayed
+                                builder: (context) => ShowAlarmPage(currentAlarmList[i], i)), // return details about current alarm since parts of it will be displayed
                           );
                           break; // break first for letting ring only one alarm if there are multiple
                           //return;
@@ -808,7 +808,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 // *********************************
 class ShowAlarmPage extends StatefulWidget {
   final globals.CustomAlarm? TriggeredAlarm;
-  const ShowAlarmPage(this.TriggeredAlarm);
+  final int alarmNumber;
+  const ShowAlarmPage(this.TriggeredAlarm, this.alarmNumber);
 
   @override
   State<ShowAlarmPage> createState() => _MyShowAlarmPageState();
@@ -833,6 +834,18 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
       _dateString = DateFormat("EEEE, MMMM dd").format(_now);
       _timeStringShort = DateFormat("HH:mm").format(_now);
     });
+  }
+
+ //todo das klappt nur bei non-recurring..muss ich noch ändern
+  /// function to deactivate an alarm //todo
+  List<globals.CustomAlarm?> _deactivateAlarm(
+      globals.CustomAlarm? TriggeredAlarm, alarmIndex)
+  {
+    List<globals.CustomAlarm?> alarmList = globals.listOfSavedAlarms;
+    alarmList[alarmIndex]!.isActive = false;
+    debugPrint("Alarm has been turned off!");
+    globals.listOfSavedAlarms = alarmList; //save the local list back to the global one
+    return alarmList;
   }
 
 
@@ -934,14 +947,31 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ElevatedButton(
-              onPressed: () {
+          ElevatedButton( // if challenge mode is active, go to page 4, otherwise to page 1 and turn off the alarm
+            onPressed:() { if (widget.TriggeredAlarm?.challengeMode == true) {
+
+              // challenge mode
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const ShowChallengePage()),
                 );
-              },
+
+
+            } else { // no challenge mode
+
+            _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber); //todo
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                builder: (context) => const MyHomePage(title: 'Alarm Clock Web Version')),
+            );
+            }
+            },
+
+
+
+
             child: const Text('Stop'),
             //
           ),
@@ -949,9 +979,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
           ),
         ],
       ),
-
-
-
 
       ),
     );
@@ -1001,6 +1028,10 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
               // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+
+
+                //todo _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber);
+
               ],
             ),
           ],
