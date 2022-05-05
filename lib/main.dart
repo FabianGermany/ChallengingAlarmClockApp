@@ -876,6 +876,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
       globals.CustomAlarm? triggeredAlarm, alarmIndex) {
     List<globals.CustomAlarm?> alarmList = globals.listOfSavedAlarms;
     alarmList[alarmIndex]!.isActive = false;
+    globals.stopAlarmSound();
     debugPrint("Alarm has been turned off!");
     globals.listOfSavedAlarms =
         alarmList; //save the local list back to the global one
@@ -1007,6 +1008,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                   onPressed: () {
                     if (widget.triggeredAlarm?.challengeMode == true) {
                       // challenge mode
+                      globals.playAlarmSound(0.1); // make alarm a bit more silent
                       Navigator.push(
                         context,
                         MaterialPageRoute(

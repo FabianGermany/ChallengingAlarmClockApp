@@ -100,6 +100,7 @@ void playAlarmSound(double volume)
   );
 }
 
+/// Stop audio function
 void stopAlarmSound()
 {
   FlutterRingtonePlayer.stop();
