@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
-
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 // global vars
 const everySecond = Duration(seconds: 1);
@@ -84,3 +85,23 @@ String weekdayBoolListToString(List<bool> weekdays)
   }
   return output;
 }
+
+
+
+/// Play audio function
+void playAlarmSound(double volume)
+{
+  FlutterRingtonePlayer.play(
+    android: AndroidSounds.notification,
+    ios: IosSounds.glass,
+    looping: true, // Android only - API >= 28
+    volume: volume, // Android only - API >= 28
+    asAlarm: true, // Android only - all APIs
+  );
+}
+
+void stopAlarmSound()
+{
+  FlutterRingtonePlayer.stop();
+}
+
