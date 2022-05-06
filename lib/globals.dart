@@ -16,17 +16,16 @@ class CustomAlarm {
   bool isRecurrent = false; //default value is single time alarm
   List<bool> weekdayRecurrence = List.filled(7, false); //from Monday to Sunday // = [false, false, false, false, false, false, false];
   bool challengeMode = false;
-  //todo: alarm sound, vibration pattern, snooze, ...
+  // Todo: alarm sound, vibration pattern, snooze, ...
 }
 
 List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
 
-/// Init app function
-// todo this should only be done once when the app is launched for the first time...reset button function etc.
+/// Init app function; this should be called only for the first start of the app or when the app is reset via settings
 List<CustomAlarm?> initApp()
 {
   // Data structure / list for a collection of saved alarms
-  List<CustomAlarm?> listOfSavedAlarms = [];
+  List<CustomAlarm?> savedAlarmList = [];
 
   // create one default alarm with some settings
   CustomAlarm? firstDefaultAlarm = CustomAlarm();
@@ -34,7 +33,7 @@ List<CustomAlarm?> initApp()
   firstDefaultAlarm.alarmTime = const TimeOfDay(hour: 16, minute: 00);
   firstDefaultAlarm.isRecurrent = true;
   firstDefaultAlarm.weekdayRecurrence = [false, false, true, true, false, false, false];
-  listOfSavedAlarms.add(firstDefaultAlarm); // add this alarm to the list
+  savedAlarmList.add(firstDefaultAlarm); // add this alarm to the list
 
   // create another default alarm with some settings
   CustomAlarm? secondDefaultAlarm = CustomAlarm();
@@ -42,9 +41,9 @@ List<CustomAlarm?> initApp()
   secondDefaultAlarm.alarmTime = const TimeOfDay(hour: 14, minute: 45);
   secondDefaultAlarm.isActive = true;
   secondDefaultAlarm.isRecurrent = false;
-  listOfSavedAlarms.add(secondDefaultAlarm); // add this alarm to the list
+  savedAlarmList.add(secondDefaultAlarm); // add this alarm to the list
   debugPrint("App has been initialized...");
-  return listOfSavedAlarms;
+  return savedAlarmList;
 }
 
 /// Convert weekday number to weekday string

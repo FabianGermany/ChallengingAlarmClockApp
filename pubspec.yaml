@@ -19,6 +19,7 @@ dependencies:
   weekday_selector: ^1.1.0
   audioplayers: ^0.20.1
   flutter_ringtone_player: ^3.2.0
+  is_first_run: ^1.0.0
 
 dev_dependencies:
   flutter_test:

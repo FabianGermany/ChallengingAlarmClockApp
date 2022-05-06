@@ -5,14 +5,18 @@ import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:is_first_run/is_first_run.dart'; // set variables only on first start of the app
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 
-void main() {
+Future<void> main() async {
   debugPrint("App is being started...");
   runApp(const MyApp());
-  globals.listOfSavedAlarms = globals
-      .initApp(); //init the app; creating default alarms etc. and store into a globally available list
+  bool firstCall = await IsFirstRun.isFirstCall();
+  if(firstCall== true) // only for the first time the app is started, init the app
+    {
+      globals.listOfSavedAlarms = globals.initApp(); //init the app; creating default alarms etc. and store into a globally available list
+    }
   debugPrint("App has been fully loaded...");
 }
 
@@ -134,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  /// function to delete the alarm //todo dialog
+  /// function to delete the alarm
   void _deleteAlarm(
       List<globals.CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
     setState(() {
@@ -448,6 +452,44 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ],
                   ),
+
+
+                Row(
+                  // Add some space
+                  children: <Widget>[
+                    SizedBox(height: 60),
+                  ],
+                ),
+
+
+
+                Row( // row for reset function (only debug mode...)
+                  children: <Widget>[
+                    Expanded(
+                      // Col/Expanded for showing the current time and date
+                      flex: 8,
+                      child: Center(
+                      ),
+                    ),
+                    Expanded(
+                      // Col/Expanded for the add alarm button
+                      flex: 2,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                            icon: const Icon(Icons.dangerous),
+                            tooltip: 'Reset the app',
+                            color: Colors.black26,
+                            iconSize: 20.0,
+                            onPressed: () {
+                              setState((){
+                                globals.listOfSavedAlarms = globals.initApp();
+                              });
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
