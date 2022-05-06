@@ -20,6 +20,7 @@ dependencies:
   audioplayers: ^0.20.1
   flutter_ringtone_player: ^3.2.0
   is_first_run: ^1.0.0
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

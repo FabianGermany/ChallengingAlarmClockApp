@@ -5,7 +5,8 @@ import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:is_first_run/is_first_run.dart'; // set variables only on first start of the app
+import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
+import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 
@@ -946,137 +947,143 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFE4DAFC),
-      body: Container(
-        margin: const EdgeInsets.all(20.0),
-        child: Column(
-          //todo maybe use Flexible/Expanded
-          children: <Widget>[
-            Row(
-              children: <Widget>[SizedBox(height: 70)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Alarm",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 10)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "${widget.triggeredAlarm?.nameOfAlarm}",
-                  style: TextStyle(
-                      color: Colors.deepPurple,
-                      //change color depending on the current recurrence mode
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500 //, spacing...: 0.15
-                      ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 100)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "It's",
-                  style: TextStyle(
-                      color: Colors.black54,
-                      //change color depending on the current recurrence mode
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500 //, spacing...: 0.15
-                      ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 5)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _timeStringShort,
-                  style: TextStyle(
-                      color: Colors.black,
-                      //change color depending on the current recurrence mode
-                      fontSize: 60,
-                      fontWeight: FontWeight.w600 //, spacing...: 0.15
-                      ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 10)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _dateString,
-                  style: TextStyle(
-                      color: Colors.black54,
-                      //change color depending on the current recurrence mode
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400 //, spacing...: 0.15
-                      ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 80)],
-            ),
-            // Add some distance between the next row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  // if challenge mode is active, go to page 4, otherwise to page 1 and turn off the alarm
-                  onPressed: () {
-                    if (widget.triggeredAlarm?.challengeMode == true) {
-                      // challenge mode
-                      globals.playAlarmSound(0.1); // make alarm a bit more silent
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ShowChallengePage()),
-                      );
-                    } else {
-                      // no challenge mode
-                      _deactivateAlarm(
-                          widget.triggeredAlarm, widget.alarmNumber); //todo
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MyHomePage(
-                                title: 'Alarm Clock Web Version')),
-                      );
-                    }
-                  },
 
-                  child: const Text('Stop'),
-                  //
+    return new WillPopScope( // I need this to deactivate the "Go back" button
+      onWillPop: () async => false, // Deactivate "Go back" button
+      child:
+
+        Scaffold(
+          backgroundColor: Color(0xFFE4DAFC),
+          body: Container(
+            margin: const EdgeInsets.all(20.0),
+            child: Column(
+              //todo maybe use Flexible/Expanded
+              children: <Widget>[
+                Row(
+                  children: <Widget>[SizedBox(height: 70)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Alarm",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 10)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "${widget.triggeredAlarm?.nameOfAlarm}",
+                      style: TextStyle(
+                          color: Colors.deepPurple,
+                          //change color depending on the current recurrence mode
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500 //, spacing...: 0.15
+                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 100)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "It's",
+                      style: TextStyle(
+                          color: Colors.black54,
+                          //change color depending on the current recurrence mode
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500 //, spacing...: 0.15
+                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 5)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      _timeStringShort,
+                      style: TextStyle(
+                          color: Colors.black,
+                          //change color depending on the current recurrence mode
+                          fontSize: 60,
+                          fontWeight: FontWeight.w600 //, spacing...: 0.15
+                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 10)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      _dateString,
+                      style: TextStyle(
+                          color: Colors.black54,
+                          //change color depending on the current recurrence mode
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400 //, spacing...: 0.15
+                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 80)],
+                ),
+                // Add some distance between the next row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                      // if challenge mode is active, go to page 4, otherwise to page 1 and turn off the alarm
+                      onPressed: () {
+                        if (widget.triggeredAlarm?.challengeMode == true) {
+                          // challenge mode
+                          globals.playAlarmSound(0.1); // make alarm a bit more silent
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ShowChallengePage()),
+                          );
+                        } else {
+                          // no challenge mode
+                          _deactivateAlarm(
+                              widget.triggeredAlarm, widget.alarmNumber); //todo
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyHomePage(
+                                    title: 'Alarm Clock Web Version')),
+                          );
+                        }
+                      },
+
+                      child: const Text('Stop'),
+                      //
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        )
     );
   }
 }
@@ -1099,7 +1106,12 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+    return new WillPopScope( // I need this to deactivate the "Go back" button
+        onWillPop: () async => false, // Deactivate "Go back" button
+    child:
+
+    Scaffold(
       backgroundColor: Color(0xFFE4DAFC),
       body: Container(
         margin: const EdgeInsets.all(20.0),
@@ -1115,6 +1127,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
           ],
         ),
       ),
+    )
     );
   }
 }
