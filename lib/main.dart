@@ -66,8 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
       .now()); // init it once, otherwise it will show NULL in the beginning
 
   late Timer
-      _refreshTimer; //timer to refresh the screen like for the current time
-  late Timer _alarmCheckerTimer; //timer to check for the alarm trigger status
+      _refreshTimer; // timer to refresh the screen like for the current time
+  late Timer _alarmCheckerTimer; // timer to check for the alarm trigger status
+  late Timer _saveDataTimer; // timer to save/backup data regularly
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (currentAlarmList[i]!.isActive == true) {
           // case 1: single time alarm
           if (currentAlarmList[i]!.isRecurrent == false) {
-            // the day has passed //todo only compare date
+            // the day has passed
             if (currentAlarmList[i]!.alarmDate.isBefore(DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
@@ -150,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    //the timers will be run here, otherwise thousands of timers will be generated
+    // the timers will be run here, otherwise thousands of timers will be generated
     // update shown times regularly
     _refreshTimer =
         Timer.periodic(globals.everySecond, (Timer t) => _updateTime());
@@ -160,14 +161,49 @@ class _MyHomePageState extends State<MyHomePage> {
     _alarmCheckerTimer = Timer.periodic(globals.every2Seconds,
         (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
 
+    // save data regularly
+    _saveDataTimer = Timer.periodic(globals.everySecond, (Timer t) => _saveData());
+
     super.initState();
+    _loadData();
   }
+
+
+  //Loading listOfSavedAlarms on start
+  void _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      //_counter = (prefs.getInt('counter') ?? 0); //todo here mit json etc. // Try reading data from the counter key. If it doesn't exist, return 0.
+      debugPrint("Loading alarm data...");
+    });
+  }
+
+  //Save data (do it as a backup regularly; because after closing the app etc. is too complex) //todo zyklisch aufrufen jede sekunde
+  void _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      //_counter = (prefs.getInt('counter') ?? 0) + 1; //todo here mit json etc.
+      //prefs.setInt('counter', _counter); //todo here mit json etc. // set value to the 'counter' key
+      //debugPrint("Saving alarm data...");
+    });
+  }
+
+
+
+
+// However, SharedPreferences doesn't support classes, but we can convert it into JSON
+
+
+
+
+
 
   @override
   void dispose() {
     //after timer is done, dispose it and it can be reused
     _refreshTimer.cancel();
     _alarmCheckerTimer.cancel();
+    _saveDataTimer.cancel();
     super.dispose();
   }
 
@@ -268,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       GestureDetector(
                                         // I need this for the clicking on the text function to edit the alarm
                                         onTap: () {
-                                          //Todo EditAlarm
+                                          //EditAlarm can be done here, but I didn't implement it
                                           // Navigator.push(
                                           //   context,
                                           //   MaterialPageRoute(
@@ -414,11 +450,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ),
                                 Expanded(
-                                  // Show date or weekdays
                                   flex: 3,
-                                  child: Row(
-                                      //todo here dann flexibel anzeigen...
-                                      ),
+                                  child: Row(),
                                 ),
                                 Expanded(
                                   // Toggle/Switch for active/inactive
@@ -463,7 +496,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
 
-
+                globals.debug_mode ?
                 Row( // row for reset function (only debug mode...)
                   children: <Widget>[
                     Expanded(
@@ -490,7 +523,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ],
-                ),
+                ): Row(),
               ],
             ),
           ],
@@ -696,7 +729,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           Row(
                             children: <Widget>[
                               Text(
-                                // todo flexible geht hier irgendwie nicht...
                                 DateFormat('MMMEd').format(_chosenDate),
                                 style: TextStyle(
                                     color: _recurrentMode == false
@@ -940,11 +972,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
   }
 
 
-
-
-
-  //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
-
   @override
   Widget build(BuildContext context) {
 
@@ -957,7 +984,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
           body: Container(
             margin: const EdgeInsets.all(20.0),
             child: Column(
-              //todo maybe use Flexible/Expanded
               children: <Widget>[
                 Row(
                   children: <Widget>[SizedBox(height: 70)],
@@ -1060,12 +1086,13 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ShowChallengePage()),
+                                builder: (context) => ShowChallengePage(widget.triggeredAlarm,
+                                    widget.alarmNumber)),
                           );
                         } else {
                           // no challenge mode
                           _deactivateAlarm(
-                              widget.triggeredAlarm, widget.alarmNumber); //todo
+                              widget.triggeredAlarm, widget.alarmNumber);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1092,13 +1119,20 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 // This is the fourth page for the challenge
 // *********************************
 class ShowChallengePage extends StatefulWidget {
-  const ShowChallengePage({Key? key}) : super(key: key);
+  final globals.CustomAlarm? triggeredAlarm;
+  final int alarmNumber;
+
+  const ShowChallengePage(this.triggeredAlarm, this.alarmNumber);
+
 
   @override
   State<ShowChallengePage> createState() => _MyShowChallengePageState();
 }
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
+
+
+
   //vars here
   //functions here
 
@@ -1121,7 +1155,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
               // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                //todo _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber);
+                //todo onpressed or something: _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber);
               ],
             ),
           ],

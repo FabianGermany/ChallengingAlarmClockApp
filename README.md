@@ -26,6 +26,9 @@ while running the debug mode.
 - Exceptions: e.g. Text Input too long for displaying it etc.
 - Edit alarm via GestureDetector; I tried this in another branch, but it's a lot of work, so I didn't implement it in the main branch
 - Snooze function
-- Functions to change sound, vibration, volume etc.
+- Functions to change sound, vibration pattern, volume, snooze etc. (and integrate in CustomAlarm class)
+  // Todo: alarm sound, vibration pattern, snooze, ...
 - Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
-- The app is not really responsive so far; heights etc. are partially absolute
+- The app is not really responsive so far; heights etc. are partially absolute; use more Flexible/Expanded etc. to avoid overflows and to make the app work on every device
+- Use bloclibrary.dev
+	

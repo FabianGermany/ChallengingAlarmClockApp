@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 
 // global vars
 const everySecond = Duration(seconds: 1);
 const every2Seconds = Duration(seconds: 2);
+bool debug_mode = true; // set this to true to show some extra elements in the UI such as the reset button
 
 // data structure / class for one alarm
 class CustomAlarm {
@@ -16,7 +18,45 @@ class CustomAlarm {
   bool isRecurrent = false; //default value is single time alarm
   List<bool> weekdayRecurrence = List.filled(7, false); //from Monday to Sunday // = [false, false, false, false, false, false, false];
   bool challengeMode = false;
-  // Todo: alarm sound, vibration pattern, snooze, ...
+
+
+//   CustomAlarm
+//   (
+//     required this.isActive,
+//     required this.isRinging,
+//     required this.nameOfAlarm,
+//     required this.alarmTime,
+//     required this.alarmDate,
+//     required this.isRecurrent,
+//     required this.weekdayRecurrence,
+//     required this.challengeMode
+//     );
+
+// I need the JSON format to save/load the data (shared preferences)
+
+  // to JSON
+  Map<String, dynamic> toJson() => {
+    "name": isActive,
+    "age": isRinging,
+    "nameOfAlarm": nameOfAlarm,
+    "alarmTime": alarmTime,
+    "alarmDate": alarmDate,
+    "isRecurrent": isRecurrent,
+    "weekdayRecurrence": weekdayRecurrence,
+    "challengeMode": challengeMode,
+  };
+
+  // from JSON todo das funktioniert nicht...
+  // CustomAlarm.fromJson(Map<String, dynamic> json)
+  //     : isActive: json['isActive'],
+  //       isRinging: json['isRinging'],
+  //       isActive: json['nameOfAlarm'],
+  //       isRinging: json['alarmTime'],
+  //       isActive: json['alarmDate'],
+  //       isRinging: json['isRecurrent'],
+  //       isActive: json['weekdayRecurrence'],
+  //       isRinging: json['challengeMode'];
+
 }
 
 List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
@@ -84,8 +124,6 @@ String weekdayBoolListToString(List<bool> weekdays)
   }
   return output;
 }
-
-
 
 /// Play audio function
 void playAlarmSound(double volume)
