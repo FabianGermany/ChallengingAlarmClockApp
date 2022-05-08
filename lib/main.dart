@@ -7,6 +7,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
+import 'dart:convert'; // for JSON etc.
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 
@@ -173,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      //_counter = (prefs.getInt('counter') ?? 0); //todo here mit json etc. // Try reading data from the counter key. If it doesn't exist, return 0.
+      //globals.listOfSavedAlarms = prefs.getString('alarmList'); //todo here mit json etc. // Try reading data from the counter key. If it doesn't exist, return 0.
       debugPrint("Loading alarm data...");
     });
   }
@@ -182,9 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _saveData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      //_counter = (prefs.getInt('counter') ?? 0) + 1; //todo here mit json etc.
-      //prefs.setInt('counter', _counter); //todo here mit json etc. // set value to the 'counter' key
+      prefs.setString('alarmList', jsonEncode(globals.listOfSavedAlarms)); //set JSON-encoded values to the key 'alarmList'
       //debugPrint("Saving alarm data...");
+      //print(prefs);
     });
   }
 
@@ -975,7 +976,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
   @override
   Widget build(BuildContext context) {
 
-    return new WillPopScope( // I need this to deactivate the "Go back" button
+    return WillPopScope( // I need this to deactivate the "Go back" button
       onWillPop: () async => false, // Deactivate "Go back" button
       child:
 
@@ -1141,7 +1142,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   @override
   Widget build(BuildContext context) {
 
-    return new WillPopScope( // I need this to deactivate the "Go back" button
+    return WillPopScope( // I need this to deactivate the "Go back" button
         onWillPop: () async => false, // Deactivate "Go back" button
     child:
 

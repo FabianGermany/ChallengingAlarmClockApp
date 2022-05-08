@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:convert'; // for JSON etc.
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 
@@ -36,14 +37,14 @@ class CustomAlarm {
 
   // to JSON
   Map<String, dynamic> toJson() => {
-    "name": isActive,
-    "age": isRinging,
-    "nameOfAlarm": nameOfAlarm,
-    "alarmTime": alarmTime,
-    "alarmDate": alarmDate,
-    "isRecurrent": isRecurrent,
-    "weekdayRecurrence": weekdayRecurrence,
-    "challengeMode": challengeMode,
+    "isActive": isActive.toString(), //todo .toString() ist das korrekt?
+    "isRinging": isRinging.toString(),
+    "nameOfAlarm": nameOfAlarm.toString(),
+    "alarmTime": alarmTime.toString(),
+    "alarmDate": alarmDate.toString(),
+    "isRecurrent": isRecurrent.toString(),
+    "weekdayRecurrence": weekdayRecurrence.toString(),
+    "challengeMode": challengeMode.toString(),
   };
 
   // from JSON todo das funktioniert nicht...
