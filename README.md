@@ -31,4 +31,8 @@ while running the debug mode.
 - Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
 - The app is not really responsive so far; heights etc. are partially absolute; use more Flexible/Expanded etc. to avoid overflows and to make the app work on every device
 - Use bloclibrary.dev
+- Different challenge modes (quiz, mathematical problem etc.)
+  - Quiz can be done via some API like [this](https://the-trivia-api.com/)
+  - Mathematical questions are probably easier without API
+- Challenge should be adapted to the user's cognitive characteristics (e.g. easier challenge for children etc.)
 	
