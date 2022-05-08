@@ -21,6 +21,7 @@ dependencies:
   flutter_ringtone_player: ^3.2.0
   is_first_run: ^1.0.0
   shared_preferences: ^2.0.13
+  wakelock: ^0.6.1+2
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'dart:convert'; // for JSON etc.
+import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 
@@ -108,7 +109,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
                   debugPrint("Single alarm is going off!");
-                  globals.playAlarmSound(0.5);
+                  globals.playAlarmSound(0.5); // play alarm
+                  Wakelock.enable(); // keep the screen active
 
                   // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
                   // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
@@ -953,6 +955,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
     List<globals.CustomAlarm?> alarmList = globals.listOfSavedAlarms;
     alarmList[alarmIndex]!.isActive = false;
     globals.stopAlarmSound();
+    Wakelock.disable(); // stop that the screen is consistently active
     debugPrint("Alarm has been turned off!");
     globals.listOfSavedAlarms =
         alarmList; //save the local list back to the global one
