@@ -1202,12 +1202,12 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   int currentScore = 0; //init the current score to 0;
   int targetScore = 5;
-  late int userInput;
+  String userInput = '';
   late bool answerCorrect;
   late bool quizPassed;
   var currentQuiz; //todo den mehrfach laufen lassen
   late String currentQuizQuestion;
-  late int currentQuizResult;
+  late String currentQuizResult;
   var score;
 
 
@@ -1231,23 +1231,37 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   }
 
   /// Handle the user input based on the current quiz
-  _quizScoreHandler() //todo call this after submit
+  void _quizScoreHandler()
   {
-    (currentQuizResult == userInput)? answerCorrect = true: answerCorrect = false;
+    debugPrint("****************************************************************");
 
+    // userInput = myNumberInputController.text; //todo das move todo das ist doppelt gemoppelt?
+    debugPrint(currentQuizResult);
+    debugPrint(userInput);
+
+
+    (currentQuizResult == userInput)? answerCorrect = true: answerCorrect = false;
     score = quiz.scoreHandler(currentScore, answerCorrect, targetScore);
     currentScore = score[0];
     quizPassed = score[1];
-
     if (quizPassed)
-      {
-        _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
-        //todo und Navigator.push(.... wohin damit?) oder muss das ins scaffold?
-        // _generateNewQuizQuestion todo das fürs nächste Mal callen; hier oder woanders?
-      }
-  }
+    {
+      _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
+      //todo und Navigator.push(.... wohin damit?) oder muss das ins scaffold?
+      _generateNewQuizQuestion(); // todo das fürs nächste Mal callen; hier oder woanders?
 
-  _generateNewQuizQuestion()
+    }
+    else // quiz is not passed
+    {
+      // load next quiz page
+
+      //todo next quizfrage...
+      //todo setState ggf. um currentscore zu refreshen etc.
+
+    }
+}
+
+  void _generateNewQuizQuestion()
   {
     currentQuiz = quiz.quizGenerator();
     currentQuizQuestion = currentQuiz[0];
@@ -1311,14 +1325,12 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
               ],
             ),
             Row(
-              children: <Widget>[SizedBox(height: 50)],
+              children: <Widget>[SizedBox(height: 100)],
             ),
             Row(
               // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                //todo hier input...
-                //todo onpressed/submit: call _quizscorehandler:
                 Expanded(
                   flex: 8,
                   child:
@@ -1327,16 +1339,23 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                     child: TextFormField(
                       controller: myNumberInputController,
                       autofocus: true,
-                      keyboardType: TextInputType.numberWithOptions(signed: true,),
+                      keyboardType: TextInputType.numberWithOptions(signed: true),
                       decoration: InputDecoration(
                         labelText: 'Enter the result',
                         border: OutlineInputBorder(),
                       ),
+                      style: TextStyle(fontSize: 22),
+                      //todo onpressed/submit: call _quizscorehandler:
+                      onFieldSubmitted: (String value){
+                        setState(() {
+                          userInput = value;
+                          _quizScoreHandler();
+                        });
+                      }
+
                     ),
                   ),
                 ),
-
-
               ],
             ),
           ],
@@ -1347,7 +1366,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   }
 }
 
-//1 todo input field machen
+//1 todo input field lesen können
 //2 todo _quizscorehandler
 
 

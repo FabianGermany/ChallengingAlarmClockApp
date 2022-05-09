@@ -21,7 +21,7 @@ String operationTypeNameToOperationTypeSymbol(operationTypeName)
 
 /// Function to calculate the result based on the operation type name
 /// Attention: I cannot use this function two or three times in a row cause multiplication/division has higher priority than addition/subtraction!
-int resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, operationType1, operationType2, operationType3)
+String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, operationType1, operationType2, operationType3)
 {
   int result;
   if(amountOfTerms == 2)
@@ -241,7 +241,7 @@ int resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, opera
       result = 0; debugPrint('Error in termGenerator');
     }
   }
-  return result;
+  return result.toString();
 }
 
 
@@ -378,7 +378,7 @@ List quizGenerator()
 {
   int term1, term2, term3, term4;
   String completeTerm;
-  int result;
+  String result;
   // 1 Generate the amount of terms
   int amountOfTerms = amountOfTermsGenerator(); // generate the amount of terms
 
