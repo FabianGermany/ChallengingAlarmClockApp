@@ -1,39 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-/// Score function
-/// returns the output score and the bool for passed/not passed
-List scoreHandler (int currentScore, bool correctAnswer, [int targetScore = 5])
-{
-  //declare return vars
-  int outputScore;
-  bool passed;
-
-  if(correctAnswer) // correct answer
-    {
-      outputScore = currentScore + 1;
-    }
-  else // wrong answer
-    {
-      outputScore = currentScore - 3;
-    }
-
-  // cut score if it's too low (no negative score)
-  if(outputScore<0)
-  {
-    outputScore = 0;
-  }
-
-  if(outputScore >= targetScore) // check for success
-    {
-      passed = true;
-    }
-  else
-    {
-      passed = false;
-    }
-  return [outputScore, passed];
-}
 
 // types of arithmetic operations
 enum operationTypeEnum {plus, minus, mul, div}
@@ -115,7 +82,7 @@ int resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, opera
 
   }
 
-  else //(amountOfTerms == 4) //todo
+  else //(amountOfTerms == 4)
   {
     if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.plus)
     {
@@ -273,9 +240,7 @@ int resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, opera
     {
       result = 0; debugPrint('Error in termGenerator');
     }
-
   }
-
   return result;
 }
 
@@ -304,8 +269,6 @@ int amountOfTermsGenerator()
 }
 
 
-
-
 /// Function to generate an arithmetic operation type
 dynamic operationTypeGenerator()
 {
@@ -325,7 +288,6 @@ dynamic operationTypeGenerator()
 }
 
 
-
 /// Function to generate an extra arithmetic operation type (no division)
 dynamic operationTypeGeneratorExtra()
 {
@@ -342,7 +304,6 @@ dynamic operationTypeGeneratorExtra()
   }
   return operationType;
 }
-
 
 
 /// This functions generated the two terms based on their operation type
@@ -386,8 +347,7 @@ List<int> termGenerator(operationType)
 
 
 
-
-/// This functions generated an additional term //todo
+/// This functions generated an additional term
 int termGeneratorExtra(operationType)
 {
   int min, max; // min and max are used as an offset/range to disable too easy/diffucult equations
@@ -413,8 +373,6 @@ int termGeneratorExtra(operationType)
 }
 
 
-
-
 /// Mathematical quiz generator function
 List quizGenerator()
 {
@@ -437,7 +395,7 @@ List quizGenerator()
   term3 = termGeneratorExtra(operationType2);
   term4 = termGeneratorExtra(operationType3);
 
-  // print the quiz
+  // 4 Print the quiz question
   if (amountOfTerms == 2)
   {
     completeTerm = "$term1 ${operationTypeNameToOperationTypeSymbol(operationType1.toString())} $term2";
@@ -453,24 +411,42 @@ List quizGenerator()
     completeTerm = "$term1 ${operationTypeNameToOperationTypeSymbol(operationType1.toString())} $term2 ${operationTypeNameToOperationTypeSymbol(operationType2.toString())} $term3 ${operationTypeNameToOperationTypeSymbol(operationType3.toString())} $term4";
   }
 
-  // result
+  // 5 Calculate the result
   result = resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, operationType1, operationType2, operationType3);
-
-  print('${[term1, term2, term3, term4, operationType1, operationType2, operationType3]}');
-
-
-
-
-
-  //todo input field machen
-
-
-
-
+  //debugPrint('${[term1, term2, term3, term4, operationType1, operationType2, operationType3]}');
   return [completeTerm, result];
+}
+
+/// Score function
+/// returns the output score and the bool for passed/not passed
+List scoreHandler (int currentScore, bool correctAnswer, [int targetScore = 5])
+{
+  //declare return vars
+  int outputScore;
+  bool passed;
+
+  if(correctAnswer) // correct answer
+  {
+    outputScore = currentScore + 1;
+  }
+  else // wrong answer
+  {
+    outputScore = currentScore - 3;
   }
 
+  // cut score if it's too low (no negative score)
+  if(outputScore < 0)
+  {
+    outputScore = 0;
+  }
 
-
-//todo call function like this
-// quiz.scoreHandler(5, false, 5);
+  if(outputScore >= targetScore) // check for success
+  {
+    passed = true;
+  }
+  else
+  {
+    passed = false;
+  }
+  return [outputScore, passed];
+}

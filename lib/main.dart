@@ -14,6 +14,7 @@ import 'package:awesome_notifications/awesome_notifications.dart'; // notificati
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
 import 'quiz.dart' as quiz;
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   debugPrint("App is being started...");
@@ -397,7 +398,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       true)
                                                   ? Colors.black
                                                   : Colors.black38,
-                                              //change color depending on the current recurrence mode
                                               fontSize: 20,
                                               fontWeight: FontWeight
                                                   .w500 //, spacing...: 0.15
@@ -476,7 +476,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     true)
                                                 ? Colors.black
                                                 : Colors.black38,
-                                            //change color depending on the current recurrence mode
                                             fontSize: 20,
                                             fontWeight: FontWeight
                                                 .w500 //, spacing...: 0.15
@@ -504,7 +503,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           true)
                                                       ? Colors.black
                                                       : Colors
-                                                          .black38), //change color depending on the current recurrence mode
+                                                          .black38),
                                             )
                                           :
 
@@ -521,7 +520,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           true)
                                                       ? Colors.black
                                                       : Colors
-                                                          .black38), //change color depending on the current recurrence mode
+                                                          .black38),
                                             ),
                                     ],
                                   ),
@@ -698,9 +697,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
-  // This is a GlobalKey<FormState>, not a GlobalKey<MyCustomFormState>.
-  // It's needed for the input of the alarm name
-  final _formKey = GlobalKey<FormState>();
+
+  final _formKey = GlobalKey<FormState>(); // It's needed for the input of the alarm name
 
   @override
   Widget build(BuildContext context) {
@@ -795,7 +793,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                                     color: _recurrentMode == false
                                         ? Colors.black
                                         : Colors
-                                            .black26), //change color depending on the current recurrence mode
+                                            .black26),
                               ),
                             ],
                           ),
@@ -812,7 +810,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                                     color: _recurrentMode == false
                                         ? Colors.black
                                         : Colors.black26,
-                                    //change color depending on the current recurrence mode
                                     fontSize: 20,
                                     fontWeight:
                                         FontWeight.w500 //, spacing...: 0.15
@@ -907,7 +904,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                         color: (_challengingModeActive == true)
                             ? Colors.black
                             : Colors
-                                .black38), //change color depending on the current recurrence mode
+                                .black38),
                   ),
                 ),
                 Expanded(
@@ -1026,15 +1023,9 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
   //todo das klappt nur bei non-recurring..muss ich noch ändern
   /// function to deactivate an alarm //todo
   List<globals.CustomAlarm?> _deactivateAlarm(
-      globals.CustomAlarm? triggeredAlarm, alarmIndex) {
-    List<globals.CustomAlarm?> alarmList = globals.listOfSavedAlarms;
-    alarmList[alarmIndex]!.isActive = false;
-    globals.stopAlarmSound();
-    Wakelock.disable(); // stop that the screen is consistently active
-    debugPrint("Alarm has been turned off!");
-    globals.listOfSavedAlarms =
-        alarmList; //save the local list back to the global one
-    return alarmList;
+      globals.CustomAlarm? triggeredAlarm, alarmIndex)
+  {
+    return globals.deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
   @override
@@ -1088,7 +1079,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       "${widget.triggeredAlarm?.nameOfAlarm}",
                       style: TextStyle(
                           color: Colors.deepPurple,
-                          //change color depending on the current recurrence mode
                           fontSize: 25,
                           fontWeight: FontWeight.w500 //, spacing...: 0.15
                           ),
@@ -1106,7 +1096,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       "It's",
                       style: TextStyle(
                           color: Colors.black54,
-                          //change color depending on the current recurrence mode
                           fontSize: 18,
                           fontWeight: FontWeight.w500 //, spacing...: 0.15
                           ),
@@ -1124,7 +1113,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       _timeStringShort,
                       style: TextStyle(
                           color: Colors.black,
-                          //change color depending on the current recurrence mode
                           fontSize: 60,
                           fontWeight: FontWeight.w600 //, spacing...: 0.15
                           ),
@@ -1142,7 +1130,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       _dateString,
                       style: TextStyle(
                           color: Colors.black54,
-                          //change color depending on the current recurrence mode
                           fontSize: 20,
                           fontWeight: FontWeight.w400 //, spacing...: 0.15
                           ),
@@ -1204,6 +1191,8 @@ class ShowChallengePage extends StatefulWidget {
   const ShowChallengePage(this.triggeredAlarm, this.alarmNumber);
 
 
+
+
   @override
   State<ShowChallengePage> createState() => _MyShowChallengePageState();
 }
@@ -1211,9 +1200,69 @@ class ShowChallengePage extends StatefulWidget {
 class _MyShowChallengePageState extends State<ShowChallengePage> {
 
 
+  int currentScore = 0; //init the current score to 0;
+  int targetScore = 5;
+  late int userInput;
+  late bool answerCorrect;
+  late bool quizPassed;
+  var currentQuiz; //todo den mehrfach laufen lassen
+  late String currentQuizQuestion;
+  late int currentQuizResult;
+  var score;
 
-  //vars here
-  //functions here
+
+  // Create a text controller and use it to retrieve the current value
+  // of the Alarm TextField.
+  final myNumberInputController =
+  TextEditingController(text: '');
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myNumberInputController.dispose();
+    super.dispose();
+  }
+
+  /// function to deactivate an alarm //todo
+  List<globals.CustomAlarm?> _deactivateAlarm(
+      globals.CustomAlarm? triggeredAlarm, alarmIndex)
+  {
+    return globals.deactivateAlarm(triggeredAlarm, alarmIndex);
+  }
+
+  /// Handle the user input based on the current quiz
+  _quizScoreHandler() //todo call this after submit
+  {
+    (currentQuizResult == userInput)? answerCorrect = true: answerCorrect = false;
+
+    score = quiz.scoreHandler(currentScore, answerCorrect, targetScore);
+    currentScore = score[0];
+    quizPassed = score[1];
+
+    if (quizPassed)
+      {
+        _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
+        //todo und Navigator.push(.... wohin damit?) oder muss das ins scaffold?
+        // _generateNewQuizQuestion todo das fürs nächste Mal callen; hier oder woanders?
+      }
+  }
+
+  _generateNewQuizQuestion()
+  {
+    currentQuiz = quiz.quizGenerator();
+    currentQuizQuestion = currentQuiz[0];
+    currentQuizResult = currentQuiz[1];
+  }
+
+
+  @override
+  void initState() {
+    _generateNewQuizQuestion();
+    super.initState();
+  }
+
+
+  final _formKey = GlobalKey<FormState>();
 
   //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
 
@@ -1231,15 +1280,63 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         child: Column(
           children: <Widget>[
             Row(
+              children: <Widget>[SizedBox(height: 50)],
+            ),
+            Row(
               // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "${quiz.quizGenerator()}",
+                  "Current Score:\n$currentScore / $targetScore",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[SizedBox(height: 50)],
+            ),
+            Row(
+              // Time selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "$currentQuizQuestion",
+                  style: TextStyle(
+                      color: Colors.deepPurple,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500 //, spacing...: 0.15
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[SizedBox(height: 50)],
+            ),
+            Row(
+              // Time selector
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //todo hier input...
+                //todo onpressed/submit: call _quizscorehandler:
+                Expanded(
+                  flex: 8,
+                  child:
+                    Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: myNumberInputController,
+                      autofocus: true,
+                      keyboardType: TextInputType.numberWithOptions(signed: true,),
+                      decoration: InputDecoration(
+                        labelText: 'Enter the result',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
                 ),
 
 
-                //todo onpressed or something: _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber);
               ],
             ),
           ],
@@ -1249,3 +1346,16 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     );
   }
 }
+
+//1 todo input field machen
+//2 todo _quizscorehandler
+
+
+
+
+
+//3 todo load new quiz; bzw. beenden wenn score enough
+//4 todo popup correct/wrong siehe figma
+
+
+

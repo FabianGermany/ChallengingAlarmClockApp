@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:convert'; // for JSON etc.
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
+import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 
 // global vars
 const everySecond = Duration(seconds: 1);
@@ -144,3 +145,16 @@ void stopAlarmSound()
   FlutterRingtonePlayer.stop();
 }
 
+
+
+List<CustomAlarm?> deactivateAlarm(
+    CustomAlarm? triggeredAlarm, alarmIndex) {
+  List<CustomAlarm?> alarmList = listOfSavedAlarms;
+  alarmList[alarmIndex]!.isActive = false;
+  stopAlarmSound();
+  Wakelock.disable(); // stop that the screen is consistently active
+  debugPrint("Alarm has been turned off!");
+  listOfSavedAlarms =
+      alarmList; //save the local list back to the global one
+  return alarmList;
+}
