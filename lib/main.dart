@@ -13,6 +13,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'; /
 import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
 import 'globals.dart'
     as globals; //global variables and stuff from other .dart file
+import 'quiz.dart' as quiz;
 
 Future<void> main() async {
   debugPrint("App is being started...");
@@ -1233,6 +1234,11 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
               // Time selector
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Text(
+                  "${quiz.quizGenerator()}",
+                ),
+
+
                 //todo onpressed or something: _deactivateAlarm(widget.TriggeredAlarm, widget.alarmNumber);
               ],
             ),
