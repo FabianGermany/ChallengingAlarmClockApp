@@ -1148,7 +1148,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       onPressed: () {
                         if (widget.triggeredAlarm?.challengeMode == true) {
                           // challenge mode
-                          globals.playAlarmSound(0.1); // make alarm a bit more silent
+                          globals.playAlarmSound(0.0); // make alarm a bit more silent //todo auf 0.1 nachdem fertig mit debuggen
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1206,6 +1206,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   late String currentQuizQuestion;
   late String currentQuizResult;
   var score;
+  FocusNode inputNode = FocusNode(); // used for showing keyboard
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
@@ -1216,6 +1217,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     myNumberInputController.dispose();
+    inputNode.dispose();
     super.dispose();
   }
 
@@ -1231,7 +1233,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   {
     debugPrint("****************************************************************");
 
-    // userInput = myNumberInputController.text; //todo das move todo das ist doppelt gemoppelt?
     debugPrint(currentQuizResult);
     debugPrint(userInput);
 
@@ -1240,7 +1241,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     score = quiz.scoreHandler(currentScore, answerCorrect, targetScore);
     currentScore = score[0];
     quizPassed = score[1];
-    myNumberInputController = TextEditingController(text: ''); // reset input
     if (quizPassed)
     {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
@@ -1260,7 +1260,10 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         _generateNewQuizQuestion();
       });
     }
-}
+    //inputNode.requestFocus(); // show keyboard again
+    FocusScope.of(context).requestFocus(inputNode); // show keyboard again
+    myNumberInputController.clear();
+  }
 
   void _generateNewQuizQuestion()
   {
@@ -1337,7 +1340,9 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                     key: _formKey,
                     child: TextFormField(
                       controller: myNumberInputController,
-                      autofocus: true,
+                      autofocus: true, // show keyboard automatically on start
+                      focusNode: inputNode, // for showing keyboard on 2nd start etc.
+                      onEditingComplete: () {}, // this prevents keyboard from closing
                       keyboardType: TextInputType.numberWithOptions(signed: true),
                       decoration: InputDecoration(
                         labelText: 'Enter the result',
