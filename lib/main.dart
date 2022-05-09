@@ -1191,29 +1191,25 @@ class ShowChallengePage extends StatefulWidget {
   const ShowChallengePage(this.triggeredAlarm, this.alarmNumber);
 
 
-
-
   @override
   State<ShowChallengePage> createState() => _MyShowChallengePageState();
 }
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
 
-
   int currentScore = 0; //init the current score to 0;
   int targetScore = 5;
   String userInput = '';
   late bool answerCorrect;
   late bool quizPassed;
-  var currentQuiz; //todo den mehrfach laufen lassen
+  var currentQuiz;
   late String currentQuizQuestion;
   late String currentQuizResult;
   var score;
 
-
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  final myNumberInputController =
+  var myNumberInputController =
   TextEditingController(text: '');
 
   @override
@@ -1223,7 +1219,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     super.dispose();
   }
 
-  /// function to deactivate an alarm //todo
+  /// function to deactivate an alarm
   List<globals.CustomAlarm?> _deactivateAlarm(
       globals.CustomAlarm? triggeredAlarm, alarmIndex)
   {
@@ -1244,20 +1240,25 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     score = quiz.scoreHandler(currentScore, answerCorrect, targetScore);
     currentScore = score[0];
     quizPassed = score[1];
+    myNumberInputController = TextEditingController(text: ''); // reset input
     if (quizPassed)
     {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
-      //todo und Navigator.push(.... wohin damit?) oder muss das ins scaffold?
-      _generateNewQuizQuestion(); // todo das fürs nächste Mal callen; hier oder woanders?
+      _generateNewQuizQuestion(); // generate new question for next time
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const MyHomePage(
+                title: 'Alarm Clock Web Version')),
+      );
 
     }
     else // quiz is not passed
     {
       // load next quiz page
-
-      //todo next quizfrage...
-      //todo setState ggf. um currentscore zu refreshen etc.
-
+      setState(() {
+        _generateNewQuizQuestion();
+      });
     }
 }
 
@@ -1277,8 +1278,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
 
   final _formKey = GlobalKey<FormState>();
-
-  //todo ggf. parameter übergeben; siehe anderer branch...; oder mit der Klasse direkt arbeiten...
 
   @override
   Widget build(BuildContext context) {
@@ -1345,7 +1344,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                         border: OutlineInputBorder(),
                       ),
                       style: TextStyle(fontSize: 22),
-                      //todo onpressed/submit: call _quizscorehandler:
                       onFieldSubmitted: (String value){
                         setState(() {
                           userInput = value;
@@ -1366,15 +1364,9 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   }
 }
 
-//1 todo input field lesen können
-//2 todo _quizscorehandler
 
 
-
-
-
-//3 todo load new quiz; bzw. beenden wenn score enough
-//4 todo popup correct/wrong siehe figma
+//todo popup correct/wrong siehe figma
 
 
 
