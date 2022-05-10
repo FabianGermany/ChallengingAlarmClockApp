@@ -3,7 +3,24 @@ import 'package:flutter/material.dart';
 
 
 // types of arithmetic operations
-enum operationTypeEnum {plus, minus, mul, div}
+enum OperationType {plus, minus, mul, div}
+
+// this can be used instead of a function like operationTypeNameToOperationTypeSymbol
+extension OperationTypeExtension on OperationType {
+  String get symbol {
+    switch (this) {
+      case OperationType.plus:
+        return '+';
+      case OperationType.minus:
+        return '-';
+      case OperationType.mul:
+        return '*';
+      case OperationType.div:
+        return '/';
+    }
+  }
+}
+
 
 /// Function to map operation type name to operation type symbol
 String operationTypeNameToOperationTypeSymbol(operationTypeName)
@@ -11,10 +28,10 @@ String operationTypeNameToOperationTypeSymbol(operationTypeName)
   String operationTypeSymbol = '';
   switch(operationTypeName)
   {
-    case 'operationTypeEnum.plus': operationTypeSymbol = '+'; break;
-    case 'operationTypeEnum.minus': operationTypeSymbol = '-'; break;
-    case 'operationTypeEnum.mul': operationTypeSymbol = '*'; break;
-    case 'operationTypeEnum.div': operationTypeSymbol = '/'; break;
+    case 'operationType.plus': operationTypeSymbol = '+'; break;
+    case 'operationType.minus': operationTypeSymbol = '-'; break;
+    case 'operationType.mul': operationTypeSymbol = '*'; break;
+    case 'operationType.div': operationTypeSymbol = '/'; break;
   }
   return operationTypeSymbol;
 }
@@ -28,51 +45,51 @@ String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, op
     {
       switch (operationType1)
       {
-        case operationTypeEnum.plus: result = term1 + term2 ; break;
-        case operationTypeEnum.minus: result = term1 - term2 ; break;
-        case operationTypeEnum.mul: result = term1 * term2 ; break;
-        case operationTypeEnum.div: result = term1 ~/ term2 ; break;
+        case OperationType.plus: result = term1 + term2 ; break;
+        case OperationType.minus: result = term1 - term2 ; break;
+        case OperationType.mul: result = term1 * term2 ; break;
+        case OperationType.div: result = term1 ~/ term2 ; break;
         default: result = 0; debugPrint('Error in termGenerator'); break;
       }
     }
 
   else if(amountOfTerms == 3)
   {
-    if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.plus)
+    if (operationType1 == OperationType.plus && operationType2 == OperationType.plus)
     {
       result = term1 + term2 + term3;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.minus) {
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.minus) {
       result = term1 + term2 - term3;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.mul) {
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.mul) {
       result = term1 + term2 * term3;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.plus) {
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.plus) {
       result = term1 - term2 + term3;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.minus) {
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.minus) {
       result = term1 - term2 - term3;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.mul) {
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.mul) {
       result = term1 - term2 * term3;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.plus) {
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.plus) {
       result = term1 * term2 + term3;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.minus) {
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.minus) {
       result = term1 * term2 - term3;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.mul) {
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.mul) {
       result = term1 * term2 * term3;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.plus) {
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.plus) {
       result = term1 ~/ term2 + term3;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.minus) {
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.minus) {
       result = term1 ~/ term2 - term3;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.mul) {
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.mul) {
       result = term1 ~/ term2 * term3;
     }
     else
@@ -84,154 +101,154 @@ String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, op
 
   else //(amountOfTerms == 4)
   {
-    if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.plus)
+    if (operationType1 == OperationType.plus && operationType2 == OperationType.plus && operationType3 == OperationType.plus)
     {
       result = term1 + term2 + term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.plus && operationType3 == OperationType.minus)
     {
       result = term1 + term2 + term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.plus && operationType3 == OperationType.mul)
     {
       result = term1 + term2 + term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.minus && operationType3 == OperationType.plus)
     {
       result = term1 + term2 - term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.minus && operationType3 == OperationType.minus)
     {
       result = term1 + term2 - term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.minus && operationType3 == OperationType.mul)
     {
       result = term1 + term2 - term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.mul && operationType3 == OperationType.plus)
     {
       result = term1 + term2 * term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.mul && operationType3 == OperationType.minus)
     {
       result = term1 + term2 * term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.plus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.plus && operationType2 == OperationType.mul && operationType3 == OperationType.mul)
     {
       result = term1 + term2 * term3 * term4;
     }
 
 
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.plus && operationType3 == OperationType.plus)
     {
       result = term1 - term2 + term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.plus && operationType3 == OperationType.minus)
     {
       result = term1 - term2 + term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.plus && operationType3 == OperationType.mul)
     {
       result = term1 - term2 + term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.minus && operationType3 == OperationType.plus)
     {
       result = term1 - term2 - term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.minus && operationType3 == OperationType.minus)
     {
       result = term1 - term2 - term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.minus && operationType3 == OperationType.mul)
     {
       result = term1 - term2 - term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.mul && operationType3 == OperationType.plus)
     {
       result = term1 - term2 * term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.mul && operationType3 == OperationType.minus)
     {
       result = term1 - term2 * term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.minus && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.minus && operationType2 == OperationType.mul && operationType3 == OperationType.mul)
     {
       result = term1 - term2 * term3 * term4;
     }
 
 
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.plus && operationType3 == OperationType.plus)
     {
       result = term1 * term2 + term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.plus && operationType3 == OperationType.minus)
     {
       result = term1 * term2 + term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.plus && operationType3 == OperationType.mul)
     {
       result = term1 * term2 + term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.minus && operationType3 == OperationType.plus)
     {
       result = term1 * term2 - term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.minus && operationType3 == OperationType.minus)
     {
       result = term1 * term2 - term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.minus && operationType3 == OperationType.mul)
     {
       result = term1 * term2 - term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.mul && operationType3 == OperationType.plus)
     {
       result = term1 * term2 * term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.mul && operationType3 == OperationType.minus)
     {
       result = term1 * term2 * term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.mul && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.mul && operationType2 == OperationType.mul && operationType3 == OperationType.mul)
     {
       result = term1 * term2 * term3 * term4;
     }
 
 
 
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.plus && operationType3 == OperationType.plus)
     {
       result = term1 ~/ term2 + term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.plus && operationType3 == OperationType.minus)
     {
       result = term1 ~/ term2 + term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.plus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.plus && operationType3 == OperationType.mul)
     {
       result = term1 ~/ term2 + term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.minus && operationType3 == OperationType.plus)
     {
       result = term1 ~/ term2 - term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.minus && operationType3 == OperationType.minus)
     {
       result = term1 ~/ term2 - term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.minus && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.minus && operationType3 == OperationType.mul)
     {
       result = term1 ~/ term2 - term3 * term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.plus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.mul && operationType3 == OperationType.plus)
     {
       result = term1 ~/ term2 * term3 + term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.minus)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.mul && operationType3 == OperationType.minus)
     {
       result = term1 ~/ term2 * term3 - term4;
     }
-    else if (operationType1 == operationTypeEnum.div && operationType2 == operationTypeEnum.mul && operationType3 == operationTypeEnum.mul)
+    else if (operationType1 == OperationType.div && operationType2 == OperationType.mul && operationType3 == OperationType.mul)
     {
       result = term1 ~/ term2 * term3 * term4;
     }
@@ -278,10 +295,10 @@ dynamic operationTypeGenerator()
   operationTypeNumber = generatorOperationType.nextInt(3); // generates a value from 0-3
   switch(operationTypeNumber)
   {
-    case 0: operationType = operationTypeEnum.plus; break;
-    case 1: operationType = operationTypeEnum.minus; break;
-    case 2: operationType = operationTypeEnum.mul; break;
-    case 3: operationType = operationTypeEnum.div; break;
+    case 0: operationType = OperationType.plus; break;
+    case 1: operationType = OperationType.minus; break;
+    case 2: operationType = OperationType.mul; break;
+    case 3: operationType = OperationType.div; break;
     default: debugPrint('Error in operationTypeGenerator'); break;
   }
   return operationType;
@@ -297,9 +314,9 @@ dynamic operationTypeGeneratorExtra()
   operationTypeNumber = generatorOperationType.nextInt(2); // generates a value from 0-2 (no division)
   switch(operationTypeNumber)
   {
-    case 0: operationType = operationTypeEnum.plus; break;
-    case 1: operationType = operationTypeEnum.minus; break;
-    case 2: operationType = operationTypeEnum.mul; break;
+    case 0: operationType = OperationType.plus; break;
+    case 1: operationType = OperationType.minus; break;
+    case 2: operationType = OperationType.mul; break;
     default: debugPrint('Error in operationTypeGeneratorExtra'); break;
   }
   return operationType;
@@ -314,30 +331,30 @@ List<int> termGenerator(operationType)
   final generatorTerm = Random();
 
   // first: generate min and max bounds
-  if (operationType == operationTypeEnum.plus || operationType == operationTypeEnum.minus)
+  if (operationType == OperationType.plus || operationType == OperationType.minus)
   {
     min = 0;
     max = 99;
   }
-  else if (operationType == operationTypeEnum.mul)
+  else if (operationType == OperationType.mul)
   {
     min = 0;
     max = 30;
   }
-  else // if (operationType == operationTypeEnum.div)
+  else // if (operationType == OperationType.div)
   {
     min = 1;
     max = 20;
   }
 
   // second; generate terms
-  if (operationType == operationTypeEnum.plus || operationType == operationTypeEnum.minus || operationType == operationTypeEnum.mul)
+  if (operationType == OperationType.plus || operationType == OperationType.minus || operationType == OperationType.mul)
   {
     term1 = min + generatorTerm.nextInt(max - min);
     term2 = min + generatorTerm.nextInt(max - min);
   }
 
-  else // if (operationType == operationTypeEnum.div)
+  else // if (operationType == OperationType.div)
   {
     term2 = min + generatorTerm.nextInt(max - min); // divisor
     term1 = term2 * generatorTerm.nextInt(15);  // dividend
@@ -355,12 +372,12 @@ int termGeneratorExtra(operationType)
   final generatorTerm = Random();
 
   // first: generate min and max bounds
-  if (operationType == operationTypeEnum.plus || operationType == operationTypeEnum.minus)
+  if (operationType == OperationType.plus || operationType == OperationType.minus)
   {
     min = 0;
     max = 99;
   }
-  else // if (operationType == operationTypeEnum.mul)
+  else // if (operationType == OperationType.mul)
   {
     min = 0;
     max = 30;
@@ -398,17 +415,17 @@ List quizGenerator()
   // 4 Print the quiz question
   if (amountOfTerms == 2)
   {
-    completeTerm = "$term1 ${operationTypeNameToOperationTypeSymbol(operationType1.toString())} $term2";
+    completeTerm = "$term1 ${operationType1.symbol} $term2";
   }
 
   else if (amountOfTerms == 3)
   {
-    completeTerm = "$term1 ${operationTypeNameToOperationTypeSymbol(operationType1.toString())} $term2 ${operationTypeNameToOperationTypeSymbol(operationType2.toString())} $term3";
+    completeTerm = "$term1 ${operationType1.symbol} $term2 ${operationType2.symbol} $term3";
   }
 
   else // (amountOfTerms == 4)
   {
-    completeTerm = "$term1 ${operationTypeNameToOperationTypeSymbol(operationType1.toString())} $term2 ${operationTypeNameToOperationTypeSymbol(operationType2.toString())} $term3 ${operationTypeNameToOperationTypeSymbol(operationType3.toString())} $term4";
+    completeTerm = "$term1 ${operationType1.symbol} $term2 ${operationType2.symbol} $term3 ${operationType3.symbol} $term4";
   }
 
   // 5 Calculate the result

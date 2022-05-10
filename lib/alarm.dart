@@ -4,56 +4,65 @@ import 'dart:convert'; // for JSON etc.
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
+import 'dart:developer';
+
 
 // data structure / class for one alarm
 class CustomAlarm {
-  bool isActive = false;
-  bool isRinging = false;
-  String nameOfAlarm = "New alarm";
-  TimeOfDay alarmTime = const TimeOfDay(hour: 9, minute: 45); // default value
-  DateTime alarmDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1); // default today plus 1 day later
-  bool isRecurrent = false; //default value is single time alarm
-  List<bool> weekdayRecurrence = List.filled(7, false); //from Monday to Sunday // = [false, false, false, false, false, false, false];
-  bool challengeMode = false;
+  bool isActive;
+  bool isRinging;
+  String nameOfAlarm;
+  TimeOfDay alarmTime; // default value //todo move comment
+  DateTime alarmDate; // default today plus 1 day later
+  bool isRecurrent; //default value is single time alarm
+  List<bool> weekdayRecurrence; //from Monday to Sunday // = [false, false, false, false, false, false, false];
+  bool challengeMode;
 
 
-//   CustomAlarm
-//   (
-//     required this.isActive,
-//     required this.isRinging,
-//     required this.nameOfAlarm,
-//     required this.alarmTime,
-//     required this.alarmDate,
-//     required this.isRecurrent,
-//     required this.weekdayRecurrence,
-//     required this.challengeMode
-//     );
+  CustomAlarm
+  ({
+    this.isActive = false,
+    this.isRinging = false,
+    this.nameOfAlarm = "New alarm",
+    this.alarmTime = const TimeOfDay(hour: 9, minute: 45),
+    DateTime? alarmDate, // constructors need const; that's why outsourced
+    this.isRecurrent = false,
+    List<bool>? weekdayRecurrence, // constructors need const; that's why outsourced
+    this.challengeMode = false
+  }
+    ):
+      this.alarmDate = alarmDate ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
+      this.weekdayRecurrence = weekdayRecurrence ?? List.filled(7, false)
+  ;
 
-// I need the JSON format to save/load the data (shared preferences)
+// I need the JSON format to save/load the data (shared preferences doesn't support classes)
 
-  // to JSON
-  // Map<String, dynamic> toJson() => {
-  //   "isActive": isActive.toString(), //todo .toString() ist das korrekt?
-  //   "isRinging": isRinging.toString(),
-  //   "nameOfAlarm": nameOfAlarm.toString(),
-  //   "alarmTime": alarmTime.toString(),
-  //   "alarmDate": alarmDate.toString(),
-  //   "isRecurrent": isRecurrent.toString(),
-  //   "weekdayRecurrence": weekdayRecurrence.toString(),
-  //   "challengeMode": challengeMode.toString(),
-  // };
+  // (1) to JSON
+  Map<String, dynamic> toJson() => {
+    "isActive": isActive,
+    "isRinging": isRinging,
+    "nameOfAlarm": nameOfAlarm,
+    "alarmTimeHour": alarmTime.hour,
+    "alarmTimeMinute": alarmTime.minute,
+    "alarmDate": alarmDate.toIso8601String(),
+    "isRecurrent": isRecurrent,
+    "weekdayRecurrence": weekdayRecurrence,
+    "challengeMode": challengeMode,
+  };
 
-  // from JSON todo das funktioniert nicht...
-  // CustomAlarm.fromJson(Map<String, dynamic> json)
-  //     : isActive: json['isActive'],
-  //       isRinging: json['isRinging'],
-  //       isActive: json['nameOfAlarm'],
-  //       isRinging: json['alarmTime'],
-  //       isActive: json['alarmDate'],
-  //       isRinging: json['isRecurrent'],
-  //       isActive: json['weekdayRecurrence'],
-  //       isRinging: json['challengeMode'];
-
+  // (2) from JSON todo das funktioniert nicht...
+  factory CustomAlarm.fromJson(Map<String, dynamic> json){
+    return CustomAlarm(
+        isActive: json['isActive'],
+        isRinging: json['isRinging'],
+        nameOfAlarm: json['nameOfAlarm'],
+        alarmTime: TimeOfDay(hour: json['alarmTimeHour'], minute: json['alarmTimeMinute']),
+        alarmDate: DateTime.parse(json['alarmDate']),
+        isRecurrent: json['isRecurrent'],
+        weekdayRecurrence: (json['weekdayRecurrence'] as List<dynamic>).cast<bool>(),
+        challengeMode: json['challengeMode'],
+    );
+  }
 }
 
 List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
@@ -152,4 +161,23 @@ List<CustomAlarm?> deactivateAlarm(
   listOfSavedAlarms =
       alarmList; //save the local list back to the global one
   return alarmList;
+}
+
+
+
+
+/// Saving listOfSavedAlarms
+/// Do it:
+/// (1) after an alarm is created
+/// (2) after an alarm is deleted
+/// (3) after an alarm is edited (not available at this time)
+/// (4) after characterists of an alarm change:
+///   (4.1) isRinging //todo
+///   (4.2) isActive //todo
+/// (5) regularly via a timer
+Future<void> saveData() async { //todo either when create und alarm triggered....
+  debugPrint("Saving alarm data...");
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setStringList('alarmList', listOfSavedAlarms.map((alarm) => jsonEncode(alarm)).toList()); //set JSON-encoded values to the key 'alarmList'
+  log('saved ${listOfSavedAlarms.length} alarms', name: 'alarms');
 }

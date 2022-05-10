@@ -9,16 +9,17 @@ import 'dart:convert'; // for JSON etc.
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // notifications when the alarm is ringing
 import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
-import 'alarm.dart' as globals; //functions and more for the alarm
-import 'quiz.dart' as quiz; // functions and more for the quiz
+import 'alarm.dart'; //functions and more for the alarm //todo rename/remove
+import 'quiz.dart'; //as quiz // functions and more for the quiz
 import 'global.dart'; //global variables and general outsourced stuff
+import 'dart:developer';
 
 Future<void> main() async {
-  debugPrint("App is being started...");
+  log("App is being started...", name: 'main.dart'); //todo statt debug
   //init the notifications //todo outsource
 
   AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
+      // set the icon to null if you want to use the default app icon
       'resource://drawable/res_app_icon',
       [
         NotificationChannel(
@@ -36,8 +37,7 @@ Future<void> main() async {
       //       channelGroupkey: 'basic_channel_group',
       //       channelGroupName: 'Basic group')
       // ],
-      debug: true
-  );
+      debug: true);
 
   // todo funktioniert nicht; das in initstate(?)
   // Request the user authorization to send local and push notifications; Make more polite...
@@ -50,14 +50,12 @@ Future<void> main() async {
     }
   });
 
-
-
-
   runApp(const MyApp());
   bool firstCall = await IsFirstRun.isFirstCall();
-  if(firstCall== true) // only for the first time the app is started, init the app
+  if (firstCall ==
+      true) // only for the first time the app is started, init the app
   {
-    globals.listOfSavedAlarms = globals.initApp(); //init the app; creating default alarms etc. and store into a globally available list
+    listOfSavedAlarms = initApp(); //init the app; creating default alarms etc. and store into a globally available list
   }
   debugPrint("App has been fully loaded...");
 }
@@ -140,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// check whether one of the alarms is triggered
-  _alarmChecker(List<globals.CustomAlarm?> currentAlarmList) {
+  _alarmChecker(List<CustomAlarm?> currentAlarmList) {
     setState(() {
       // debugPrint("Let me check the alarm state...");
       // check whether there is any alarm that is the past and is not set to isRinging=False yet
@@ -164,20 +162,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
                   debugPrint("Single alarm is going off!");
-                  globals.playAlarmSound(0.5); // play alarm
+                  playAlarmSound(0.5); // play alarm
                   Wakelock.enable(); // keep the screen active
 
                   // create a notification
                   AwesomeNotifications().createNotification(
-                      content: NotificationContent(
-                          id: 10,
-                          channelKey: 'basic_channel',
-                          title: 'Simple Notification',
-                          body: 'Simple body'
-                      )
+                    content: NotificationContent(
+                      id: 10,
+                      channelKey: 'basic_channel',
+                      title: 'Simple Notification',
+                      body: 'Simple body',
+                    ),
                   );
-
-
 
                   // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
                   // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
@@ -212,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// function to delete the alarm
   void _deleteAlarm(
-      List<globals.CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
+      List<CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
     setState(() {
       currentAlarmList.removeAt(itemNumberToBeRemoved);
       debugPrint("Alarm has been deleted!");
@@ -223,48 +219,36 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // the timers will be run here, otherwise thousands of timers will be generated
     // update shown times regularly
-    _refreshTimer =
-        Timer.periodic(everySecond, (Timer t) => _updateTime());
+    _refreshTimer = Timer.periodic(everySecond, (Timer t) => _updateTime());
     //This will cause that the updateTime() function will be exected every second;
 
     // check for alarm status regularly
-    _alarmCheckerTimer = Timer.periodic(every2Seconds,
-        (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
+    _alarmCheckerTimer = Timer.periodic(
+        every2Seconds, (Timer t) => _alarmChecker(listOfSavedAlarms));
 
-    // save data regularly
-    _saveDataTimer = Timer.periodic(everySecond, (Timer t) => _saveData());
+    // save data regularly (just in case)
+    _saveDataTimer = Timer.periodic(every2Minutes, (Timer t) => saveData());
+
+    loadData(); // load backup of alarm list
 
     super.initState();
-    _loadData();
   }
 
 
-  //Loading listOfSavedAlarms on start
-  void _loadData() async {
+
+  /// Loading listOfSavedAlarms (on start)
+  Future<void> loadData() async {
+    debugPrint("Loading alarm data...");
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      //globals.listOfSavedAlarms = prefs.getString('alarmList'); //todo here mit json etc. // Try reading data from the counter key. If it doesn't exist, return 0.
-      debugPrint("Loading alarm data...");
+      if (prefs.containsKey('alarmList')) {
+        listOfSavedAlarms = (prefs.getStringList('alarmList') ?? []).map((alarm) => CustomAlarm.fromJson(jsonDecode(alarm))).toList();
+        log('loaded ${listOfSavedAlarms.length} saved alarms', name: 'alarm');
+      } else {
+        log('no saved alarms found', name: 'alarm');
+      }
     });
   }
-
-  //Save data (do it as a backup regularly; because after closing the app etc. is too complex) //todo zyklisch aufrufen jede sekunde
-  void _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      // prefs.setString('alarmList', jsonEncode(globals.listOfSavedAlarms)); //set JSON-encoded values to the key 'alarmList'
-      //debugPrint("Saving alarm data...");
-      //print(prefs);
-    });
-  }
-
-
-
-
-// However, SharedPreferences doesn't support classes, but we can convert it into JSON
-
-
-
 
 
 
@@ -279,118 +263,197 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope( // I need this to deactivate the "Go back" button
+    return WillPopScope(
+      // I need this to deactivate the "Go back" button
       onWillPop: () async => false, // Deactivate "Go back" button
-      child:
-
-      Scaffold(
-
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Container(
-        margin: const EdgeInsets.all(20.0),
-        child: ListView(
-          //scrollable
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                // I need this single column to allow multiple rows
-                Row(
-                  // Row for the current date/time and the add alarm button
-                  children: <Widget>[
-                    Expanded(
-                      // Col/Expanded for showing the current time and date
-                      flex: 7, // 70%
-                      child: Center(
-                        child: Column(
-                          // Column is also a layout widget
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          //center vertically
-                          children: <Widget>[
-                            const Text(
-                              'The current time is',
-                            ),
-                            Text(
-                              _timeString,
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            const Text(
-                              'The current date is',
-                            ),
-                            Text(
-                              _dateString,
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            // Already set alarms
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                        // Col/Expanded for adding some space
-                        flex: 1, // 10%
-                        child: Text('') //empty
-                        ),
-                    Expanded(
-                      // Col/Expanded for the add alarm button
-                      flex: 2, // 20%
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                            icon: const Icon(Icons.add),
-                            tooltip: 'Add a new alarm',
-                            color: Colors.deepPurple,
-                            iconSize: 50.0,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const AddAlarmPage()),
-                              );
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-
-                Row(
-                  children: <Widget>[SizedBox(height: 70)],
-                ),
-                // Add some distance between the next row
-
-                // List of alarms (for loop)
-                for (int i = 0; i < globals.listOfSavedAlarms.length; i++)
-                  //for (final alarm_element in globals.listOfSavedAlarms)
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Container(
+          margin: const EdgeInsets.all(20.0),
+          child: ListView(
+            //scrollable
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  // I need this single column to allow multiple rows
                   Row(
-                    // Row for the set alarms I
+                    // Row for the current date/time and the add alarm button
                     children: <Widget>[
                       Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              // Row for the set alarms I
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 10,
-                                  child: Row(
-                                    //mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        // I need this for the clicking on the text function to edit the alarm
-                                        onTap: () {
-                                          //EditAlarm can be done here, but I didn't implement it
-                                          // Navigator.push(
-                                          //   context,
-                                          //   MaterialPageRoute(
-                                          //     builder: (context) => EditAlarmPage(globals.listOfSavedAlarms[i], i)),
-                                          //   );
-                                        },
-                                        child: Text(
-                                          "${globals.listOfSavedAlarms[i]?.nameOfAlarm}",
+                        // Col/Expanded for showing the current time and date
+                        flex: 7, // 70%
+                        child: Center(
+                          child: Column(
+                            // Column is also a layout widget
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            //center vertically
+                            children: <Widget>[
+                              const Text(
+                                'The current time is',
+                              ),
+                              Text(
+                                _timeString,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                              const Text(
+                                'The current date is',
+                              ),
+                              Text(
+                                _dateString,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                              // Already set alarms
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                          // Col/Expanded for adding some space
+                          flex: 1, // 10%
+                          child: Text('') //empty
+                          ),
+                      Expanded(
+                        // Col/Expanded for the add alarm button
+                        flex: 2, // 20%
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                              icon: const Icon(Icons.add),
+                              tooltip: 'Add a new alarm',
+                              color: Colors.deepPurple,
+                              iconSize: 50.0,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddAlarmPage()),
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    children: <Widget>[SizedBox(height: 70)],
+                  ),
+                  // Add some distance between the next row
+
+                  // List of alarms (for loop)
+                  for (int i = 0; i < listOfSavedAlarms.length; i++)
+                    //for (final alarm_element in listOfSavedAlarms)
+                    Row(
+                      // Row for the set alarms I
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                // Row for the set alarms I
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 10,
+                                    child: Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          // I need this for the clicking on the text function to edit the alarm
+                                          onTap: () {
+                                            //EditAlarm can be done here, but I didn't implement it
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) => EditAlarmPage(listOfSavedAlarms[i], i)),
+                                            //   );
+                                          },
+                                          child: Text(
+                                            "${listOfSavedAlarms[i]?.nameOfAlarm}",
+                                            style: TextStyle(
+                                                color: (listOfSavedAlarms[
+                                                                i]
+                                                            ?.isActive ==
+                                                        true)
+                                                    ? Colors.black
+                                                    : Colors.black38,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight
+                                                    .w500 //, spacing...: 0.15
+                                                ),
+                                          ),
+                                        ),
+
+                                        //Delete the alarm
+                                        IconButton(
+                                          icon:
+                                              const Icon(Icons.delete_outlined),
+                                          tooltip: 'Delete the alarm',
+                                          color: (listOfSavedAlarms[i]
+                                                      ?.isActive ==
+                                                  true)
+                                              ? Colors.black38
+                                              : Colors.black26,
+                                          iconSize: 20.0,
+                                          onPressed: () => showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                              title: Text('Delete alarm?'),
+                                              content: Text(
+                                                  'You are about to delete this alarm.'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'CANCEL'),
+                                                  //close dialog
+                                                  child: Text('CANCEL'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => [
+                                                    //close dialog and delete alarm at the same time
+                                                    _deleteAlarm(
+                                                        listOfSavedAlarms,
+                                                        i),
+                                                    Navigator.pop(
+                                                        context, 'DELETE'),
+                                                  ],
+                                                  child: Text('DELETE'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    // Col/Expanded for the add alarm button
+                                    flex: 0,
+                                    child: Row(), //empty
+                                  ),
+                                ],
+                              ),
+                              // some space
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(height: 9),
+                                ],
+                              ),
+                              Row(
+                                // Row for the set alarms II
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "${listOfSavedAlarms[i]?.alarmTime.hour.toString().padLeft(2, '0')}:${listOfSavedAlarms[i]?.alarmTime.minute.toString().padLeft(2, '0')}",
                                           style: TextStyle(
-                                              color: (globals
-                                                          .listOfSavedAlarms[i]
+                                              color: (listOfSavedAlarms[i]
                                                           ?.isActive ==
                                                       true)
                                                   ? Colors.black
@@ -400,209 +463,126 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   .w500 //, spacing...: 0.15
                                               ),
                                         ),
-                                      ),
+                                        Text("  "),
+                                        // add some space
 
-                                      //Delete the alarm
-                                      IconButton(
-                                        icon: const Icon(Icons.delete_outlined),
-                                        tooltip: 'Delete the alarm',
-                                        color: (globals.listOfSavedAlarms[i]
-                                                    ?.isActive ==
+                                        //Display the date / the recurring weekdays
+                                        (listOfSavedAlarms[i]
+                                                    ?.isRecurrent ==
                                                 true)
-                                            ? Colors.black38
-                                            : Colors.black26,
-                                        iconSize: 20.0,
-                                        onPressed: () => showDialog<String>(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              AlertDialog(
-                                            title: Text('Delete alarm?'),
-                                            content: Text(
-                                                'You are about to delete this alarm.'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    context, 'CANCEL'),
-                                                //close dialog
-                                                child: Text('CANCEL'),
+                                            ? // check for the mode via a?b:c
+
+                                            // case one: recurrence mode
+                                            Text(
+                                                weekdayBoolListToString(
+                                                    listOfSavedAlarms[i]!
+                                                        .weekdayRecurrence),
+                                                style: TextStyle(
+                                                    color: (listOfSavedAlarms[
+                                                                    i]
+                                                                ?.isActive ==
+                                                            true)
+                                                        ? Colors.black
+                                                        : Colors.black38),
+                                              )
+                                            :
+
+                                            // case two: date mode
+                                            Text(
+                                                DateFormat('EEE, d MMM').format(
+                                                    listOfSavedAlarms[i]!
+                                                        .alarmDate),
+                                                style: TextStyle(
+                                                    color: (listOfSavedAlarms[
+                                                                    i]
+                                                                ?.isActive ==
+                                                            true)
+                                                        ? Colors.black
+                                                        : Colors.black38),
                                               ),
-                                              TextButton(
-                                                onPressed: () => [
-                                                  //close dialog and delete alarm at the same time
-                                                  _deleteAlarm(
-                                                      globals.listOfSavedAlarms,
-                                                      i),
-                                                  Navigator.pop(
-                                                      context, 'DELETE'),
-                                                ],
-                                                child: Text('DELETE'),
-                                              ),
-                                            ],
-                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Row(),
+                                  ),
+                                  Expanded(
+                                    // Toggle/Switch for active/inactive
+                                    flex: 2,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Switch(
+                                          value: listOfSavedAlarms[i]!.isActive,
+                                          activeColor: Color(0xFF6200EE),
+                                          onChanged: (bool value) {
+                                            setState(() {
+                                              listOfSavedAlarms[i]!
+                                                  .isActive = value;
+                                            });
+                                          },
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  // Col/Expanded for the add alarm button
-                                  flex: 0,
-                                  child: Row(), //empty
-                                ),
-                              ],
-                            ),
-                            // some space
-                            Row(
-                              children: <Widget>[
-                                SizedBox(height: 9),
-                              ],
-                            ),
-                            Row(
-                              // Row for the set alarms II
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Row(
-                                    //mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        "${globals.listOfSavedAlarms[i]?.alarmTime.hour.toString().padLeft(2, '0')}:${globals.listOfSavedAlarms[i]?.alarmTime.minute.toString().padLeft(2, '0')}",
-                                        style: TextStyle(
-                                            color: (globals.listOfSavedAlarms[i]
-                                                        ?.isActive ==
-                                                    true)
-                                                ? Colors.black
-                                                : Colors.black38,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight
-                                                .w500 //, spacing...: 0.15
-                                            ),
-                                      ),
-                                      Text("  "),
-                                      // add some space
+                                ],
+                              ),
 
-                                      //Display the date / the recurring weekdays
-                                      (globals.listOfSavedAlarms[i]
-                                                  ?.isRecurrent ==
-                                              true)
-                                          ? // check for the mode via a?b:c
-
-                                          // case one: recurrence mode
-                                          Text(
-                                              globals.weekdayBoolListToString(
-                                                  globals.listOfSavedAlarms[i]!
-                                                      .weekdayRecurrence),
-                                              style: TextStyle(
-                                                  color: (globals
-                                                              .listOfSavedAlarms[
-                                                                  i]
-                                                              ?.isActive ==
-                                                          true)
-                                                      ? Colors.black
-                                                      : Colors
-                                                          .black38),
-                                            )
-                                          :
-
-                                          // case two: date mode
-                                          Text(
-                                              DateFormat('EEE, d MMM').format(
-                                                  globals.listOfSavedAlarms[i]!
-                                                      .alarmDate),
-                                              style: TextStyle(
-                                                  color: (globals
-                                                              .listOfSavedAlarms[
-                                                                  i]
-                                                              ?.isActive ==
-                                                          true)
-                                                      ? Colors.black
-                                                      : Colors
-                                                          .black38),
-                                            ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Row(),
-                                ),
-                                Expanded(
-                                  // Toggle/Switch for active/inactive
-                                  flex: 2,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Switch(
-                                        value: globals
-                                            .listOfSavedAlarms[i]!.isActive,
-                                        activeColor: Color(0xFF6200EE),
-                                        onChanged: (bool value) {
-                                          setState(() {
-                                            globals.listOfSavedAlarms[i]!
-                                                .isActive = value;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // some space
-                            Row(
-                              children: <Widget>[
-                                SizedBox(height: 25),
-                              ],
-                            ),
-                          ],
+                              // some space
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(height: 25),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+
+                  Row(
+                    // Add some space
+                    children: <Widget>[
+                      SizedBox(height: 60),
                     ],
                   ),
 
-
-                Row(
-                  // Add some space
-                  children: <Widget>[
-                    SizedBox(height: 60),
-                  ],
-                ),
-
-
-                debugMode ?
-                Row( // row for reset function (only debug mode...)
-                  children: <Widget>[
-                    Expanded(
-                      // Col/Expanded for showing the current time and date
-                      flex: 8,
-                      child: Center(
-                      ),
-                    ),
-                    Expanded(
-                      // Col/Expanded for the add alarm button
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                            icon: const Icon(Icons.dangerous),
-                            tooltip: 'Reset the app',
-                            color: Colors.black26,
-                            iconSize: 20.0,
-                            onPressed: () {
-                              setState((){
-                                globals.listOfSavedAlarms = globals.initApp();
-                              });
-                            }),
-                      ),
-                    ),
-                  ],
-                ): Row(),
-              ],
-            ),
-          ],
+                  debugMode
+                      ? Row(
+                          // row for reset function (only debug mode...)
+                          children: <Widget>[
+                            Expanded(
+                              // Col/Expanded for showing the current time and date
+                              flex: 8,
+                              child: Center(),
+                            ),
+                            Expanded(
+                              // Col/Expanded for the add alarm button
+                              flex: 2,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                    icon: const Icon(Icons.dangerous),
+                                    tooltip: 'Reset the app',
+                                    color: Colors.black26,
+                                    iconSize: 20.0,
+                                    onPressed: () {
+                                      setState(() {
+                                        listOfSavedAlarms =
+                                            initApp();
+                                      });
+                                    }),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -637,11 +617,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   }
 
   /// function to save the alarm
-  List<globals.CustomAlarm?> _saveAlarm(
-      List<globals.CustomAlarm?> currentAlarmList) {
-    List<globals.CustomAlarm?> alarmList = currentAlarmList;
-    globals.CustomAlarm? newCreatedAlarm =
-        globals.CustomAlarm(); // create a new default alarm
+  List<CustomAlarm?> _saveAlarm(
+      List<CustomAlarm?> currentAlarmList) {
+    List<CustomAlarm?> alarmList = currentAlarmList;
+    CustomAlarm? newCreatedAlarm =
+        CustomAlarm(); // create a new default alarm
 
     // overwrite the default values
     newCreatedAlarm.isActive = true; // if saved, then automatically make active
@@ -653,7 +633,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     newCreatedAlarm.challengeMode = _challengingModeActive;
     alarmList.add(newCreatedAlarm); //add the alarm to the list
     debugPrint("Alarm has been created!");
-    globals.listOfSavedAlarms =
+    listOfSavedAlarms =
         alarmList; //save the local list back to the global one
     return alarmList;
   }
@@ -694,8 +674,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
-
-  final _formKey = GlobalKey<FormState>(); // It's needed for the input of the alarm name
+  final _formKey =
+      GlobalKey<FormState>(); // It's needed for the input of the alarm name
 
   @override
   Widget build(BuildContext context) {
@@ -789,8 +769,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                                 style: TextStyle(
                                     color: _recurrentMode == false
                                         ? Colors.black
-                                        : Colors
-                                            .black26),
+                                        : Colors.black26),
                               ),
                             ],
                           ),
@@ -900,8 +879,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                     style: TextStyle(
                         color: (_challengingModeActive == true)
                             ? Colors.black
-                            : Colors
-                                .black38),
+                            : Colors.black38),
                   ),
                 ),
                 Expanded(
@@ -957,7 +935,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           // for multiple commands in onPressed this form should be used:
                           // () =>[command1, command2]
                           // but in if statement, it seems to be not necessary
-                          _saveAlarm(globals.listOfSavedAlarms);
+                          _saveAlarm(listOfSavedAlarms); // save current alarm
+                          saveData(); // backup alarmlist
                           Navigator.pop(context);
                         } else {
                           //don't save it
@@ -981,11 +960,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 // This is the third page for showing the alarm
 // *********************************
 class ShowAlarmPage extends StatefulWidget {
-  final globals.CustomAlarm? triggeredAlarm;
+  final CustomAlarm? triggeredAlarm;
   final int alarmNumber;
 
   const ShowAlarmPage(this.triggeredAlarm, this.alarmNumber);
-
 
   @override
   State<ShowAlarmPage> createState() => _MyShowAlarmPageState();
@@ -1001,7 +979,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
       .now()); // init it once, otherwise it will show NULL in the beginning
   String _timeStringShort = DateFormat("HH:mm").format(DateTime
       .now()); // init it once, otherwise it will show NULL in the beginning
-
 
   late Timer
       _refreshTimer; //timer to refresh the screen like for the current time
@@ -1019,16 +996,14 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 
   //todo das klappt nur bei non-recurring..muss ich noch ändern
   /// function to deactivate an alarm //todo
-  List<globals.CustomAlarm?> _deactivateAlarm(
-      globals.CustomAlarm? triggeredAlarm, alarmIndex)
-  {
-    return globals.deactivateAlarm(triggeredAlarm, alarmIndex);
+  List<CustomAlarm?> _deactivateAlarm(
+      CustomAlarm? triggeredAlarm, alarmIndex) {
+    return deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
   @override
   void initState() {
-    _refreshTimer =
-        Timer.periodic(everySecond, (Timer t) => _updateTime());
+    _refreshTimer = Timer.periodic(everySecond, (Timer t) => _updateTime());
     super.initState();
   }
 
@@ -1038,15 +1013,12 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    return WillPopScope( // I need this to deactivate the "Go back" button
-      onWillPop: () async => false, // Deactivate "Go back" button
-      child:
-
-        Scaffold(
+    return WillPopScope(
+        // I need this to deactivate the "Go back" button
+        onWillPop: () async => false, // Deactivate "Go back" button
+        child: Scaffold(
           backgroundColor: Color(0xFFE4DAFC),
           body: Container(
             margin: const EdgeInsets.all(20.0),
@@ -1145,12 +1117,13 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       onPressed: () {
                         if (widget.triggeredAlarm?.challengeMode == true) {
                           // challenge mode
-                          globals.playAlarmSound(0.1); // make alarm a bit more silent
+                          playAlarmSound(
+                              0.1); // make alarm a bit more silent
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ShowChallengePage(widget.triggeredAlarm,
-                                    widget.alarmNumber)),
+                                builder: (context) => ShowChallengePage(
+                                    widget.triggeredAlarm, widget.alarmNumber)),
                           );
                         } else {
                           // no challenge mode
@@ -1173,8 +1146,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
 
@@ -1182,18 +1154,16 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 // This is the fourth page for the challenge
 // *********************************
 class ShowChallengePage extends StatefulWidget {
-  final globals.CustomAlarm? triggeredAlarm;
+  final CustomAlarm? triggeredAlarm;
   final int alarmNumber;
 
   const ShowChallengePage(this.triggeredAlarm, this.alarmNumber);
-
 
   @override
   State<ShowChallengePage> createState() => _MyShowChallengePageState();
 }
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
-
   int currentScore = 0; //init the current score to 0;
   int targetScore = 5;
   String userInput = '';
@@ -1207,8 +1177,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  var myNumberInputController =
-  TextEditingController(text: '');
+  var myNumberInputController = TextEditingController(text: '');
 
   @override
   void dispose() {
@@ -1219,37 +1188,58 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   }
 
   /// function to deactivate an alarm
-  List<globals.CustomAlarm?> _deactivateAlarm(
-      globals.CustomAlarm? triggeredAlarm, alarmIndex)
-  {
-    return globals.deactivateAlarm(triggeredAlarm, alarmIndex);
+  List<CustomAlarm?> _deactivateAlarm(
+      CustomAlarm? triggeredAlarm, alarmIndex) {
+    return deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
   /// Handle the user input based on the current quiz
-  void _quizScoreHandler()
-  {
+  void _quizScoreHandler() {
     // debugPrint("****************************************************************");
     // debugPrint(currentQuizResult);
     // debugPrint(userInput);
 
+    (currentQuizResult == userInput)
+        ? answerCorrect = true
+        : answerCorrect = false;
 
-    (currentQuizResult == userInput)? answerCorrect = true: answerCorrect = false;
-    score = quiz.scoreHandler(currentScore, answerCorrect, targetScore);
+    //todo
+    //show a snackback for right/wrong answer //todo
+    /* if (answerCorrect){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const snackBarRightAnswer = SnackBar(
+          content: Text(
+              'Correct!',
+            style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.green,
+      ),
+      );
+
+
+    }
+    else { // (!answerCorrect)
+      ScaffoldMessenger.of(context).showSnackBar(
+      const snackBarWrongAnswer = SnackBar(
+      content: Text(
+      'Correct!',
+      style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red,
+      ),
+      )
+    }*/
+    score = scoreHandler(currentScore, answerCorrect, targetScore);
     currentScore = score[0];
     quizPassed = score[1];
-    if (quizPassed)
-    {
+    if (quizPassed) {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
       _generateNewQuizQuestion(); // generate new question for next time
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const MyHomePage(
-                title: 'Alarm Clock Web Version')),
+            builder: (context) =>
+                const MyHomePage(title: 'Alarm Clock Web Version')),
       );
-
-    }
-    else // quiz is not passed
+    } else // quiz is not passed
     {
       // load next quiz page
       setState(() {
@@ -1261,13 +1251,11 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     myNumberInputController.clear();
   }
 
-  void _generateNewQuizQuestion()
-  {
-    currentQuiz = quiz.quizGenerator();
+  void _generateNewQuizQuestion() {
+    currentQuiz = quizGenerator();
     currentQuizQuestion = currentQuiz[0];
     currentQuizResult = currentQuiz[1];
   }
-
 
   @override
   void initState() {
@@ -1275,93 +1263,89 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     super.initState();
   }
 
-
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-
-    return WillPopScope( // I need this to deactivate the "Go back" button
+    return WillPopScope(
+        // I need this to deactivate the "Go back" button
         onWillPop: () async => false, // Deactivate "Go back" button
-    child:
-
-    Scaffold(
-      backgroundColor: Color(0xFFE4DAFC),
-      body: Container(
-        margin: const EdgeInsets.all(20.0),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[SizedBox(height: 50)],
-            ),
-            Row(
-              // Time selector
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Scaffold(
+          backgroundColor: Color(0xFFE4DAFC),
+          body: Container(
+            margin: const EdgeInsets.all(20.0),
+            child: Column(
               children: <Widget>[
-                Text(
-                  "Current Score:\n$currentScore / $targetScore",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline6,
+                Row(
+                  children: <Widget>[SizedBox(height: 50)],
                 ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 50)],
-            ),
-            Row(
-              // Time selector
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  currentQuizQuestion,
-                  style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500 //, spacing...: 0.15
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[SizedBox(height: 100)],
-            ),
-            Row(
-              // Time selector
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  flex: 8,
-                  child:
-                    Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: myNumberInputController,
-                      autofocus: true, // show keyboard automatically on start
-                      focusNode: inputNode, // for showing keyboard on 2nd start etc.
-                      onEditingComplete: () {}, // this prevents keyboard from closing
-                      keyboardType: TextInputType.numberWithOptions(signed: true),
-                      decoration: InputDecoration(
-                        labelText: 'Enter the result',
-                        border: OutlineInputBorder(),
-                      ),
-                      style: TextStyle(fontSize: 22),
-                      onFieldSubmitted: (String value){
-                        setState(() {
-                          userInput = value;
-                          _quizScoreHandler();
-                        });
-                      }
-
+                Row(
+                  // Time selector
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Current Score:\n$currentScore / $targetScore",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline6,
                     ),
-                  ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 50)],
+                ),
+                Row(
+                  // Time selector
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      currentQuizQuestion,
+                      style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500 //, spacing...: 0.15
+                          ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[SizedBox(height: 100)],
+                ),
+                Row(
+                  // Time selector
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                            controller: myNumberInputController,
+                            autofocus: true,
+                            // show keyboard automatically on start
+                            focusNode: inputNode,
+                            // for showing keyboard on 2nd start etc.
+                            onEditingComplete: () {},
+                            // this prevents keyboard from closing
+                            keyboardType:
+                                TextInputType.numberWithOptions(signed: true),
+                            decoration: InputDecoration(
+                              labelText: 'Enter the result',
+                              border: OutlineInputBorder(),
+                            ),
+                            style: TextStyle(fontSize: 22),
+                            onFieldSubmitted: (String value) {
+                              setState(() {
+                                userInput = value;
+                                _quizScoreHandler();
+                              });
+                            }),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    )
-    );
+          ),
+        ));
   }
 }
-
