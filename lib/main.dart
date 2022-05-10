@@ -3,18 +3,15 @@ import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:weekday_selector/weekday_selector.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'dart:convert'; // for JSON etc.
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // notifications when the alarm is ringing
 import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
-import 'globals.dart'
-    as globals; //global variables and stuff from other .dart file
-import 'quiz.dart' as quiz;
-import 'package:flutter/services.dart';
+import 'alarm.dart' as globals; //functions and more for the alarm
+import 'quiz.dart' as quiz; // functions and more for the quiz
+import 'global.dart'; //global variables and general outsourced stuff
 
 Future<void> main() async {
   debugPrint("App is being started...");
@@ -59,9 +56,9 @@ Future<void> main() async {
   runApp(const MyApp());
   bool firstCall = await IsFirstRun.isFirstCall();
   if(firstCall== true) // only for the first time the app is started, init the app
-    {
-      globals.listOfSavedAlarms = globals.initApp(); //init the app; creating default alarms etc. and store into a globally available list
-    }
+  {
+    globals.listOfSavedAlarms = globals.initApp(); //init the app; creating default alarms etc. and store into a globally available list
+  }
   debugPrint("App has been fully loaded...");
 }
 
@@ -227,15 +224,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // the timers will be run here, otherwise thousands of timers will be generated
     // update shown times regularly
     _refreshTimer =
-        Timer.periodic(globals.everySecond, (Timer t) => _updateTime());
+        Timer.periodic(everySecond, (Timer t) => _updateTime());
     //This will cause that the updateTime() function will be exected every second;
 
     // check for alarm status regularly
-    _alarmCheckerTimer = Timer.periodic(globals.every2Seconds,
+    _alarmCheckerTimer = Timer.periodic(every2Seconds,
         (Timer t) => _alarmChecker(globals.listOfSavedAlarms));
 
     // save data regularly
-    _saveDataTimer = Timer.periodic(globals.everySecond, (Timer t) => _saveData());
+    _saveDataTimer = Timer.periodic(everySecond, (Timer t) => _saveData());
 
     super.initState();
     _loadData();
@@ -255,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _saveData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      prefs.setString('alarmList', jsonEncode(globals.listOfSavedAlarms)); //set JSON-encoded values to the key 'alarmList'
+      // prefs.setString('alarmList', jsonEncode(globals.listOfSavedAlarms)); //set JSON-encoded values to the key 'alarmList'
       //debugPrint("Saving alarm data...");
       //print(prefs);
     });
@@ -572,7 +569,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
 
-                globals.debug_mode ?
+                debugMode ?
                 Row( // row for reset function (only debug mode...)
                   children: <Widget>[
                     Expanded(
@@ -1031,7 +1028,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
   @override
   void initState() {
     _refreshTimer =
-        Timer.periodic(globals.everySecond, (Timer t) => _updateTime());
+        Timer.periodic(everySecond, (Timer t) => _updateTime());
     super.initState();
   }
 
@@ -1148,7 +1145,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       onPressed: () {
                         if (widget.triggeredAlarm?.challengeMode == true) {
                           // challenge mode
-                          globals.playAlarmSound(0.0); // make alarm a bit more silent //todo auf 0.1 nachdem fertig mit debuggen
+                          globals.playAlarmSound(0.1); // make alarm a bit more silent
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1231,10 +1228,9 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   /// Handle the user input based on the current quiz
   void _quizScoreHandler()
   {
-    debugPrint("****************************************************************");
-
-    debugPrint(currentQuizResult);
-    debugPrint(userInput);
+    // debugPrint("****************************************************************");
+    // debugPrint(currentQuizResult);
+    // debugPrint(userInput);
 
 
     (currentQuizResult == userInput)? answerCorrect = true: answerCorrect = false;
@@ -1317,7 +1313,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "$currentQuizQuestion",
+                  currentQuizQuestion,
                   style: TextStyle(
                       color: Colors.deepPurple,
                       fontSize: 30,
@@ -1368,10 +1364,4 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     );
   }
 }
-
-
-
-//todo popup correct/wrong siehe figma
-
-
 

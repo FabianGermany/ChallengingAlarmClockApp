@@ -5,11 +5,6 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 
-// global vars
-const everySecond = Duration(seconds: 1);
-const every2Seconds = Duration(seconds: 2);
-bool debug_mode = true; // set this to true to show some extra elements in the UI such as the reset button
-
 // data structure / class for one alarm
 class CustomAlarm {
   bool isActive = false;
@@ -37,16 +32,16 @@ class CustomAlarm {
 // I need the JSON format to save/load the data (shared preferences)
 
   // to JSON
-  Map<String, dynamic> toJson() => {
-    "isActive": isActive.toString(), //todo .toString() ist das korrekt?
-    "isRinging": isRinging.toString(),
-    "nameOfAlarm": nameOfAlarm.toString(),
-    "alarmTime": alarmTime.toString(),
-    "alarmDate": alarmDate.toString(),
-    "isRecurrent": isRecurrent.toString(),
-    "weekdayRecurrence": weekdayRecurrence.toString(),
-    "challengeMode": challengeMode.toString(),
-  };
+  // Map<String, dynamic> toJson() => {
+  //   "isActive": isActive.toString(), //todo .toString() ist das korrekt?
+  //   "isRinging": isRinging.toString(),
+  //   "nameOfAlarm": nameOfAlarm.toString(),
+  //   "alarmTime": alarmTime.toString(),
+  //   "alarmDate": alarmDate.toString(),
+  //   "isRecurrent": isRecurrent.toString(),
+  //   "weekdayRecurrence": weekdayRecurrence.toString(),
+  //   "challengeMode": challengeMode.toString(),
+  // };
 
   // from JSON todo das funktioniert nicht...
   // CustomAlarm.fromJson(Map<String, dynamic> json)

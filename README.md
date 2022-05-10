@@ -35,4 +35,3 @@ while running the debug mode.
   - Quiz can be done via some API like [this](https://the-trivia-api.com/)
   - Mathematical questions are probably easier without API
 - Challenge should be adapted to the user's cognitive characteristics (e.g. easier challenge for children etc.)
-	
