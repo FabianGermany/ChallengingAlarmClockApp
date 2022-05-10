@@ -36,3 +36,7 @@ while running the debug mode.
   - Mathematical questions are probably easier without API
 - Challenge should be adapted to the user's cognitive characteristics (e.g. easier challenge for children etc.)
 - Better UX, e.g. by creating a toast/snackbar "Alarm has been created" and "Alarm has been set / Alarm will ring in xx hours and xx minutes" etc.
+
+
+## General Remarks
+- Don't use ```print``` in production code, it's better to use ``` debugPrint```  or ``` log``` is even more powerful.

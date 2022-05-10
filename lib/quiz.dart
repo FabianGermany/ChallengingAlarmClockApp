@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-
+//import 'package:flutter/material.dart';
+import 'dart:developer' as dev;
 
 // types of arithmetic operations
 enum OperationType {plus, minus, mul, div}
@@ -49,7 +49,7 @@ String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, op
         case OperationType.minus: result = term1 - term2 ; break;
         case OperationType.mul: result = term1 * term2 ; break;
         case OperationType.div: result = term1 ~/ term2 ; break;
-        default: result = 0; debugPrint('Error in termGenerator'); break;
+        default: result = 0; dev.log('Error in termGenerator', name: 'Error in Quiz'); break;
       }
     }
 
@@ -94,7 +94,7 @@ String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, op
     }
     else
     {
-      result = 0; debugPrint('Error in termGenerator');
+      result = 0; dev.log('Error in termGenerator', name: 'Error in Quiz');
     }
 
   }
@@ -255,7 +255,7 @@ String resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, op
 
     else
     {
-      result = 0; debugPrint('Error in termGenerator');
+      result = 0; dev.log('Error in termGenerator', name: 'Error in Quiz');
     }
   }
   return result.toString();
@@ -287,7 +287,7 @@ int amountOfTermsGenerator()
 
 
 /// Function to generate an arithmetic operation type
-dynamic operationTypeGenerator()
+OperationType operationTypeGenerator()
 {
   final generatorOperationType = Random();
   int operationTypeNumber;
@@ -299,14 +299,15 @@ dynamic operationTypeGenerator()
     case 1: operationType = OperationType.minus; break;
     case 2: operationType = OperationType.mul; break;
     case 3: operationType = OperationType.div; break;
-    default: debugPrint('Error in operationTypeGenerator'); break;
+    default: dev.log('Error in operationTypeGenerator', name: 'Error in Quiz'); break;
   }
   return operationType;
-}
+  //shorter version:   return OperationType.values[Random().nextInt(OperationType.values.length)];
+  }
 
 
 /// Function to generate an extra arithmetic operation type (no division)
-dynamic operationTypeGeneratorExtra()
+OperationType operationTypeGeneratorExtra()
 {
   final generatorOperationType = Random();
   int operationTypeNumber;
@@ -317,7 +318,7 @@ dynamic operationTypeGeneratorExtra()
     case 0: operationType = OperationType.plus; break;
     case 1: operationType = OperationType.minus; break;
     case 2: operationType = OperationType.mul; break;
-    default: debugPrint('Error in operationTypeGeneratorExtra'); break;
+    default: dev.log('Error in operationTypeGeneratorExtra', name: 'Error in Quiz'); break;
   }
   return operationType;
 }
@@ -400,7 +401,7 @@ List quizGenerator()
   int amountOfTerms = amountOfTermsGenerator(); // generate the amount of terms
 
   // 2 Generate the operation types
-  dynamic operationType1, operationType2, operationType3;
+  OperationType operationType1, operationType2, operationType3;
   operationType1 = operationTypeGenerator(); // generate the operation type
   operationType2 = operationTypeGeneratorExtra(); // generate the operation type
   operationType3 = operationTypeGeneratorExtra(); // generate the operation type
@@ -430,7 +431,7 @@ List quizGenerator()
 
   // 5 Calculate the result
   result = resultBasedOneOperationName(amountOfTerms, term1, term2, term3, term4, operationType1, operationType2, operationType3);
-  //debugPrint('${[term1, term2, term3, term4, operationType1, operationType2, operationType3]}');
+  dev.log('${[term1, term2, term3, term4, operationType1, operationType2, operationType3]}', name: 'Quiz');
   return [completeTerm, result];
 }
 

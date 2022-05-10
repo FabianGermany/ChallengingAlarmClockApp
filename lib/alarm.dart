@@ -4,7 +4,7 @@ import 'dart:convert'; // for JSON etc.
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
-import 'dart:developer';
+import 'dart:developer' as dev;
 
 
 // data structure / class for one alarm
@@ -68,7 +68,7 @@ class CustomAlarm {
 List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
 
 /// Init app function; this should be called only for the first start of the app or when the app is reset via settings
-List<CustomAlarm?> initApp()
+List<CustomAlarm?> initAlarms()
 {
   // Data structure / list for a collection of saved alarms
   List<CustomAlarm?> savedAlarmList = [];
@@ -88,7 +88,7 @@ List<CustomAlarm?> initApp()
   secondDefaultAlarm.isActive = true;
   secondDefaultAlarm.isRecurrent = false;
   savedAlarmList.add(secondDefaultAlarm); // add this alarm to the list
-  debugPrint("App has been initialized...");
+  dev.log("Alarms have been initialized...", name: 'Alarm');
   return savedAlarmList;
 }
 
@@ -157,9 +157,10 @@ List<CustomAlarm?> deactivateAlarm(
   alarmList[alarmIndex]!.isActive = false;
   stopAlarmSound();
   Wakelock.disable(); // stop that the screen is consistently active
-  debugPrint("Alarm has been turned off!");
+  dev.log("Alarm has been turned off!", name: 'Alarm');
   listOfSavedAlarms =
       alarmList; //save the local list back to the global one
+  saveData();
   return alarmList;
 }
 
@@ -172,12 +173,12 @@ List<CustomAlarm?> deactivateAlarm(
 /// (2) after an alarm is deleted
 /// (3) after an alarm is edited (not available at this time)
 /// (4) after characterists of an alarm change:
-///   (4.1) isRinging //todo
-///   (4.2) isActive //todo
+///   (4.1) isRinging (when is alarm is going off and when it's deactived)
+///   (4.2) isActive (when the toggle is used)
 /// (5) regularly via a timer
 Future<void> saveData() async { //todo either when create und alarm triggered....
-  debugPrint("Saving alarm data...");
+  dev.log("Saving alarm data...", name: 'Alarm');
   final prefs = await SharedPreferences.getInstance();
   prefs.setStringList('alarmList', listOfSavedAlarms.map((alarm) => jsonEncode(alarm)).toList()); //set JSON-encoded values to the key 'alarmList'
-  log('saved ${listOfSavedAlarms.length} alarms', name: 'alarms');
+  dev.log('saved ${listOfSavedAlarms.length} alarms', name: 'Alarm');
 }

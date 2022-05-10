@@ -9,13 +9,13 @@ import 'dart:convert'; // for JSON etc.
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // notifications when the alarm is ringing
 import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
-import 'alarm.dart'; //functions and more for the alarm //todo rename/remove
+import 'alarm.dart'; //functions and more for the alarm
 import 'quiz.dart'; //as quiz // functions and more for the quiz
 import 'global.dart'; //global variables and general outsourced stuff
-import 'dart:developer';
+import 'dart:developer' as dev;
 
 Future<void> main() async {
-  log("App is being started...", name: 'main.dart'); //todo statt debug
+  dev.log("App is being started...", name: 'General'); //todo statt debug
   //init the notifications //todo outsource
 
   AwesomeNotifications().initialize(
@@ -55,9 +55,9 @@ Future<void> main() async {
   if (firstCall ==
       true) // only for the first time the app is started, init the app
   {
-    listOfSavedAlarms = initApp(); //init the app; creating default alarms etc. and store into a globally available list
+    listOfSavedAlarms = initAlarms(); //init the app; creating default alarms etc. and store into a globally available list
   }
-  debugPrint("App has been fully loaded...");
+  dev.log("App has been fully loaded...", name: 'General');
 }
 
 class MyApp extends StatelessWidget {
@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: 'Alarm Clock Web Version'),
+      home: const MyHomePage(title: appTitleHome),
     );
   }
 }
@@ -127,7 +127,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
-    // debugPrint("Let me update the time...");
     setState(() {
       // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
       _now = DateTime.now();
@@ -140,7 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
   /// check whether one of the alarms is triggered
   _alarmChecker(List<CustomAlarm?> currentAlarmList) {
     setState(() {
-      // debugPrint("Let me check the alarm state...");
       // check whether there is any alarm that is the past and is not set to isRinging=False yet
       for (int i = 0; i < currentAlarmList.length; i++) {
         // first check whether the alarm is active
@@ -161,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   (toDouble(TimeOfDay.now()))) {
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
-                  debugPrint("Single alarm is going off!");
+                  dev.log("Single alarm is going off!", name: 'Alarm');
                   playAlarmSound(0.5); // play alarm
                   Wakelock.enable(); // keep the screen active
 
@@ -182,6 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   currentAlarmList[i]!.isRinging =
                       true; // set to true for next time todo outsource to another function onChange isRinging. //todo alarm ringing page
 
+                  saveData();
+
                   Navigator.push(
                     // alarm will ring
                     context,
@@ -199,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // case 2: recurring alarm
           else if (currentAlarmList[i]!.isRecurrent == true) {
             //todo that's a bit more complicated
-            //debugPrint("Recurrent alarm is going off!");
+            //dev.log("Recurrent alarm is going off!", name: 'Alarm');
           }
         }
       }
@@ -211,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
       List<CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
     setState(() {
       currentAlarmList.removeAt(itemNumberToBeRemoved);
-      debugPrint("Alarm has been deleted!");
+      dev.log("Alarm has been deleted!", name: 'Alarm');
     });
   }
 
@@ -238,14 +238,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Loading listOfSavedAlarms (on start)
   Future<void> loadData() async {
-    debugPrint("Loading alarm data...");
+    dev.log("Loading alarm data...", name: 'Alarm');
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       if (prefs.containsKey('alarmList')) {
         listOfSavedAlarms = (prefs.getStringList('alarmList') ?? []).map((alarm) => CustomAlarm.fromJson(jsonDecode(alarm))).toList();
-        log('loaded ${listOfSavedAlarms.length} saved alarms', name: 'alarm');
+        dev.log('Loaded ${listOfSavedAlarms.length} saved alarms', name: 'Alarm');
       } else {
-        log('no saved alarms found', name: 'alarm');
+        dev.log('No saved alarms found', name: 'Alarm');
       }
     });
   }
@@ -269,6 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          centerTitle: true,
         ),
         body: Container(
           margin: const EdgeInsets.all(20.0),
@@ -519,6 +520,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             setState(() {
                                               listOfSavedAlarms[i]!
                                                   .isActive = value;
+                                              saveData();
                                             });
                                           },
                                         ),
@@ -569,7 +571,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onPressed: () {
                                       setState(() {
                                         listOfSavedAlarms =
-                                            initApp();
+                                            initAlarms();
                                       });
                                     }),
                               ),
@@ -632,7 +634,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
     newCreatedAlarm.challengeMode = _challengingModeActive;
     alarmList.add(newCreatedAlarm); //add the alarm to the list
-    debugPrint("Alarm has been created!");
+    dev.log("Alarm has been created!", name: 'Alarm');
     listOfSavedAlarms =
         alarmList; //save the local list back to the global one
     return alarmList;
@@ -681,7 +683,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add an alarm'),
+        title: const Text(appTitleAddAlarm),
       ),
       body: Container(
         margin: const EdgeInsets.all(20.0),
@@ -985,7 +987,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
-    // debugPrint("Let me update the time...");
     setState(() {
       // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
       _now = DateTime.now();
@@ -1133,7 +1134,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const MyHomePage(
-                                    title: 'Alarm Clock Web Version')),
+                                    title: appTitleHome)),
                           );
                         }
                       },
@@ -1195,9 +1196,8 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   /// Handle the user input based on the current quiz
   void _quizScoreHandler() {
-    // debugPrint("****************************************************************");
-    // debugPrint(currentQuizResult);
-    // debugPrint(userInput);
+    dev.log(currentQuizResult, name: 'Quiz');
+    dev.log(userInput, name: 'Quiz');
 
     (currentQuizResult == userInput)
         ? answerCorrect = true
@@ -1237,7 +1237,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                const MyHomePage(title: 'Alarm Clock Web Version')),
+                const MyHomePage(title: appTitleHome)),
       );
     } else // quiz is not passed
     {
