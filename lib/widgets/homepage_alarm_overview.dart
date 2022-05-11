@@ -15,12 +15,12 @@ import 'package:awesome_notifications/awesome_notifications.dart'; // notificati
 import '../alarm.dart'; // functions and more for the alarm
 import '../quiz.dart'; // as quiz // functions and more for the quiz
 import '../global.dart'; // global variables and general outsourced stuff
-import 'widget-alarm-trigger.dart'; // widget for the alarm exposure
-import 'widget-add-alarm.dart'; // widget for the alarm adding
+import 'show_alarm_page.dart'; // widget for the alarm exposure
+import 'add_alarm_page.dart'; // widget for the alarm adding
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class HomePageAlarmOverview extends StatefulWidget {
+  const HomePageAlarmOverview({Key? key, required this.title}) : super(key: key);
 
   // This widget is the homepage of the app. It has different states.
 
@@ -32,10 +32,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePageAlarmOverview> createState() => _HomePageAlarmOverviewState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
   // Declare vars for the time
   DateTime _now = DateTime
       .now(); // init it once, otherwise it will show NULL in the beginning
@@ -88,13 +88,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   playAlarmSound(0.5); // play alarm
                   Wakelock.enable(); // keep the screen active
 
-                  // create a notification
+                  // Create a notification
                   AwesomeNotifications().createNotification(
                     content: NotificationContent(
                       id: 10,
                       channelKey: 'basic_channel',
-                      title: 'Simple Notification',
-                      body: 'Simple body',
+                      title: 'The alarm ${currentAlarmList[i]!.nameOfAlarm} is ringing!',
+                      body: 'Click here to turn it off.',
                       actionType: ActionType.Default
                     ),
                   );

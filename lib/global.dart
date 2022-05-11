@@ -1,5 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart'; //todo die klasse unten outsourcen...
 import 'dart:developer' as dev;
+import 'main.dart';
 
 
 // global vars

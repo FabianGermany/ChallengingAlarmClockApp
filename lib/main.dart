@@ -4,12 +4,11 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:developer' as dev;
 import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // notifications when the alarm is ringing
-import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
+import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing
 import 'alarm.dart'; // functions and more for the alarm
 import 'global.dart'; // global variables and general outsourced stuff
-import 'widgets/components.dart'; // outsourced widget components
-import 'widgets/widget-home-alarm-overview.dart'; // widget for the homepage
+import 'components.dart'; // outsourced widget components
+import 'widgets/homepage_alarm_overview.dart'; // widget for the homepage
 
 
 Future <void> main() async {
@@ -18,7 +17,8 @@ Future <void> main() async {
   //init the notifications //todo outsource
   AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
-      'resource://drawable/res_app_icon',
+      //'resource://drawable/res_app_icon',
+      null,
       [
         NotificationChannel(
             channelGroupKey: 'basic_channel_group',
@@ -36,7 +36,6 @@ Future <void> main() async {
       ],
       debug: true);
 
-  // todo
   // Request the user authorization to send local and push notifications; Make more polite...
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
@@ -81,23 +80,6 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  //todo
-  // // start to listen the notification actions (user taps)
-  // AwesomeNotifications().actionStream.listen(
-  // (ReceivedNotification receivedNotification){
-  //
-  // Navigator.of(context).pushNamed(
-  // '/NotificationPage',
-  // arguments: {
-  // // your page params. I recommend you to pass the
-  // // entire *receivedNotification* object
-  // id: receivedNotification.id
-  // }
-  // );
-  // }
-  // );
-
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -107,29 +89,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: appTitleHome),
-
-
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (context) =>
-                MyHomePage(title: 'Alarm Clock App')
-            );
-
-          case '/notification-page':
-            return MaterialPageRoute(builder: (context) {
-              final ReceivedAction receivedAction = settings
-                  .arguments as ReceivedAction;
-              return MyNotificationPage(receivedAction: receivedAction);
-            });
-
-          default:
-            assert(false, 'Page ${settings.name} not found');
-            return null;
-        }
-      },
+      home: const HomePageAlarmOverview(title: appTitleHome),
     );
   }
 }

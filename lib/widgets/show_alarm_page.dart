@@ -8,8 +8,8 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import '../alarm.dart'; // functions and more for the alarm
 import '../global.dart'; // global variables and general outsourced stuff
-import '../widgets/widget-challenge.dart'; // widget for the challenge
-import 'widget-home-alarm-overview.dart'; // widget for the homepage
+import '../widgets/show_challenge_page.dart'; // widget for the challenge
+import 'homepage_alarm_overview.dart'; // widget for the homepage
 
 
 class ShowAlarmPage extends StatefulWidget {
@@ -183,7 +183,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                const MyHomePage(title: appTitleHome)),
+                                const HomePageAlarmOverview(title: appTitleHome)),
                           );
                         }
                       },

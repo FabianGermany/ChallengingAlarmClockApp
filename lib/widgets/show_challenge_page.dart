@@ -8,8 +8,8 @@ import 'dart:developer' as dev;
 import '../alarm.dart'; // functions and more for the alarm
 import '../quiz.dart'; // as quiz // functions and more for the quiz
 import '../global.dart'; // global variables and general outsourced stuff
-import 'components.dart'; // outsourced widget components
-import 'widget-home-alarm-overview.dart';
+import '../components.dart'; // outsourced widget components
+import 'homepage_alarm_overview.dart';
 
 
 class ShowChallengePage extends StatefulWidget {
@@ -72,7 +72,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const MyHomePage(title: appTitleHome)),
+            builder: (context) => const HomePageAlarmOverview(title: appTitleHome)),
       );
     } else // quiz is not passed
         {
