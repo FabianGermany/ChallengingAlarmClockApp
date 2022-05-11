@@ -2,7 +2,6 @@
 // This is the homepage
 // *********************************
 
-
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:intl/intl.dart';
 import 'dart:async';
@@ -18,8 +17,6 @@ import '../quiz.dart'; // as quiz // functions and more for the quiz
 import '../global.dart'; // global variables and general outsourced stuff
 import 'widget-alarm-trigger.dart'; // widget for the alarm exposure
 import 'widget-add-alarm.dart'; // widget for the alarm adding
-
-
 
 
 class MyHomePage extends StatefulWidget {

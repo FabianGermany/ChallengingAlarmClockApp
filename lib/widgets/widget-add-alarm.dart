@@ -71,7 +71,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   }
 
   void _selectDate() async {
-    //todo das und andere sachen vll.t auslagern weil doppelt gemoppelt?
     final DateTime? newDate = await showDatePicker(
       context: context,
       initialDate: _chosenDate,

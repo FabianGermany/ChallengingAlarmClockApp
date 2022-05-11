@@ -12,11 +12,10 @@ import 'widgets/components.dart'; // outsourced widget components
 import 'widgets/widget-home-alarm-overview.dart'; // widget for the homepage
 
 
-
 Future <void> main() async {
   dev.log("App is being started...", name: 'General');
-  //init the notifications //todo outsource
 
+  //init the notifications //todo outsource
   AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
       'resource://drawable/res_app_icon',
@@ -30,12 +29,11 @@ Future <void> main() async {
             ledColor: Colors.white)
       ],
       // Channel groups are only visual and are not required
-      //todo aktivieren
-      // channelGroups: [
-      //   NotificationChannelGroup(
-      //       channelGroupkey: 'basic_channel_group',
-      //       channelGroupName: 'Basic group')
-      // ],
+      channelGroups: [
+        NotificationChannelGroup(
+            channelGroupKey: 'basic_channel_group',
+            channelGroupName: 'Basic group')
+      ],
       debug: true);
 
   // todo funktioniert nicht; das in initstate(?)

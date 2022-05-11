@@ -60,10 +60,8 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         ? _answerCorrect = true
         : _answerCorrect = false;
 
-    //todo
     //show a snackback for right/wrong answer
     showSnackBarCorrect(context, _answerCorrect);
-
 
     _score = scoreHandler(_currentScore, _answerCorrect, _targetScore);
     _currentScore = _score[0];
