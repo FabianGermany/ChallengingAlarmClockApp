@@ -12,13 +12,13 @@ class CustomAlarm {
   bool isActive;
   bool isRinging;
   String nameOfAlarm;
-  TimeOfDay alarmTime; // default value //todo move comment
-  DateTime alarmDate; // default today plus 1 day later
-  bool isRecurrent; //default value is single time alarm
-  List<bool> weekdayRecurrence; //from Monday to Sunday // = [false, false, false, false, false, false, false];
+  TimeOfDay alarmTime;
+  DateTime alarmDate;
+  bool isRecurrent;
+  List<bool> weekdayRecurrence;
   bool challengeMode;
 
-
+  // constructor with initial/default values
   CustomAlarm
   ({
     this.isActive = false,
@@ -31,9 +31,14 @@ class CustomAlarm {
     this.challengeMode = false
   }
     ):
-      this.alarmDate = alarmDate ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
-      this.weekdayRecurrence = weekdayRecurrence ?? List.filled(7, false)
+      this.alarmDate = alarmDate ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1), // default today plus 1 day later
+      this.weekdayRecurrence = weekdayRecurrence ?? List.filled(7, false) //from Monday to Sunday // = [false, false, false, false, false, false, false];
   ;
+
+  // Information
+  // isRecurrent and alarmDate are exclusive, so only one value is used
+  // and the user could be null; however, I won't use null, since whene editing
+  // the alarm it can be toggled; in this way the old information can be stored
 
 // I need the JSON format to save/load the data (shared preferences doesn't support classes)
 
@@ -50,7 +55,7 @@ class CustomAlarm {
     "challengeMode": challengeMode,
   };
 
-  // (2) from JSON todo das funktioniert nicht...
+  // (2) from JSON
   factory CustomAlarm.fromJson(Map<String, dynamic> json){
     return CustomAlarm(
         isActive: json['isActive'],
@@ -74,20 +79,31 @@ List<CustomAlarm?> initAlarms()
   List<CustomAlarm?> savedAlarmList = [];
 
   // create one default alarm with some settings
-  CustomAlarm? firstDefaultAlarm = CustomAlarm();
-  firstDefaultAlarm.nameOfAlarm = "Weekly meeting";
-  firstDefaultAlarm.alarmTime = const TimeOfDay(hour: 16, minute: 00);
-  firstDefaultAlarm.isRecurrent = true;
-  firstDefaultAlarm.weekdayRecurrence = [false, false, true, true, false, false, false];
-  savedAlarmList.add(firstDefaultAlarm); // add this alarm to the list
+  CustomAlarm? firstDefaultAlarm = CustomAlarm(
+    isActive: false,
+    isRinging: false,
+    nameOfAlarm: "Weekly meeting",
+    alarmTime: const TimeOfDay(hour: 16, minute: 00),
+    alarmDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
+    isRecurrent: true,
+    weekdayRecurrence: [false, false, true, true, false, false, false],
+    challengeMode: false,
+  );
 
   // create another default alarm with some settings
-  CustomAlarm? secondDefaultAlarm = CustomAlarm();
-  secondDefaultAlarm.nameOfAlarm = "Dentist";
-  secondDefaultAlarm.alarmTime = const TimeOfDay(hour: 14, minute: 45);
-  secondDefaultAlarm.isActive = true;
-  secondDefaultAlarm.isRecurrent = false;
-  savedAlarmList.add(secondDefaultAlarm); // add this alarm to the list
+  CustomAlarm? secondDefaultAlarm = CustomAlarm(
+    isActive: true,
+    isRinging: false,
+    nameOfAlarm: "Dentist",
+    alarmTime: const TimeOfDay(hour: 14, minute: 45),
+    alarmDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
+    isRecurrent: false,
+    weekdayRecurrence: [false, false, true, true, false, false, false],
+    challengeMode: false,
+  );
+
+  savedAlarmList.add(firstDefaultAlarm); // add the first alarm to the list
+  savedAlarmList.add(secondDefaultAlarm); // add the second alarm to the list
   dev.log("Alarms have been initialized...", name: 'Alarm');
   return savedAlarmList;
 }
@@ -150,7 +166,7 @@ void stopAlarmSound()
 }
 
 
-
+/// Function to deactivate an alarm
 List<CustomAlarm?> deactivateAlarm(
     CustomAlarm? triggeredAlarm, alarmIndex) {
   List<CustomAlarm?> alarmList = listOfSavedAlarms;
@@ -165,8 +181,6 @@ List<CustomAlarm?> deactivateAlarm(
 }
 
 
-
-
 /// Saving listOfSavedAlarms
 /// Do it:
 /// (1) after an alarm is created
@@ -176,9 +190,9 @@ List<CustomAlarm?> deactivateAlarm(
 ///   (4.1) isRinging (when is alarm is going off and when it's deactived)
 ///   (4.2) isActive (when the toggle is used)
 /// (5) regularly via a timer
-Future<void> saveData() async { //todo either when create und alarm triggered....
+Future<void> saveData() async {
   dev.log("Saving alarm data...", name: 'Alarm');
   final prefs = await SharedPreferences.getInstance();
   prefs.setStringList('alarmList', listOfSavedAlarms.map((alarm) => jsonEncode(alarm)).toList()); //set JSON-encoded values to the key 'alarmList'
-  dev.log('saved ${listOfSavedAlarms.length} alarms', name: 'Alarm');
+  dev.log('Saved ${listOfSavedAlarms.length} alarms', name: 'Alarm');
 }

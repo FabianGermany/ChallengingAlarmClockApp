@@ -55,7 +55,8 @@ Future<void> main() async {
   if (firstCall ==
       true) // only for the first time the app is started, init the app
   {
-    listOfSavedAlarms = initAlarms(); //init the app; creating default alarms etc. and store into a globally available list
+    listOfSavedAlarms =
+        initAlarms(); //init the app; creating default alarms etc. and store into a globally available list
   }
   dev.log("App has been fully loaded...", name: 'General');
 }
@@ -234,23 +235,22 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-
-
   /// Loading listOfSavedAlarms (on start)
   Future<void> loadData() async {
     dev.log("Loading alarm data...", name: 'Alarm');
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       if (prefs.containsKey('alarmList')) {
-        listOfSavedAlarms = (prefs.getStringList('alarmList') ?? []).map((alarm) => CustomAlarm.fromJson(jsonDecode(alarm))).toList();
-        dev.log('Loaded ${listOfSavedAlarms.length} saved alarms', name: 'Alarm');
+        listOfSavedAlarms = (prefs.getStringList('alarmList') ?? [])
+            .map((alarm) => CustomAlarm.fromJson(jsonDecode(alarm)))
+            .toList();
+        dev.log('Loaded ${listOfSavedAlarms.length} saved alarms',
+            name: 'Alarm');
       } else {
         dev.log('No saved alarms found', name: 'Alarm');
       }
     });
   }
-
-
 
   @override
   void dispose() {
@@ -373,8 +373,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: Text(
                                             "${listOfSavedAlarms[i]?.nameOfAlarm}",
                                             style: TextStyle(
-                                                color: (listOfSavedAlarms[
-                                                                i]
+                                                color: (listOfSavedAlarms[i]
                                                             ?.isActive ==
                                                         true)
                                                     ? Colors.black
@@ -391,11 +390,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           icon:
                                               const Icon(Icons.delete_outlined),
                                           tooltip: 'Delete the alarm',
-                                          color: (listOfSavedAlarms[i]
-                                                      ?.isActive ==
-                                                  true)
-                                              ? Colors.black38
-                                              : Colors.black26,
+                                          color:
+                                              (listOfSavedAlarms[i]?.isActive ==
+                                                      true)
+                                                  ? Colors.black38
+                                                  : Colors.black26,
                                           iconSize: 20.0,
                                           onPressed: () => showDialog<String>(
                                             context: context,
@@ -416,8 +415,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   onPressed: () => [
                                                     //close dialog and delete alarm at the same time
                                                     _deleteAlarm(
-                                                        listOfSavedAlarms,
-                                                        i),
+                                                        listOfSavedAlarms, i),
                                                     Navigator.pop(
                                                         context, 'DELETE'),
                                                   ],
@@ -468,8 +466,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         // add some space
 
                                         //Display the date / the recurring weekdays
-                                        (listOfSavedAlarms[i]
-                                                    ?.isRecurrent ==
+                                        (listOfSavedAlarms[i]?.isRecurrent ==
                                                 true)
                                             ? // check for the mode via a?b:c
 
@@ -479,8 +476,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     listOfSavedAlarms[i]!
                                                         .weekdayRecurrence),
                                                 style: TextStyle(
-                                                    color: (listOfSavedAlarms[
-                                                                    i]
+                                                    color: (listOfSavedAlarms[i]
                                                                 ?.isActive ==
                                                             true)
                                                         ? Colors.black
@@ -494,8 +490,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     listOfSavedAlarms[i]!
                                                         .alarmDate),
                                                 style: TextStyle(
-                                                    color: (listOfSavedAlarms[
-                                                                    i]
+                                                    color: (listOfSavedAlarms[i]
                                                                 ?.isActive ==
                                                             true)
                                                         ? Colors.black
@@ -518,8 +513,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                           activeColor: Color(0xFF6200EE),
                                           onChanged: (bool value) {
                                             setState(() {
-                                              listOfSavedAlarms[i]!
-                                                  .isActive = value;
+                                              listOfSavedAlarms[i]!.isActive =
+                                                  value;
                                               saveData();
                                             });
                                           },
@@ -570,8 +565,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     iconSize: 20.0,
                                     onPressed: () {
                                       setState(() {
-                                        listOfSavedAlarms =
-                                            initAlarms();
+                                        listOfSavedAlarms = initAlarms();
                                       });
                                     }),
                               ),
@@ -618,25 +612,24 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     super.dispose();
   }
 
-  /// function to save the alarm
-  List<CustomAlarm?> _saveAlarm(
-      List<CustomAlarm?> currentAlarmList) {
+  /// function to save the created/edited alarm
+  List<CustomAlarm?> _saveAlarm(List<CustomAlarm?> currentAlarmList) {
     List<CustomAlarm?> alarmList = currentAlarmList;
-    CustomAlarm? newCreatedAlarm =
-        CustomAlarm(); // create a new default alarm
+    CustomAlarm? newCreatedAlarm = CustomAlarm(
+      isActive: true,
+      // if saved, then automatically make active
+      isRinging: false,
+      nameOfAlarm: myAlarmNameController.text,
+      alarmTime: _chosenTime,
+      alarmDate: _chosenDate,
+      isRecurrent: _recurrentMode,
+      weekdayRecurrence: _chosenWeekdays,
+      challengeMode: _challengingModeActive,
+    ); // create a new default alarm
 
-    // overwrite the default values
-    newCreatedAlarm.isActive = true; // if saved, then automatically make active
-    newCreatedAlarm.nameOfAlarm = myAlarmNameController.text;
-    newCreatedAlarm.alarmTime = _chosenTime;
-    newCreatedAlarm.alarmDate = _chosenDate;
-    newCreatedAlarm.isRecurrent = _recurrentMode;
-    newCreatedAlarm.weekdayRecurrence = _chosenWeekdays;
-    newCreatedAlarm.challengeMode = _challengingModeActive;
     alarmList.add(newCreatedAlarm); //add the alarm to the list
     dev.log("Alarm has been created!", name: 'Alarm');
-    listOfSavedAlarms =
-        alarmList; //save the local list back to the global one
+    listOfSavedAlarms = alarmList; //save the local list back to the global one
     return alarmList;
   }
 
@@ -997,8 +990,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 
   //todo das klappt nur bei non-recurring..muss ich noch ändern
   /// function to deactivate an alarm //todo
-  List<CustomAlarm?> _deactivateAlarm(
-      CustomAlarm? triggeredAlarm, alarmIndex) {
+  List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
     return deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
@@ -1118,8 +1110,7 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                       onPressed: () {
                         if (widget.triggeredAlarm?.challengeMode == true) {
                           // challenge mode
-                          playAlarmSound(
-                              0.1); // make alarm a bit more silent
+                          playAlarmSound(0.1); // make alarm a bit more silent
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1133,8 +1124,8 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MyHomePage(
-                                    title: appTitleHome)),
+                                builder: (context) =>
+                                    const MyHomePage(title: appTitleHome)),
                           );
                         }
                       },
@@ -1189,8 +1180,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   }
 
   /// function to deactivate an alarm
-  List<CustomAlarm?> _deactivateAlarm(
-      CustomAlarm? triggeredAlarm, alarmIndex) {
+  List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
     return deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
@@ -1236,8 +1226,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                const MyHomePage(title: appTitleHome)),
+            builder: (context) => const MyHomePage(title: appTitleHome)),
       );
     } else // quiz is not passed
     {
