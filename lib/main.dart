@@ -231,6 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _saveDataTimer = Timer.periodic(every2Minutes, (Timer t) => saveData());
 
     loadData(); // load backup of alarm list
+    stopAlarmSound(); // turn off sound from last start
 
     super.initState();
   }
@@ -1195,28 +1196,28 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
     //todo
     //show a snackback for right/wrong answer //todo
-    /* if (_answerCorrect){
+     if (_answerCorrect){
       ScaffoldMessenger.of(context).showSnackBar(
-        const snackBarRightAnswer = SnackBar(
+        const SnackBar(
+          duration: const Duration(seconds: 1),
           content: Text(
-              'Correct!',
+              'Correct answer!',
             style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.green,
-      ),
+            backgroundColor: Colors.green,
+        ),
       );
-
-
     }
     else { // (!_answerCorrect)
       ScaffoldMessenger.of(context).showSnackBar(
-      const snackBarWrongAnswer = SnackBar(
-      content: Text(
-      'Correct!',
-      style: TextStyle(color: Colors.white)),
-      backgroundColor: Colors.red,
-      ),
-      )
-    }*/
+        const SnackBar(
+          duration: const Duration(seconds: 1),
+          content: Text(
+            'Wrong answer!',
+          style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
     _score = scoreHandler(_currentScore, _answerCorrect, _targetScore);
     _currentScore = _score[0];
     _quizPassed = _score[1];
