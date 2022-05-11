@@ -1195,29 +1195,10 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         : _answerCorrect = false;
 
     //todo
-    //show a snackback for right/wrong answer //todo
-     if (_answerCorrect){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text(
-              'Correct answer!',
-            style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green,
-        ),
-      );
-    }
-    else { // (!_answerCorrect)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text(
-            'Wrong answer!',
-          style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    //show a snackback for right/wrong answer
+     showSnackBarCorrect(context, _answerCorrect);
+
+
     _score = scoreHandler(_currentScore, _answerCorrect, _targetScore);
     _currentScore = _score[0];
     _quizPassed = _score[1];
