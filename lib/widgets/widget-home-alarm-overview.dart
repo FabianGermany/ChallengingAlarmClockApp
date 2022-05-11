@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// check whether one of the alarms is triggered
+  //todo outsource that
   _alarmChecker(List<CustomAlarm?> currentAlarmList) {
     setState(() {
       // check whether there is any alarm that is the past and is not set to isRinging=False yet
@@ -94,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       channelKey: 'basic_channel',
                       title: 'Simple Notification',
                       body: 'Simple body',
+                      actionType: ActionType.Default
                     ),
                   );
 
@@ -159,6 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+
   /// Loading listOfSavedAlarms (on start)
   Future<void> loadData() async {
     dev.log("Loading alarm data...", name: 'Alarm');
@@ -168,10 +171,10 @@ class _MyHomePageState extends State<MyHomePage> {
         listOfSavedAlarms = (prefs.getStringList('alarmList') ?? [])
             .map((alarm) => CustomAlarm.fromJson(jsonDecode(alarm)))
             .toList();
-        dev.log('Loaded ${listOfSavedAlarms.length} saved alarms',
+        dev.log('Loaded ${listOfSavedAlarms.length} saved alarms.',
             name: 'Alarm');
       } else {
-        dev.log('No saved alarms found', name: 'Alarm');
+        dev.log('No saved alarms found.', name: 'Alarm');
       }
     });
   }

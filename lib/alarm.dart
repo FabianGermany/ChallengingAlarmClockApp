@@ -194,5 +194,5 @@ Future<void> saveData() async {
   dev.log("Saving alarm data...", name: 'Alarm');
   final prefs = await SharedPreferences.getInstance();
   prefs.setStringList('alarmList', listOfSavedAlarms.map((alarm) => jsonEncode(alarm)).toList()); //set JSON-encoded values to the key 'alarmList'
-  dev.log('Saved ${listOfSavedAlarms.length} alarms', name: 'Alarm');
+  dev.log('Saved ${listOfSavedAlarms.length} alarms.', name: 'Alarm');
 }

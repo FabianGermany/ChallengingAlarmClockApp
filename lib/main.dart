@@ -36,13 +36,11 @@ Future <void> main() async {
       ],
       debug: true);
 
-  // todo funktioniert nicht; das in initstate(?)
+  // todo
   // Request the user authorization to send local and push notifications; Make more polite...
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
-      // This is just a basic example. For real apps, you must show some
-      // friendly dialog box before call the request method.
-      // This is very important to not harm the user experience
+      // Here should be a friendly dialog box for better UX
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
@@ -58,8 +56,30 @@ Future <void> main() async {
   dev.log("App has been fully loaded...", name: 'General');
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+
+    // Only after at least the action method is set, the notification events are delivered
+    AwesomeNotifications().setListeners(
+        onActionReceivedMethod:         NotificationController.onActionReceivedMethod,
+        onNotificationCreatedMethod:    NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
+    );
+
+    super.initState();
+  }
+
 
   //todo
   // // start to listen the notification actions (user taps)
@@ -77,15 +97,39 @@ class MyApp extends StatelessWidget {
   // }
   // );
 
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: MyApp.navigatorKey,
       title: 'Alarm Clock App',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
       home: const MyHomePage(title: appTitleHome),
+
+
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (context) =>
+                MyHomePage(title: 'Alarm Clock App')
+            );
+
+          case '/notification-page':
+            return MaterialPageRoute(builder: (context) {
+              final ReceivedAction receivedAction = settings
+                  .arguments as ReceivedAction;
+              return MyNotificationPage(receivedAction: receivedAction);
+            });
+
+          default:
+            assert(false, 'Page ${settings.name} not found');
+            return null;
+        }
+      },
     );
   }
 }
