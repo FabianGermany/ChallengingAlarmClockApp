@@ -437,7 +437,7 @@ List quizGenerator()
 
 /// Score function
 /// returns the output score and the bool for passed/not passed
-List scoreHandler (int currentScore, bool correctAnswer, [int targetScore = 5])
+List scoreHandler (int _currentScore, bool correctAnswer, [int _targetScore = 5])
 {
   //declare return vars
   int outputScore;
@@ -445,11 +445,11 @@ List scoreHandler (int currentScore, bool correctAnswer, [int targetScore = 5])
 
   if(correctAnswer) // correct answer
   {
-    outputScore = currentScore + 1;
+    outputScore = _currentScore + 1;
   }
   else // wrong answer
   {
-    outputScore = currentScore - 3;
+    outputScore = _currentScore - 3;
   }
 
   // cut score if it's too low (no negative score)
@@ -458,7 +458,7 @@ List scoreHandler (int currentScore, bool correctAnswer, [int targetScore = 5])
     outputScore = 0;
   }
 
-  if(outputScore >= targetScore) // check for success
+  if(outputScore >= _targetScore) // check for success
   {
     passed = true;
   }

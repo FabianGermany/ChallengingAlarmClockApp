@@ -602,13 +602,13 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  final myAlarmNameController =
+  final _alarmNameController =
       TextEditingController(text: 'My personal alarm');
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myAlarmNameController.dispose();
+    _alarmNameController.dispose();
     super.dispose();
   }
 
@@ -619,7 +619,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       isActive: true,
       // if saved, then automatically make active
       isRinging: false,
-      nameOfAlarm: myAlarmNameController.text,
+      nameOfAlarm: _alarmNameController.text,
       alarmTime: _chosenTime,
       alarmDate: _chosenDate,
       isRecurrent: _recurrentMode,
@@ -839,7 +839,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child: Form(
                     key: _formKey,
                     child: TextFormField(
-                      controller: myAlarmNameController,
+                      controller: _alarmNameController,
                       decoration: InputDecoration(
                         labelText: 'Name of alarm',
                         border: OutlineInputBorder(),
@@ -1156,26 +1156,26 @@ class ShowChallengePage extends StatefulWidget {
 }
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
-  int currentScore = 0; //init the current score to 0;
-  int targetScore = 5;
-  String userInput = '';
-  late bool answerCorrect;
-  late bool quizPassed;
-  var currentQuiz;
-  late String currentQuizQuestion;
-  late String currentQuizResult;
-  var score;
-  FocusNode inputNode = FocusNode(); // used for showing keyboard
+  int _currentScore = 0; //init the current score to 0;
+  int _targetScore = 5;
+  String _userInput = '';
+  late bool _answerCorrect;
+  late bool _quizPassed;
+  var _currentQuiz;
+  late String _currentQuizQuestion;
+  late String _currentQuizResult;
+  var _score;
+  FocusNode _inputNode = FocusNode(); // used for showing keyboard
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  var myNumberInputController = TextEditingController(text: '');
+  var _numberInputController = TextEditingController(text: '');
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myNumberInputController.dispose();
-    inputNode.dispose();
+    _numberInputController.dispose();
+    _inputNode.dispose();
     super.dispose();
   }
 
@@ -1186,16 +1186,16 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   /// Handle the user input based on the current quiz
   void _quizScoreHandler() {
-    dev.log(currentQuizResult, name: 'Quiz');
-    dev.log(userInput, name: 'Quiz');
+    dev.log(_currentQuizResult, name: 'Quiz');
+    dev.log(_userInput, name: 'Quiz');
 
-    (currentQuizResult == userInput)
-        ? answerCorrect = true
-        : answerCorrect = false;
+    (_currentQuizResult == _userInput)
+        ? _answerCorrect = true
+        : _answerCorrect = false;
 
     //todo
     //show a snackback for right/wrong answer //todo
-    /* if (answerCorrect){
+    /* if (_answerCorrect){
       ScaffoldMessenger.of(context).showSnackBar(
         const snackBarRightAnswer = SnackBar(
           content: Text(
@@ -1207,7 +1207,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
 
     }
-    else { // (!answerCorrect)
+    else { // (!_answerCorrect)
       ScaffoldMessenger.of(context).showSnackBar(
       const snackBarWrongAnswer = SnackBar(
       content: Text(
@@ -1217,10 +1217,10 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
       ),
       )
     }*/
-    score = scoreHandler(currentScore, answerCorrect, targetScore);
-    currentScore = score[0];
-    quizPassed = score[1];
-    if (quizPassed) {
+    _score = scoreHandler(_currentScore, _answerCorrect, _targetScore);
+    _currentScore = _score[0];
+    _quizPassed = _score[1];
+    if (_quizPassed) {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
       _generateNewQuizQuestion(); // generate new question for next time
       Navigator.push(
@@ -1236,14 +1236,14 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
       });
     }
     //inputNode.requestFocus(); // show keyboard again
-    FocusScope.of(context).requestFocus(inputNode); // show keyboard again
-    myNumberInputController.clear();
+    FocusScope.of(context).requestFocus(_inputNode); // show keyboard again
+    _numberInputController.clear();
   }
 
   void _generateNewQuizQuestion() {
-    currentQuiz = quizGenerator();
-    currentQuizQuestion = currentQuiz[0];
-    currentQuizResult = currentQuiz[1];
+    _currentQuiz = quizGenerator();
+    _currentQuizQuestion = _currentQuiz[0];
+    _currentQuizResult = _currentQuiz[1];
   }
 
   @override
@@ -1273,7 +1273,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "Current Score:\n$currentScore / $targetScore",
+                      "Current Score:\n$_currentScore / $_targetScore",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline6,
                     ),
@@ -1287,7 +1287,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      currentQuizQuestion,
+                      _currentQuizQuestion,
                       style: TextStyle(
                           color: Colors.deepPurple,
                           fontSize: 30,
@@ -1308,10 +1308,10 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                       child: Form(
                         key: _formKey,
                         child: TextFormField(
-                            controller: myNumberInputController,
+                            controller: _numberInputController,
                             autofocus: true,
                             // show keyboard automatically on start
-                            focusNode: inputNode,
+                            focusNode: _inputNode,
                             // for showing keyboard on 2nd start etc.
                             onEditingComplete: () {},
                             // this prevents keyboard from closing
@@ -1324,7 +1324,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                             style: TextStyle(fontSize: 22),
                             onFieldSubmitted: (String value) {
                               setState(() {
-                                userInput = value;
+                                _userInput = value;
                                 _quizScoreHandler();
                               });
                             }),
