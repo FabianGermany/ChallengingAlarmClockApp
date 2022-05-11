@@ -5,6 +5,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'dart:developer' as dev;
+import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing
 
 
 // data structure / class for one alarm
@@ -173,6 +174,7 @@ List<CustomAlarm?> deactivateAlarm(
   alarmList[alarmIndex]!.isActive = false;
   stopAlarmSound();
   Wakelock.disable(); // stop that the screen is consistently active
+  AwesomeNotifications().cancelAll(); //remove notifications
   dev.log("Alarm has been turned off!", name: 'Alarm');
   listOfSavedAlarms =
       alarmList; //save the local list back to the global one

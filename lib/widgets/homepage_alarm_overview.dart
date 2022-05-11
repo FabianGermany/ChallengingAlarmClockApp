@@ -10,13 +10,13 @@ import 'package:is_first_run/is_first_run.dart'; // for setting variables only o
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'dart:convert'; // for JSON etc.
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // notifications when the alarm is ringing
-import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing (alternative)
+import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing
 import '../alarm.dart'; // functions and more for the alarm
 import '../quiz.dart'; // as quiz // functions and more for the quiz
 import '../global.dart'; // global variables and general outsourced stuff
 import 'show_alarm_page.dart'; // widget for the alarm exposure
 import 'add_alarm_page.dart'; // widget for the alarm adding
+import '../notification.dart'; // functions and more for the notifications
 
 
 class HomePageAlarmOverview extends StatefulWidget {
@@ -87,17 +87,8 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                   dev.log("Single alarm is going off!", name: 'Alarm');
                   playAlarmSound(0.5); // play alarm
                   Wakelock.enable(); // keep the screen active
+                  createNotification(currentAlarmList[i]!.nameOfAlarm);
 
-                  // Create a notification
-                  AwesomeNotifications().createNotification(
-                    content: NotificationContent(
-                      id: 10,
-                      channelKey: 'basic_channel',
-                      title: 'The alarm ${currentAlarmList[i]!.nameOfAlarm} is ringing!',
-                      body: 'Click here to turn it off.',
-                      actionType: ActionType.Default
-                    ),
-                  );
 
                   // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
                   // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;

@@ -38,6 +38,11 @@ while running the debug mode.
 - Better UX 
   - e.g. by creating a toast/snackbar "Alarm has been created" and "Alarm has been set / Alarm will ring in xx hours and xx minutes" etc.
   - by making a friendly dialogue for requestPermissionToSendNotifications
+  - chose time via "now" field etc.
+- Improve alarm notification
+  - It works when app is active, when app is in background, when the screen is off
+  - It does not work yet when the app is 
+  - No wake up notification yet
 
 
 
