@@ -126,6 +126,23 @@ String weekdayNumberToString(int number)
   return output;
 }
 
+/// Weekday conversion function
+/// I need this function because
+/// WeekdaySelector starts Sunday (0) to Saturday (6)
+/// While DayTime.now().weekday goes from Monday (1) to Sunday (7)
+int DateTimeRemapper(int input){
+  int output = 0;
+  switch(input){
+    case 0: output = 7; break;
+    case 1: output = 1; break;
+    case 2: output = 2; break;
+    case 3: output = 3; break;
+    case 4: output = 4; break;
+    case 5: output = 5; break;
+    case 6: output = 6; break;
+  }
+  return output;
+}
 
 
 /// Converts a bool list of weekdays to strings
@@ -170,15 +187,33 @@ void stopAlarmSound()
 }
 
 
-/// Function to deactivate an alarm
-List<CustomAlarm?> deactivateAlarm(
+/// Function to deactivate a single alarm
+List<CustomAlarm?> deactivateSingleAlarm(
     CustomAlarm? triggeredAlarm, alarmIndex) {
   List<CustomAlarm?> alarmList = listOfSavedAlarms;
   alarmList[alarmIndex]!.isActive = false;
+  alarmList[alarmIndex]!.isRinging = false;
   stopAlarmSound();
   Wakelock.disable(); // stop that the screen is consistently active
   AwesomeNotifications().cancelAll(); //remove notifications
-  dev.log("Alarm has been turned off!", name: 'Alarm');
+  dev.log("Single alarm has been turned off!", name: 'Alarm');
+  listOfSavedAlarms =
+      alarmList; //save the local list back to the global one
+  saveData();
+  return alarmList;
+}
+
+
+/// Function to deactivate a recurring alarm
+List<CustomAlarm?> deactivateRecurringAlarm(
+    CustomAlarm? triggeredAlarm, alarmIndex) {
+  List<CustomAlarm?> alarmList = listOfSavedAlarms;
+  alarmList[alarmIndex]!.isActive = true; // keep it active //todo
+  alarmList[alarmIndex]!.isRinging = false;
+  stopAlarmSound();
+  Wakelock.disable(); // stop that the screen is consistently active
+  AwesomeNotifications().cancelAll(); //remove notifications
+  dev.log("Recurring alarm has been turned off temporarily!", name: 'Alarm');
   listOfSavedAlarms =
       alarmList; //save the local list back to the global one
   saveData();

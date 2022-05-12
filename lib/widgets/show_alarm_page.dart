@@ -46,10 +46,16 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
     });
   }
 
-  //todo das klappt nur bei non-recurring..muss ich noch ändern
-  /// function to deactivate an alarm //todo
+  /// function to deactivate an alarm
   List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
-    return deactivateAlarm(triggeredAlarm, alarmIndex);
+    if (triggeredAlarm?.isRecurrent == false){
+      return deactivateSingleAlarm(triggeredAlarm, alarmIndex);
+    }
+    else {
+      return deactivateRecurringAlarm(triggeredAlarm, alarmIndex);
+    }
+
+
   }
 
   @override

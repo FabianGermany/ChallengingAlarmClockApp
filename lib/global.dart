@@ -11,3 +11,8 @@ bool debugMode = true; // set this to true to show some extra elements in the UI
 const String appTitleHome = 'My alarms';
 const String appTitleAddAlarm = 'Add an alarm';
 
+
+//conversion function to compare TimeOfDay datatypes
+double TimeOfDayToDouble(TimeOfDay time){
+  return (time.hour + time.minute / 60.0);
+}

@@ -33,6 +33,8 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
   DateTime _now = DateTime.now();
   String _dateString = DateFormat("MMMM dd, yyyy").format(DateTime.now());
   String _timeString = DateFormat("HH:mm:ss").format(DateTime.now());
+  late DateTime alarmTimeAsDateTime;
+  late DateTime threeSecondsAfterAlarm;
 
   // timer on order to ....
   late Timer _refreshTimer; // ...refresh the screen like for the current time
@@ -62,21 +64,22 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
           if (currentAlarmList[i]!.isRecurrent == false) {
 
             // the day has passed
+            // +1 day because also the same day should be included
             if (currentAlarmList[i]!.alarmDate.isBefore(DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
-                DateTime.now().day +
-                    1))) // +1 day because also the same day should be included
-                {
+                DateTime.now().day + 1))) {
 
-              // the time has passed
-              double toDouble(TimeOfDay myTime) =>
-                  myTime.hour + myTime.minute / 60.0; //conversion function
-              if (toDouble(currentAlarmList[i]!.alarmTime) <=
-                  (toDouble(TimeOfDay.now()))) {
+              // the time has passed (but not too long time ago, like 3 seconds)
+              alarmTimeAsDateTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute);
+              threeSecondsAfterAlarm = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute, 5);
+              if ((DateTime.now().isAfter(alarmTimeAsDateTime)) &&
+                  (DateTime.now().isBefore(threeSecondsAfterAlarm))){
 
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
+
+                  // start the alarm
                   alarmReaction(currentAlarmList[i], i, context, 'Single');
                   break; // break first for letting ring only one alarm if there are multiple
                   //return;
@@ -87,25 +90,26 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
           // case 2: recurring alarm
           else if (currentAlarmList[i]!.isRecurrent == true) {
+
             // check whether today is one of the recurring days
-            if (currentAlarmList[i]!.weekdayRecurrence[DateTime.now().weekday - 1] == true){
+            if (currentAlarmList[i]!.weekdayRecurrence[DateTimeRemapper(DateTime
+                .now().weekday)] == true) {
 
-              //todo that's a bit more complicated
-              //dev.log("Recurrent alarm is going off!", name: 'Alarm');
-              print('hi');
+              // the time has passed (but not too long time ago, like 3 seconds)
+              alarmTimeAsDateTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute);
+              threeSecondsAfterAlarm = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute, 5);
+              if ((DateTime.now().isAfter(alarmTimeAsDateTime)) &&
+                  (DateTime.now().isBefore(threeSecondsAfterAlarm))){
 
+                //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
+                if (currentAlarmList[i]!.isRinging == false) {
 
-              alarmReaction(currentAlarmList[i], i, context, 'Recurring');
-              break; // break first for letting ring only one alarm if there are multiple
-
+                  // start the alarm
+                  alarmReaction(currentAlarmList[i], i, context, 'Recurrent');
+                  break; // break first for letting ring only one alarm if there are multiple
+                }
+              }
             }
-
-
-
-
-
-
-
           }
         }
       }
@@ -130,7 +134,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
     // check for alarm status regularly
     _alarmCheckerTimer = Timer.periodic(
-        every2Seconds, (Timer t) => _alarmChecker(listOfSavedAlarms));
+        everySecond, (Timer t) => _alarmChecker(listOfSavedAlarms));
 
     // save data regularly (just in case)
     _saveDataTimer = Timer.periodic(every2Minutes, (Timer t) => saveData());

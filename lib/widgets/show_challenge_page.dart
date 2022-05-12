@@ -48,7 +48,12 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   /// function to deactivate an alarm
   List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
-    return deactivateAlarm(triggeredAlarm, alarmIndex);
+    if (triggeredAlarm?.isRecurrent == false){
+      return deactivateSingleAlarm(triggeredAlarm, alarmIndex);
+    }
+    else {
+      return deactivateRecurringAlarm(triggeredAlarm, alarmIndex);
+    }
   }
 
   /// Handle the user input based on the current quiz
