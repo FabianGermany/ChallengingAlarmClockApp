@@ -208,7 +208,7 @@ List<CustomAlarm?> deactivateSingleAlarm(
 List<CustomAlarm?> deactivateRecurringAlarm(
     CustomAlarm? triggeredAlarm, alarmIndex) {
   List<CustomAlarm?> alarmList = listOfSavedAlarms;
-  alarmList[alarmIndex]!.isActive = true; // keep it active //todo
+  alarmList[alarmIndex]!.isActive = true; // keep it active
   alarmList[alarmIndex]!.isRinging = false;
   stopAlarmSound();
   Wakelock.disable(); // stop that the screen is consistently active

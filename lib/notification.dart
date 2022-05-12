@@ -1,9 +1,9 @@
-import 'package:awesome_notifications/awesome_notifications.dart'; //todo die klasse unten outsourcen...
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev;
 import 'main.dart';
 
-// notification controller
+/// Notification controller
 class NotificationController {
 
   /// Use this method to detect when a new notification or a schedule is created
@@ -31,7 +31,7 @@ class NotificationController {
   }
 }
 
-/// initialize the notification function
+/// Initialize the notification function
 void initializeNotifications(){
   AwesomeNotifications().initialize(
     // set the icon to null if you want to use the default app icon
@@ -63,6 +63,8 @@ void initializeNotifications(){
   });
 }
 
+
+/// Set notification listeners
 void setNotificationListeners(){
   AwesomeNotifications().setListeners(
       onActionReceivedMethod:         NotificationController.onActionReceivedMethod,
@@ -73,6 +75,7 @@ void setNotificationListeners(){
 }
 
 
+/// Create an alarm notification
 void createNotification(nameOfAlarm){
   AwesomeNotifications().createNotification(
     content: NotificationContent(
@@ -83,8 +86,8 @@ void createNotification(nameOfAlarm){
         autoDismissible: false,
         locked: true,
         //wakeUpScreen: true, //this removes the notification when app is in background for some reason...
-        actionType: ActionType.Default //todo vllt. hier anpassen
+        actionType: ActionType.Default
     ),
-    //actionButtons: //todo
+    //actionButtons:
   );
 }

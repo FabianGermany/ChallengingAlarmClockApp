@@ -1,5 +1,6 @@
 // This file includes outsourced widget components
 import 'package:flutter/material.dart'; //Google Material Design assets
+import 'alarm.dart';
 
 /// Show snackbar
 void showSnackBarCorrect(BuildContext context, bool answerCorrect){
@@ -17,16 +18,42 @@ void showSnackBarCorrect(BuildContext context, bool answerCorrect){
 
 
 
-/// Widget for XXXXX
-class xxxWidget extends  StatelessWidget{
+/// Dialog component to reset the app
+class DialogResetApp extends StatefulWidget{
 
-  final varvar;
-  const xxxWidget(this.varvar);
+  const DialogResetApp();
 
+  @override
+  State<DialogResetApp> createState() => _MyDialogResetAppState();
+}
+
+class _MyDialogResetAppState extends State<DialogResetApp> {
 
   @override
   Widget build(BuildContext context) {
     return
-      Text('Add stuff here');
-          }
+      AlertDialog(
+        title: Text('Reset the app?'),
+        content: Text(
+            'You are about to reset the app.'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(
+                    context, 'CANCEL'),
+            child: Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => [
+              setState(() {
+                listOfSavedAlarms = initAlarms(); // reset the app
+              }),
+              Navigator.pop(
+                  context, 'DELETE'),
+            ],
+            child: Text('DELETE'),
+          ),
+        ],
+      );
+  }
 }

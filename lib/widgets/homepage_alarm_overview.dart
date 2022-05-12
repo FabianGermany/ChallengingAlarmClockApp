@@ -17,7 +17,7 @@ import '../global.dart'; // global variables and general outsourced stuff
 import 'show_alarm_page.dart'; // widget for the alarm exposure
 import 'add_alarm_page.dart'; // widget for the alarm adding
 import '../notification.dart'; // functions and more for the notifications
-
+import 'package:alarm_clock_app/components.dart';
 
 class HomePageAlarmOverview extends StatefulWidget {
   const HomePageAlarmOverview({Key? key, required this.title}) : super(key: key);
@@ -203,31 +203,9 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) =>
-                                    AlertDialog(
-                                      title: Text('Reset the app?'),
-                                      content: Text(
-                                          'You are about to reset the app.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(
-                                                  context, 'CANCEL'),
-                                          child: Text('CANCEL'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => [
-                                            setState(() {
-                                              listOfSavedAlarms = initAlarms(); // reset the app
-                                            }),
-                                            Navigator.pop(
-                                                context, 'DELETE'),
-                                          ],
-                                          child: Text('DELETE'),
-                                        ),
-                                      ],
-                                    ),
+                                DialogResetApp(), //Start dialog to reset app
                               )
-                            : null; //if not debug mode do nothing
+                            : null; //if not debug mode don't do anything
                           },
 
 
