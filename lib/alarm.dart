@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart'; // for saving/loadi
 import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
 import 'dart:developer' as dev;
 import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing
-
+import 'notification.dart'; // functions and more for the notifications
+import 'widgets/show_alarm_page.dart'; // widget for the alarm exposure
 
 // data structure / class for one alarm
 class CustomAlarm {
@@ -28,7 +29,7 @@ class CustomAlarm {
     this.alarmTime = const TimeOfDay(hour: 9, minute: 45),
     DateTime? alarmDate, // constructors need const; that's why outsourced
     this.isRecurrent = false,
-    List<bool>? weekdayRecurrence, // constructors need const; that's why outsourced
+    List<bool>? weekdayRecurrence, // constructors need const; that's why outsourced; attention: [0] is Sunday, [1] is Monday etc.
     this.challengeMode = false
   }
     ):
@@ -109,27 +110,29 @@ List<CustomAlarm?> initAlarms()
   return savedAlarmList;
 }
 
-/// Convert weekday number to weekday string
+/// Convert weekday number to custom weekday string
 String weekdayNumberToString(int number)
 {
   String output = 'None';
   switch(number){
+    case 0: output = 'Sun'; break;
     case 1: output = 'Mon'; break;
     case 2: output = 'Tue'; break;
     case 3: output = 'Wed'; break;
     case 4: output = 'Thu'; break;
     case 5: output = 'Fri'; break;
     case 6: output = 'Sat'; break;
-    case 7: output = 'Sun'; break;
   }
   return output;
 }
+
+
 
 /// Converts a bool list of weekdays to strings
 String weekdayBoolListToString(List<bool> weekdays)
 {
   String output = "";
-  int weekdayCounter = 0;
+  int weekdayCounter = -1;
   for (final i in weekdays)
     {
     weekdayCounter++;
@@ -197,4 +200,24 @@ Future<void> saveData() async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setStringList('alarmList', listOfSavedAlarms.map((alarm) => jsonEncode(alarm)).toList()); //set JSON-encoded values to the key 'alarmList'
   dev.log('Saved ${listOfSavedAlarms.length} alarms.', name: 'Alarm');
+}
+
+
+/// Function including the reactions when an alarm goes off
+/// We only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
+//  That's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
+void alarmReaction(CustomAlarm? triggeredAlarm, index, context, typeOfAlarm){
+  dev.log("$typeOfAlarm alarm is going off!", name: 'Alarm');
+  playAlarmSound(0.5); // play alarm
+  Wakelock.enable(); // keep the screen active
+  createNotification(triggeredAlarm!.nameOfAlarm);
+  triggeredAlarm.isRinging = true; // set to true for next time
+  saveData();
+  Navigator.push(
+    // alarm will ring
+    context,
+    MaterialPageRoute(
+        builder: (context) => ShowAlarmPage(triggeredAlarm,
+            index)), // return details about current alarm since parts of it will be displayed
+  );
 }

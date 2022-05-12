@@ -21,14 +21,7 @@ import '../notification.dart'; // functions and more for the notifications
 
 class HomePageAlarmOverview extends StatefulWidget {
   const HomePageAlarmOverview({Key? key, required this.title}) : super(key: key);
-
   // This widget is the homepage of the app. It has different states.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -36,40 +29,38 @@ class HomePageAlarmOverview extends StatefulWidget {
 }
 
 class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
-  // Declare vars for the time
-  DateTime _now = DateTime
-      .now(); // init it once, otherwise it will show NULL in the beginning
-  String _dateString = DateFormat("MMMM dd, yyyy").format(DateTime
-      .now()); // init it once, otherwise it will show NULL in the beginning
-  String _timeString = DateFormat("HH:mm:ss").format(DateTime
-      .now()); // init it once, otherwise it will show NULL in the beginning
+  // Declare vars for the time (init it once, otherwise it will show NULL in the beginning)
+  DateTime _now = DateTime.now();
+  String _dateString = DateFormat("MMMM dd, yyyy").format(DateTime.now());
+  String _timeString = DateFormat("HH:mm:ss").format(DateTime.now());
 
-  late Timer
-  _refreshTimer; // timer to refresh the screen like for the current time
-  late Timer _alarmCheckerTimer; // timer to check for the alarm trigger status
-  late Timer _saveDataTimer; // timer to save/backup data regularly
+  // timer on order to ....
+  late Timer _refreshTimer; // ...refresh the screen like for the current time
+  late Timer _alarmCheckerTimer; // ...check for the alarm trigger status
+  late Timer _saveDataTimer; // ...save/backup data regularly
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
-    setState(() {
-      // setState tells the Flutter framework that something has changed in this state, which causes it to rerun the build method
+    setState(() { // setState causes the rerun of the build method
       _now = DateTime.now();
       _dateString = DateFormat("MMMM dd, yyyy").format(_now);
       _timeString = DateFormat("HH:mm:ss").format(_now);
-      // _timeString = DateFormat('hh:mm:ss a').format(DateTime.now());
     });
   }
 
   /// check whether one of the alarms is triggered
-  //todo outsource that
   _alarmChecker(List<CustomAlarm?> currentAlarmList) {
     setState(() {
+
       // check whether there is any alarm that is the past and is not set to isRinging=False yet
       for (int i = 0; i < currentAlarmList.length; i++) {
+
         // first check whether the alarm is active
         if (currentAlarmList[i]!.isActive == true) {
+
           // case 1: single time alarm
           if (currentAlarmList[i]!.isRecurrent == false) {
+
             // the day has passed
             if (currentAlarmList[i]!.alarmDate.isBefore(DateTime(
                 DateTime.now().year,
@@ -77,35 +68,16 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                 DateTime.now().day +
                     1))) // +1 day because also the same day should be included
                 {
+
               // the time has passed
               double toDouble(TimeOfDay myTime) =>
                   myTime.hour + myTime.minute / 60.0; //conversion function
               if (toDouble(currentAlarmList[i]!.alarmTime) <=
                   (toDouble(TimeOfDay.now()))) {
+
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
-                  dev.log("Single alarm is going off!", name: 'Alarm');
-                  playAlarmSound(0.5); // play alarm
-                  Wakelock.enable(); // keep the screen active
-                  createNotification(currentAlarmList[i]!.nameOfAlarm);
-
-
-                  // only go to the alarm ringing page if we are not there (otherwise it will be reloaded like every second);
-                  // that's why we call the function only in the states (routes) for the alarm overview and the alarm adding;
-                  // todo die funtion auslagern, soll auch bei  addalarm route gemacht werden
-
-                  currentAlarmList[i]!.isRinging =
-                  true; // set to true for next time todo outsource to another function onChange isRinging. //todo alarm ringing page
-
-                  saveData();
-
-                  Navigator.push(
-                    // alarm will ring
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ShowAlarmPage(currentAlarmList[i],
-                            i)), // return details about current alarm since parts of it will be displayed
-                  );
+                  alarmReaction(currentAlarmList[i], i, context, 'Single');
                   break; // break first for letting ring only one alarm if there are multiple
                   //return;
                 }
@@ -115,8 +87,25 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
           // case 2: recurring alarm
           else if (currentAlarmList[i]!.isRecurrent == true) {
-            //todo that's a bit more complicated
-            //dev.log("Recurrent alarm is going off!", name: 'Alarm');
+            // check whether today is one of the recurring days
+            if (currentAlarmList[i]!.weekdayRecurrence[DateTime.now().weekday - 1] == true){
+
+              //todo that's a bit more complicated
+              //dev.log("Recurrent alarm is going off!", name: 'Alarm');
+              print('hi');
+
+
+              alarmReaction(currentAlarmList[i], i, context, 'Recurring');
+              break; // break first for letting ring only one alarm if there are multiple
+
+            }
+
+
+
+
+
+
+
           }
         }
       }

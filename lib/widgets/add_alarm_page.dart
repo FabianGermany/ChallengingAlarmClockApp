@@ -51,7 +51,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       weekdayRecurrence: _chosenWeekdays,
       challengeMode: _challengingModeActive,
     ); // create a new default alarm
-
     alarmList.add(newCreatedAlarm); //add the alarm to the list
     dev.log("Alarm has been created!", name: 'Alarm');
     listOfSavedAlarms = alarmList; //save the local list back to the global one
@@ -230,11 +229,11 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
               children: <Widget>[
                 Expanded(
                   child: WeekdaySelector(
+                    firstDayOfWeek: DateTime.monday,
                     onChanged: (int day) {
                       setState(() {
                         final index = day % 7;
                         _chosenWeekdays[index] = !_chosenWeekdays[index];
-
                         // if any weekday is active, activate recurrent mode, otherwise not
                         if (_chosenWeekdays.any((e) => e == true)) {
                           _recurrentMode = true;
