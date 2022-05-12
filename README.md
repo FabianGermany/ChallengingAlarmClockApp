@@ -19,9 +19,11 @@ while running the debug mode.
 
 Alarm Overview          |  Adding Alarm
 :-------------------------:|:-------------------------:
-![](project/screenshots%20app/01_Alarm_Overview.png)  |  ![](project/screenshots%20app/02_Add_Alarm)
-
-
+![](project/screenshots%20app/01_Alarm_Overview.png)  |  ![](project/screenshots%20app/02_Add_Alarm.png)
+Ringing Alarm         |  Notification
+![](project/screenshots%20app/03_Alarm_Ringing.png)  |  ![](project/screenshots%20app/07_Notification.png)
+Challenge Example 1         |  Challenge Example 2
+![](project/screenshots%20app/05_Challenge_Example_2.png)  |  ![](project/screenshots%20app/04_Challenge_Example_1.png)
 
 
 ## To Do MT
