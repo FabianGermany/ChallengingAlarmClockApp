@@ -11,8 +11,16 @@ on a virtually created smartphone
 or on the Chrome browser for example.
 To refresh the project, it's possible to use the hot reload function. 
 
+<!--
 To see the wireframe of the app, click on "Open Flutter DevTools" in the debug window below 
 while running the debug mode.
+-->
+
+
+Alarm Overview          |  Adding Alarm
+:-------------------------:|:-------------------------:
+![](project/screenshots%20app/01_Alarm_Overview.png)  |  ![](project/screenshots%20app/02_Add_Alarm)
+
 
 
 
