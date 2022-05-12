@@ -15,8 +15,6 @@ void showSnackBarCorrect(BuildContext context, bool answerCorrect){
 }
 
 
-/// Show dialog for deleting an alarm
-
 
 
 /// Widget for XXXXX

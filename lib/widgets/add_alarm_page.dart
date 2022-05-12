@@ -19,8 +19,8 @@ class AddAlarmPage extends StatefulWidget {
 }
 
 class _MyAddAlarmPageState extends State<AddAlarmPage> {
-  TimeOfDay _chosenTime = TimeOfDay(hour: 7, minute: 15);
-  DateTime _chosenDate = DateTime.now(); // DateTime(2022, 1, 1);
+  TimeOfDay _chosenTime = TimeOfDay(hour: 8, minute: 00);
+  DateTime _chosenDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1); // default today plus 1 day later; // DateTime(2022, 1, 1);
   List<bool> _chosenWeekdays = List.filled(7, false); // for weekday picker
   bool _challengingModeActive = false;
   bool _recurrentMode = false;

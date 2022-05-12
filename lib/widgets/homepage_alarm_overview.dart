@@ -203,6 +203,41 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                       Expanded(
                         // Col/Expanded for showing the current time and date
                         flex: 7, // 70%
+                        child:
+                        GestureDetector( // longpress here to reset the app (debugging purposes first)
+                          onLongPress: () {
+                            debugMode ? // if debug mode start dialog for reset
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    AlertDialog(
+                                      title: Text('Reset the app?'),
+                                      content: Text(
+                                          'You are about to reset the app.'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(
+                                                  context, 'CANCEL'),
+                                          child: Text('CANCEL'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => [
+                                            setState(() {
+                                              listOfSavedAlarms = initAlarms(); // reset the app
+                                            }),
+                                            Navigator.pop(
+                                                context, 'DELETE'),
+                                          ],
+                                          child: Text('DELETE'),
+                                        ),
+                                      ],
+                                    ),
+                              )
+                            : null; //if not debug mode do nothing
+                          },
+
+
                         child: Center(
                           child: Column(
                             // Column is also a layout widget
@@ -227,6 +262,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                             ],
                           ),
                         ),
+                      ),
                       ),
                       Expanded(
                         // Col/Expanded for adding some space
@@ -461,36 +497,6 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                       SizedBox(height: 60),
                     ],
                   ),
-
-                  debugMode
-                      ? Row(
-                    // row for reset function (only debug mode...)
-                    children: <Widget>[
-                      Expanded(
-                        // Col/Expanded for showing the current time and date
-                        flex: 8,
-                        child: Center(),
-                      ),
-                      Expanded(
-                        // Col/Expanded for the add alarm button
-                        flex: 2,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                              icon: const Icon(Icons.dangerous),
-                              tooltip: 'Reset the app',
-                              color: Colors.black26,
-                              iconSize: 20.0,
-                              onPressed: () {
-                                setState(() {
-                                  listOfSavedAlarms = initAlarms();
-                                });
-                              }),
-                        ),
-                      ),
-                    ],
-                  )
-                      : Row(),
                 ],
               ),
             ],

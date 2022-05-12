@@ -41,7 +41,7 @@ while running the debug mode.
   - chose time via "now" field etc.
 - Improve alarm notification
   - It works when app is active, when app is in background, when the screen is off
-  - It does not work yet when the app is 
+  - It does not work yet when the app is terminated
   - No wake up notification yet
 
 
