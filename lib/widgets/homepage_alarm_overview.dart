@@ -116,14 +116,6 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
     });
   }
 
-  /// function to delete the alarm
-  void _deleteAlarm(
-      List<CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
-    setState(() {
-      currentAlarmList.removeAt(itemNumberToBeRemoved);
-      dev.log("Alarm has been deleted!", name: 'Alarm');
-    });
-  }
 
   @override
   void initState() {
@@ -324,31 +316,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                           onPressed: () => showDialog<String>(
                                             context: context,
                                             builder: (BuildContext context) =>
-                                            //DialogResetAlarm(), // show dialog for deleting the alarm //todo
-                                            AlertDialog(
-                                              title: Text('Delete alarm?'),
-                                              content: Text(
-                                                  'You are about to delete this alarm.'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, 'CANCEL'),
-                                                  //close dialog
-                                                  child: Text('CANCEL'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () => [
-                                                    //close dialog and delete alarm at the same time
-                                                    _deleteAlarm(
-                                                        listOfSavedAlarms, i),
-                                                    Navigator.pop(
-                                                        context, 'DELETE'),
-                                                  ],
-                                                  child: Text('DELETE'),
-                                                ),
-                                              ],
-                                            ),
+                                            DialogResetAlarm(i), // show dialog for deleting the alarm //todo
                                           ),
                                         ),
                                       ],

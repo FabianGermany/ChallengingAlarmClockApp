@@ -68,10 +68,12 @@ class _MyDialogResetAppState extends State<DialogResetApp> {
 }
 
 
-/* //todo
+
 /// Dialog component/widget to delete an alarm
 class DialogResetAlarm extends StatefulWidget{
-  const DialogResetAlarm();
+
+  final index; //todo do I need that
+  const DialogResetAlarm(this.index);
 
   @override
   State<DialogResetAlarm> createState() => _MyDialogResetAlarmState();
@@ -95,16 +97,19 @@ class _MyDialogResetAlarmState extends State<DialogResetAlarm> {
             child: Text('CANCEL'),
           ),
           TextButton(
-            onPressed: () => [
+            onPressed: () =>
+            [
               //close dialog and delete alarm at the same time
-              _deleteAlarm(
-                  listOfSavedAlarms, i),
+              setState(() {
+                deleteAlarm(
+                listOfSavedAlarms, widget.index);
+              }),
               Navigator.pop(
                   context, 'DELETE'),
             ],
             child: Text('DELETE'),
           ),
         ],
-      ),
+      );
   }
-  */
+}

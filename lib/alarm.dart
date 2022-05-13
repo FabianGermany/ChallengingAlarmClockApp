@@ -256,3 +256,10 @@ void alarmReaction(CustomAlarm? triggeredAlarm, index, context, typeOfAlarm){
             index)), // return details about current alarm since parts of it will be displayed
   );
 }
+
+/// Function to delete an alarm
+void deleteAlarm(
+    List<CustomAlarm?> currentAlarmList, int itemNumberToBeRemoved) {
+    currentAlarmList.removeAt(itemNumberToBeRemoved);
+    dev.log("Alarm has been deleted!", name: 'Alarm');
+}
