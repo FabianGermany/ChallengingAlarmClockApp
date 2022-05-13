@@ -6,17 +6,11 @@ import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:developer' as dev;
-import 'package:is_first_run/is_first_run.dart'; // for setting variables only on first start of the app
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
 import 'dart:convert'; // for JSON etc.
-import 'package:wakelock/wakelock.dart'; // this is needed to keep the screen active
-import 'package:awesome_notifications/awesome_notifications.dart'; // notifications when the alarm is ringing
 import '../alarm.dart'; // functions and more for the alarm
-import '../quiz.dart'; // as quiz // functions and more for the quiz
 import '../global.dart'; // global variables and general outsourced stuff
-import 'show_alarm_page.dart'; // widget for the alarm exposure
 import 'add_alarm_page.dart'; // widget for the alarm adding
-import '../notification.dart'; // functions and more for the notifications
 import 'package:alarm_clock_app/components.dart';
 
 class HomePageAlarmOverview extends StatefulWidget {
@@ -92,7 +86,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
           else if (currentAlarmList[i]!.isRecurrent == true) {
 
             // check whether today is one of the recurring days
-            if (currentAlarmList[i]!.weekdayRecurrence[DateTimeRemapper(DateTime
+            if (currentAlarmList[i]!.weekdayRecurrence[dateTimeRemapper(DateTime
                 .now().weekday)] == true) {
 
               // the time has passed (but not too long time ago, like 3 seconds)
@@ -119,26 +113,23 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
   @override
   void initState() {
-    // the timers will be run here, otherwise thousands of timers will be generated
-    // update shown times regularly
+    // update the in the UI presented current time regularly
     _refreshTimer = Timer.periodic(everySecond, (Timer t) => _updateTime());
-    //This will cause that the updateTime() function will be exected every second;
 
     // check for alarm status regularly
     _alarmCheckerTimer = Timer.periodic(
         everySecond, (Timer t) => _alarmChecker(listOfSavedAlarms));
 
-    // save data regularly (just in case)
+    // backup data regularly (just in case)
     _saveDataTimer = Timer.periodic(every2Minutes, (Timer t) => saveData());
 
     loadData(); // load backup of alarm list
     stopAlarmSound(); // turn off sound from last start
-
     super.initState();
   }
 
 
-  /// Loading listOfSavedAlarms (on start)
+  /// Loading the current alarm list on start
   Future<void> loadData() async {
     dev.log("Loading alarm data...", name: 'Alarm');
     final prefs = await SharedPreferences.getInstance();
@@ -208,14 +199,14 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                             //center vertically
                             children: <Widget>[
                               const Text(
-                                'The current time is',
+                                'The current time is:',
                               ),
                               Text(
                                 _timeString,
                                 style: Theme.of(context).textTheme.headline6,
                               ),
                               const Text(
-                                'The current date is',
+                                'The current date is:',
                               ),
                               Text(
                                 _dateString,
@@ -316,7 +307,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                           onPressed: () => showDialog<String>(
                                             context: context,
                                             builder: (BuildContext context) =>
-                                            DialogResetAlarm(i), // show dialog for deleting the alarm //todo
+                                            DialogResetAlarm(index: i), // show dialog for deleting the alarm
                                           ),
                                         ),
                                       ],
@@ -332,7 +323,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                               // some space
                               Row(
                                 children: <Widget>[
-                                  SizedBox(height: 9),
+                                  SizedBox(height: 5),
                                 ],
                               ),
                               Row(

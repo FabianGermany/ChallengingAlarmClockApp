@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev;
-import 'main.dart';
-
 
 // global vars
 const everySecond = Duration(seconds: 1);
@@ -13,6 +11,6 @@ const String appTitleAddAlarm = 'Add an alarm';
 
 
 //conversion function to compare TimeOfDay datatypes
-double TimeOfDayToDouble(TimeOfDay time){
+double timeOfDayToDouble(TimeOfDay time){
   return (time.hour + time.minute / 60.0);
 }

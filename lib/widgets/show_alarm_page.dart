@@ -16,25 +16,22 @@ class ShowAlarmPage extends StatefulWidget {
   final CustomAlarm? triggeredAlarm;
   final int alarmNumber;
 
-  const ShowAlarmPage(this.triggeredAlarm, this.alarmNumber);
+  const ShowAlarmPage({Key? key, required this.triggeredAlarm, required this.alarmNumber}) : super(key: key);
+
 
   @override
   State<ShowAlarmPage> createState() => _MyShowAlarmPageState();
 }
 
 class _MyShowAlarmPageState extends State<ShowAlarmPage> {
-  //vars here
-  //functions here
 
-  DateTime _now = DateTime
-      .now(); // init it once, otherwise it will show NULL in the beginning
-  String _dateString = DateFormat("EEEE, MMMM dd").format(DateTime
-      .now()); // init it once, otherwise it will show NULL in the beginning
-  String _timeStringShort = DateFormat("HH:mm").format(DateTime
-      .now()); // init it once, otherwise it will show NULL in the beginning
+  // init the vars, otherwise they will show NULL in the UI in the beginning
+  DateTime _now = DateTime.now();
+  String _dateString = DateFormat("EEEE, MMMM dd").format(DateTime.now());
+  String _timeStringShort = DateFormat("HH:mm").format(DateTime.now());
 
-  late Timer
-  _refreshTimer; //timer to refresh the screen like for the current time
+  //timer to refresh the screen like for the current time
+  late Timer _refreshTimer;
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
@@ -48,15 +45,9 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
 
   /// function to deactivate an alarm
   List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
-    if (triggeredAlarm?.isRecurrent == false){
-      return deactivateSingleAlarm(triggeredAlarm, alarmIndex);
-    }
-    else {
-      return deactivateRecurringAlarm(triggeredAlarm, alarmIndex);
+      return deactivateAlarm(triggeredAlarm, alarmIndex);
     }
 
-
-  }
 
   @override
   void initState() {
@@ -84,7 +75,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 70)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -97,7 +87,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 10)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -114,7 +103,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 100)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -131,7 +119,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 5)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -148,7 +135,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 10)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -165,7 +151,6 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                 Row(
                   children: <Widget>[SizedBox(height: 80)],
                 ),
-                // Add some distance between the next row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -179,7 +164,8 @@ class _MyShowAlarmPageState extends State<ShowAlarmPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ShowChallengePage(
-                                    widget.triggeredAlarm, widget.alarmNumber)),
+                                    triggeredAlarm: widget.triggeredAlarm,
+                                    alarmNumber: widget.alarmNumber)),
                           );
                         } else {
                           // no challenge mode

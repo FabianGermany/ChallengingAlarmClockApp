@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
-import 'package:audioplayers/audioplayers.dart';
 import 'dart:convert'; // for JSON etc.
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // for saving/loading data for new start of the app
@@ -9,7 +8,7 @@ import 'package:awesome_notifications/awesome_notifications.dart'; // notificati
 import 'notification.dart'; // functions and more for the notifications
 import 'widgets/show_alarm_page.dart'; // widget for the alarm exposure
 
-// data structure / class for one alarm
+/// data structure / class for one single alarm
 class CustomAlarm {
   bool isActive;
   bool isRinging;
@@ -27,14 +26,15 @@ class CustomAlarm {
     this.isRinging = false,
     this.nameOfAlarm = "New alarm",
     this.alarmTime = const TimeOfDay(hour: 9, minute: 45),
-    DateTime? alarmDate, // constructors need const; that's why outsourced
+    DateTime? alarmDate, // cf. [Info1]
     this.isRecurrent = false,
-    List<bool>? weekdayRecurrence, // constructors need const; that's why outsourced; attention: [0] is Sunday, [1] is Monday etc.
+    List<bool>? weekdayRecurrence, // cf. [Info1]
     this.challengeMode = false
   }
+  // [Info1] constructors need const values; that's why it's outsourced where it can be non-const.;
     ):
-      this.alarmDate = alarmDate ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1), // default today plus 1 day later
-      this.weekdayRecurrence = weekdayRecurrence ?? List.filled(7, false) //from Monday to Sunday // = [false, false, false, false, false, false, false];
+      alarmDate = alarmDate ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1), // default today plus 1 day later
+      weekdayRecurrence = weekdayRecurrence ?? List.filled(7, false) // = [false, ..., false]; Attention: [0] is Sunday, [1] is Monday etc.
   ;
 
   // Information
@@ -42,9 +42,9 @@ class CustomAlarm {
   // and the user could be null; however, I won't use null, since whene editing
   // the alarm it can be toggled; in this way the old information can be stored
 
-// I need the JSON format to save/load the data (shared preferences doesn't support classes)
+  // JSON format is needed to save/load the data (shared preferences doesn't support classes as datatype)
 
-  // (1) to JSON
+  // (1) Object to JSON
   Map<String, dynamic> toJson() => {
     "isActive": isActive,
     "isRinging": isRinging,
@@ -57,7 +57,7 @@ class CustomAlarm {
     "challengeMode": challengeMode,
   };
 
-  // (2) from JSON
+  // (2) JSON to Object
   factory CustomAlarm.fromJson(Map<String, dynamic> json){
     return CustomAlarm(
         isActive: json['isActive'],
@@ -72,11 +72,12 @@ class CustomAlarm {
   }
 }
 
-List<CustomAlarm?> listOfSavedAlarms = []; // list including all the saved alarms
+// list including all the saved alarms
+List<CustomAlarm?> listOfSavedAlarms = [];
 
-/// Init app function; this should be called only for the first start of the app or when the app is reset via settings
-List<CustomAlarm?> initAlarms()
-{
+/// Init app function
+/// This is called only for the first start of the app or when the app is resetted via settings
+List<CustomAlarm?> initAlarms(){
   // Data structure / list for a collection of saved alarms
   List<CustomAlarm?> savedAlarmList = [];
 
@@ -104,8 +105,9 @@ List<CustomAlarm?> initAlarms()
     challengeMode: false,
   );
 
-  savedAlarmList.add(firstDefaultAlarm); // add the first alarm to the list
-  savedAlarmList.add(secondDefaultAlarm); // add the second alarm to the list
+  // add the alarms to the list
+  savedAlarmList.add(firstDefaultAlarm);
+  savedAlarmList.add(secondDefaultAlarm);
   dev.log("Alarms have been initialized...", name: 'Alarm');
   return savedAlarmList;
 }
@@ -129,8 +131,8 @@ String weekdayNumberToString(int number)
 /// Weekday conversion function
 /// I need this function because
 /// WeekdaySelector starts Sunday (0) to Saturday (6)
-/// While DayTime.now().weekday goes from Monday (1) to Sunday (7)
-int DateTimeRemapper(int input){
+/// while DayTime.now().weekday goes from Monday (1) to Sunday (7)
+int dateTimeRemapper(int input){
   int output = 0;
   switch(input){
     case 0: output = 7; break;
@@ -145,7 +147,8 @@ int DateTimeRemapper(int input){
 }
 
 
-/// Converts a bool list of weekdays to strings
+/// Converts a bool list of weekdays to a string
+/// that will be displayed in the UI
 String weekdayBoolListToString(List<bool> weekdays)
 {
   String output = "";
@@ -168,6 +171,7 @@ String weekdayBoolListToString(List<bool> weekdays)
   return output;
 }
 
+
 /// Play audio function
 void playAlarmSound(double volume)
 {
@@ -187,41 +191,31 @@ void stopAlarmSound()
 }
 
 
-/// Function to deactivate a single alarm
-List<CustomAlarm?> deactivateSingleAlarm(
+/// Function to deactivate a single or recurring alarm
+List<CustomAlarm?> deactivateAlarm(
     CustomAlarm? triggeredAlarm, alarmIndex) {
+
   List<CustomAlarm?> alarmList = listOfSavedAlarms;
-  alarmList[alarmIndex]!.isActive = false;
   alarmList[alarmIndex]!.isRinging = false;
+  if (triggeredAlarm?.isRecurrent == true){
+      alarmList[alarmIndex]!.isActive = true; // keep it active for next weekday
+      dev.log("Recurring alarm has been turned off temporarily!", name: 'Alarm');
+  }
+  else {
+    alarmList[alarmIndex]!.isActive = false;
+    dev.log("Single alarm has been turned off!", name: 'Alarm');
+  }
   stopAlarmSound();
   Wakelock.disable(); // stop that the screen is consistently active
   AwesomeNotifications().cancelAll(); //remove notifications
-  dev.log("Single alarm has been turned off!", name: 'Alarm');
-  listOfSavedAlarms =
-      alarmList; //save the local list back to the global one
+  listOfSavedAlarms = alarmList; //save the local list back to the global one
   saveData();
   return alarmList;
 }
 
 
-/// Function to deactivate a recurring alarm
-List<CustomAlarm?> deactivateRecurringAlarm(
-    CustomAlarm? triggeredAlarm, alarmIndex) {
-  List<CustomAlarm?> alarmList = listOfSavedAlarms;
-  alarmList[alarmIndex]!.isActive = true; // keep it active
-  alarmList[alarmIndex]!.isRinging = false;
-  stopAlarmSound();
-  Wakelock.disable(); // stop that the screen is consistently active
-  AwesomeNotifications().cancelAll(); //remove notifications
-  dev.log("Recurring alarm has been turned off temporarily!", name: 'Alarm');
-  listOfSavedAlarms =
-      alarmList; //save the local list back to the global one
-  saveData();
-  return alarmList;
-}
 
-
-/// Saving listOfSavedAlarms
+/// Backuping the alarm list listOfSavedAlarms
 /// Do it:
 /// (1) after an alarm is created
 /// (2) after an alarm is deleted
@@ -252,8 +246,8 @@ void alarmReaction(CustomAlarm? triggeredAlarm, index, context, typeOfAlarm){
     // alarm will ring
     context,
     MaterialPageRoute(
-        builder: (context) => ShowAlarmPage(triggeredAlarm,
-            index)), // return details about current alarm since parts of it will be displayed
+        builder: (context) => ShowAlarmPage(triggeredAlarm: triggeredAlarm,
+            alarmNumber: index)),
   );
 }
 

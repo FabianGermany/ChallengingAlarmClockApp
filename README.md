@@ -61,8 +61,7 @@ I used [this website](https://online-video-cutter.com/de/).
 - Exceptions: e.g. Text Input too long for displaying it etc.
 - Edit alarm via GestureDetector; I tried this in another branch, but it's a lot of work, so I didn't implement it in the main branch
 - Snooze function
-- Functions to change sound, vibration pattern, volume, snooze etc. (and integrate in CustomAlarm class)
-  // Todo: alarm sound, vibration pattern, snooze, ...
+- Functions to change alarm sound, vibration pattern, volume, snooze etc. (and integrate in CustomAlarm class)
 - Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
 - The app is not really responsive so far; heights etc. are partially absolute; use more Flexible/Expanded etc. to avoid overflows and to make the app work on every device
 - Use bloclibrary.dev for states
@@ -71,7 +70,6 @@ I used [this website](https://online-video-cutter.com/de/).
   - Mathematical questions are probably easier without API
 - Challenge should be adapted to the user's cognitive characteristics (e.g. easier challenge for children etc.)
 - Better UX 
-  - e.g. by creating a toast/snackbar "Alarm has been created" and "Alarm has been set / Alarm will ring in xx hours and xx minutes" etc.
   - by making a friendly dialogue for requestPermissionToSendNotifications
   - chose time via "now" field etc.
   - Quiz score 5/5 is not apparent right now
@@ -79,7 +77,7 @@ I used [this website](https://online-video-cutter.com/de/).
   - It works when app is active, when app is in background, when the screen is off
   - It does not work yet when the app is terminated
   - No wake up notification yet
-
+- Autoformat (add comma after every bracket etc.)
 
 
 ## General Remarks

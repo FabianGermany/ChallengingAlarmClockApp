@@ -1,7 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev;
-import 'main.dart';
 
 /// Notification controller
 class NotificationController {
@@ -81,7 +80,7 @@ void createNotification(nameOfAlarm){
     content: NotificationContent(
         id: 10,
         channelKey: 'basic_channel',
-        title: 'The alarm \"${nameOfAlarm}\" is ringing!',
+        title: 'The alarm "$nameOfAlarm" is ringing!',
         body: 'Click here to turn it off.',
         autoDismissible: false,
         locked: true,

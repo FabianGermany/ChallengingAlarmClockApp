@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'package:intl/intl.dart';
-import 'dart:async';
 import 'dart:developer' as dev;
 import 'package:weekday_selector/weekday_selector.dart';
 import '../alarm.dart'; // functions and more for the alarm
@@ -27,12 +26,10 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  final _alarmNameController =
-  TextEditingController(text: 'My personal alarm');
+  final _alarmNameController = TextEditingController(text: 'My personal alarm');
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     _alarmNameController.dispose();
     super.dispose();
   }
@@ -42,7 +39,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     List<CustomAlarm?> alarmList = currentAlarmList;
     CustomAlarm? newCreatedAlarm = CustomAlarm(
       isActive: true,
-      // if saved, then automatically make active
       isRinging: false,
       nameOfAlarm: _alarmNameController.text,
       alarmTime: _chosenTime,
@@ -50,14 +46,15 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       isRecurrent: _recurrentMode,
       weekdayRecurrence: _chosenWeekdays,
       challengeMode: _challengingModeActive,
-    ); // create a new default alarm
+    );
     alarmList.add(newCreatedAlarm); //add the alarm to the list
     dev.log("Alarm has been created!", name: 'Alarm');
-    showAlarmCreationSnackBar(context);
+    showAlarmCreationSnackBar(context); // Give feedback
     listOfSavedAlarms = alarmList; //save the local list back to the global one
     return alarmList;
   }
 
+  /// Time selector
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -70,6 +67,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
+  /// Date selector
   void _selectDate() async {
     final DateTime? newDate = await showDatePicker(
       context: context,
@@ -82,7 +80,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
       helpText: 'Select a date',
     );
     if (newDate != null) {
-      //close the menu and save
+      //closes the menu and saves everything
       setState(() {
         _chosenDate = newDate;
         _recurrentMode =
@@ -93,8 +91,8 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     }
   }
 
-  final _formKey =
-  GlobalKey<FormState>(); // It's needed for the input of the alarm name
+  // That's needed for the input of the alarm name
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -122,31 +120,36 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Row(
+                      GestureDetector(
+                        onTap: _selectTime,
+                        behavior: HitTestBehavior.opaque,
+                        child:
+                          Column(
                             children: <Widget>[
-                              Text(
-                                'Selected time:',
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Selected time:',
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(height: 6),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    _chosenTime.format(context),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6, //textTheme.subtitle1
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              SizedBox(height: 6),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                _chosenTime.format(context),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6, //textTheme.subtitle1
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -179,41 +182,46 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Row(
+                      GestureDetector(
+                        onTap: _selectDate,
+                        behavior: HitTestBehavior.opaque,
+                        child:
+                          Column(
                             children: <Widget>[
-                              Text(
-                                'Selected date:',
-                                style: TextStyle(
-                                    color: _recurrentMode == false
-                                        ? Colors.black
-                                        : Colors.black26),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Selected date:',
+                                    style: TextStyle(
+                                        color: _recurrentMode == false
+                                            ? Colors.black
+                                            : Colors.black26),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(height: 6),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    DateFormat('MMMEd').format(_chosenDate),
+                                    style: TextStyle(
+                                        color: _recurrentMode == false
+                                            ? Colors.black
+                                            : Colors.black26,
+                                        fontSize: 20,
+                                        fontWeight:
+                                        FontWeight.w500 //, spacing...: 0.15
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              SizedBox(height: 6),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                DateFormat('MMMEd').format(_chosenDate),
-                                style: TextStyle(
-                                    color: _recurrentMode == false
-                                        ? Colors.black
-                                        : Colors.black26,
-                                    fontSize: 20,
-                                    fontWeight:
-                                    FontWeight.w500 //, spacing...: 0.15
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
                     ],
                   ),
                 ),
@@ -361,7 +369,6 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                           //don't save it
                         }
                       },
-
                       child: const Text('Confirm'),
                     ),
                   ),

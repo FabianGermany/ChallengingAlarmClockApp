@@ -3,7 +3,6 @@
 // *********************************
 
 import 'package:flutter/material.dart'; //Google Material Design assets
-import 'dart:async';
 import 'dart:developer' as dev;
 import '../alarm.dart'; // functions and more for the alarm
 import '../quiz.dart'; // as quiz // functions and more for the quiz
@@ -16,7 +15,7 @@ class ShowChallengePage extends StatefulWidget {
   final CustomAlarm? triggeredAlarm;
   final int alarmNumber;
 
-  const ShowChallengePage(this.triggeredAlarm, this.alarmNumber);
+  const ShowChallengePage({Key? key, required this.triggeredAlarm, required this.alarmNumber}) : super(key: key);
 
   @override
   State<ShowChallengePage> createState() => _MyShowChallengePageState();
@@ -24,7 +23,7 @@ class ShowChallengePage extends StatefulWidget {
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
   int _currentScore = 0; //init the current score to 0;
-  int _targetScore = 5;
+  final int _targetScore = 5;
   String _userInput = '';
   late bool _answerCorrect;
   late bool _quizPassed;
@@ -32,11 +31,11 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
   late String _currentQuizQuestion;
   late String _currentQuizResult;
   var _score;
-  FocusNode _inputNode = FocusNode(); // used for showing keyboard
+  final FocusNode _inputNode = FocusNode(); // used for showing keyboard
 
   // Create a text controller and use it to retrieve the current value
   // of the Alarm TextField.
-  var _numberInputController = TextEditingController(text: '');
+  final _numberInputController = TextEditingController(text: '');
 
   @override
   void dispose() {
@@ -48,12 +47,7 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
 
   /// function to deactivate an alarm
   List<CustomAlarm?> _deactivateAlarm(CustomAlarm? triggeredAlarm, alarmIndex) {
-    if (triggeredAlarm?.isRecurrent == false){
-      return deactivateSingleAlarm(triggeredAlarm, alarmIndex);
-    }
-    else {
-      return deactivateRecurringAlarm(triggeredAlarm, alarmIndex);
-    }
+      return deactivateAlarm(triggeredAlarm, alarmIndex);
   }
 
   /// Handle the user input based on the current quiz
@@ -79,18 +73,17 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
             builder: (context) => const HomePageAlarmOverview(title: appTitleHome)),
       );
       _generateNewQuizQuestion(); // generate new question for next time
-    } else // quiz is not passed
-        {
-      // load next quiz page
+    }
+    else { // quiz is not passed
       setState(() {
-        _generateNewQuizQuestion();
+        _generateNewQuizQuestion(); // load next quiz page
       });
     }
-    //inputNode.requestFocus(); // show keyboard again
     FocusScope.of(context).requestFocus(_inputNode); // show keyboard again
     _numberInputController.clear();
   }
 
+  /// Generate a new question question
   void _generateNewQuizQuestion() {
     _currentQuiz = quizGenerator();
     _currentQuizQuestion = _currentQuiz[0];

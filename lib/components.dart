@@ -30,7 +30,7 @@ void showAlarmCreationSnackBar(BuildContext context){
 
 /// Dialog component/widget to reset the app
 class DialogResetApp extends StatefulWidget{
-  const DialogResetApp();
+  const DialogResetApp({Key? key}) : super(key: key);
 
   @override
   State<DialogResetApp> createState() => _MyDialogResetAppState();
@@ -44,7 +44,7 @@ class _MyDialogResetAppState extends State<DialogResetApp> {
       AlertDialog(
         title: Text('Reset the app?'),
         content: Text(
-            'You are about to reset the app.'),
+            'You are about to reset the app back to its factory settings.'),
         actions: [
           TextButton(
             onPressed: () =>
@@ -58,9 +58,9 @@ class _MyDialogResetAppState extends State<DialogResetApp> {
                 listOfSavedAlarms = initAlarms(); // reset the app
               }),
               Navigator.pop(
-                  context, 'DELETE'),
+                  context, 'RESET'),
             ],
-            child: Text('DELETE'),
+            child: Text('RESET'),
           ),
         ],
       );
@@ -72,8 +72,9 @@ class _MyDialogResetAppState extends State<DialogResetApp> {
 /// Dialog component/widget to delete an alarm
 class DialogResetAlarm extends StatefulWidget{
 
-  final index; //todo do I need that
-  const DialogResetAlarm(this.index);
+  final index;
+  const DialogResetAlarm({Key? key, required this.index}) : super(key: key);
+
 
   @override
   State<DialogResetAlarm> createState() => _MyDialogResetAlarmState();
