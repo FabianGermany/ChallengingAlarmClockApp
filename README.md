@@ -23,18 +23,17 @@ while running the debug mode.
 ## About the Prototype
 
 
-
 Create and Manage Alarms         |  Alarm Challenge
 :-------------------------:|:-------------------------:
-![](project/clickdummy/01_Create_Alarm.mp4)  |  ![](project/clickdummy/02_Alarm_Challenge.mp4)
+![](project/clickdummy/01_Create_Alarm.gif)  |  ![](project/clickdummy/02_Alarm_Challenge.gif)
 
 
 
 ## About the Flutter App
 
-Preview        |  
+Preview         |  Information
 :-------------------------:|:-------------------------:
-![](project/app/08_Video.mp4) |  
+![](project/app/08_Video.gif) |  This and the following assets are showing a preview of a specific development status. The app is still in progress.
 
 
 
