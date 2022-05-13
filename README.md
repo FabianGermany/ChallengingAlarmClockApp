@@ -2,6 +2,8 @@
 
 This repo is about creating an alarm clock app that is challenging the user by making him/her to solve a problem before the alarm sound stops.
 
+The app is not completed yet, there are still many things to be improved and implemented.
+
 ## Getting Started
 
 
@@ -17,19 +19,43 @@ while running the debug mode.
 -->
 
 
+
+## About the Prototype
+
+
+
+Create and Manage Alarms         |  Alarm Challenge
+:-------------------------:|:-------------------------:
+![](project/clickdummy/01_Create_Alarm.mp4)  |  ![](project/clickdummy/02_Alarm_Challenge.mp4)
+
+
+
+## About the Flutter App
+
+Preview        |  
+:-------------------------:|:-------------------------:
+![](project/app/08_Video.mp4) |  
+
+
+
+
 Alarm Overview          |  Adding Alarm
 :-------------------------:|:-------------------------:
-![](project/screenshots%20app/01_Alarm_Overview.png)  |  ![](project/screenshots%20app/02_Add_Alarm.png)
+![](project/app/01_Alarm_Overview.png)  |  ![](project/app/02_Add_Alarm.png)
 Ringing Alarm         |  Notification
-![](project/screenshots%20app/03_Alarm_Ringing.png)  |  ![](project/screenshots%20app/07_Notification.png)
+![](project/app/03_Alarm_Ringing.png)  |  ![](project/app/07_Notification.png)
 Challenge Example 1         |  Challenge Example 2
-![](project/screenshots%20app/05_Challenge_Example_2.png)  |  ![](project/screenshots%20app/04_Challenge_Example_1.png)
+![](project/app/05_Challenge_Example_2.png)  |  ![](project/app/04_Challenge_Example_1.png)
 
 
-## To Do MT
+
+## About the Clickdummy & the App
+In the project folder, there are some assets such as screenshots and videos of the clickdummy and the app.
+To record the prototype in Figma and Android Studio, I used the Windows Recorder. For editing such as cropping the video to right format,
+I used [this website](https://online-video-cutter.com/de/).
+
+## To Do Long-Term
 - Use Expanded etc. to avoid text overflow
-
-## To Do LT
 - Handle time zone issue
 - For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).
 - Design Changes (e.g. display weekdays etc on both pages)
@@ -49,6 +75,7 @@ Challenge Example 1         |  Challenge Example 2
   - e.g. by creating a toast/snackbar "Alarm has been created" and "Alarm has been set / Alarm will ring in xx hours and xx minutes" etc.
   - by making a friendly dialogue for requestPermissionToSendNotifications
   - chose time via "now" field etc.
+  - Quiz score 5/5 is not apparent right now
 - Improve alarm notification
   - It works when app is active, when app is in background, when the screen is off
   - It does not work yet when the app is terminated
