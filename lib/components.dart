@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'alarm.dart';
 
-/// Show snackbar
-void showSnackBarCorrect(BuildContext context, bool answerCorrect){
+/// Show snackbar for the quiz
+void showQuizSnackBar(BuildContext context, bool answerCorrect){
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       duration: const Duration(seconds: 1),
@@ -16,11 +16,20 @@ void showSnackBarCorrect(BuildContext context, bool answerCorrect){
 }
 
 
+/// Show snackbar for alarm creation
+void showAlarmCreationSnackBar(BuildContext context){
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      duration: Duration(milliseconds: 1500),
+      content: Text('Alarm has been created.',
+      ),
+    ),
+  );
+}
 
 
-/// Dialog component to reset the app
+/// Dialog component/widget to reset the app
 class DialogResetApp extends StatefulWidget{
-
   const DialogResetApp();
 
   @override
@@ -57,3 +66,45 @@ class _MyDialogResetAppState extends State<DialogResetApp> {
       );
   }
 }
+
+
+/* //todo
+/// Dialog component/widget to delete an alarm
+class DialogResetAlarm extends StatefulWidget{
+  const DialogResetAlarm();
+
+  @override
+  State<DialogResetAlarm> createState() => _MyDialogResetAlarmState();
+}
+
+class _MyDialogResetAlarmState extends State<DialogResetAlarm> {
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      AlertDialog(
+        title: Text('Delete alarm?'),
+        content: Text(
+            'You are about to delete this alarm.'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(
+                    context, 'CANCEL'),
+            //close dialog
+            child: Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => [
+              //close dialog and delete alarm at the same time
+              _deleteAlarm(
+                  listOfSavedAlarms, i),
+              Navigator.pop(
+                  context, 'DELETE'),
+            ],
+            child: Text('DELETE'),
+          ),
+        ],
+      ),
+  }
+  */

@@ -66,19 +66,19 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
         : _answerCorrect = false;
 
     //show a snackback for right/wrong answer
-    showSnackBarCorrect(context, _answerCorrect);
+    showQuizSnackBar(context, _answerCorrect);
 
     _score = scoreHandler(_currentScore, _answerCorrect, _targetScore);
     _currentScore = _score[0];
     _quizPassed = _score[1];
     if (_quizPassed) {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
-      _generateNewQuizQuestion(); // generate new question for next time
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => const HomePageAlarmOverview(title: appTitleHome)),
       );
+      _generateNewQuizQuestion(); // generate new question for next time
     } else // quiz is not passed
         {
       // load next quiz page

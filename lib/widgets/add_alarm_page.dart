@@ -9,7 +9,7 @@ import 'dart:developer' as dev;
 import 'package:weekday_selector/weekday_selector.dart';
 import '../alarm.dart'; // functions and more for the alarm
 import '../global.dart'; // global variables and general outsourced stuff
-
+import '../components.dart'; // outsourced widget components
 
 class AddAlarmPage extends StatefulWidget {
   const AddAlarmPage({Key? key}) : super(key: key);
@@ -53,6 +53,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     ); // create a new default alarm
     alarmList.add(newCreatedAlarm); //add the alarm to the list
     dev.log("Alarm has been created!", name: 'Alarm');
+    showAlarmCreationSnackBar(context);
     listOfSavedAlarms = alarmList; //save the local list back to the global one
     return alarmList;
   }

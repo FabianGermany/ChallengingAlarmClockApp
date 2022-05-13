@@ -33,7 +33,7 @@ Create and Manage Alarms         |  Alarm Challenge
 
 Preview         |  Information
 :-------------------------:|:-------------------------:
-![](project/app/08_Video.gif) |  This and the following assets are showing a preview of a specific development status. The app is still in progress.
+![](project/app/08_Video.gif)  |  This and the following assets are showing a preview of a specific development status. The app is still in progress.
 
 
 

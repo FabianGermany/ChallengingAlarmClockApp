@@ -324,30 +324,31 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                           onPressed: () => showDialog<String>(
                                             context: context,
                                             builder: (BuildContext context) =>
-                                                AlertDialog(
-                                                  title: Text('Delete alarm?'),
-                                                  content: Text(
-                                                      'You are about to delete this alarm.'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context, 'CANCEL'),
-                                                      //close dialog
-                                                      child: Text('CANCEL'),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () => [
-                                                        //close dialog and delete alarm at the same time
-                                                        _deleteAlarm(
-                                                            listOfSavedAlarms, i),
-                                                        Navigator.pop(
-                                                            context, 'DELETE'),
-                                                      ],
-                                                      child: Text('DELETE'),
-                                                    ),
-                                                  ],
+                                            //DialogResetAlarm(), // show dialog for deleting the alarm //todo
+                                            AlertDialog(
+                                              title: Text('Delete alarm?'),
+                                              content: Text(
+                                                  'You are about to delete this alarm.'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'CANCEL'),
+                                                  //close dialog
+                                                  child: Text('CANCEL'),
                                                 ),
+                                                TextButton(
+                                                  onPressed: () => [
+                                                    //close dialog and delete alarm at the same time
+                                                    _deleteAlarm(
+                                                        listOfSavedAlarms, i),
+                                                    Navigator.pop(
+                                                        context, 'DELETE'),
+                                                  ],
+                                                  child: Text('DELETE'),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
