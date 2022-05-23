@@ -6,6 +6,7 @@ import 'alarm.dart'; // functions and more for the alarm
 import 'notification.dart'; // functions and more for the notifications
 import 'global.dart'; // global variables and general outsourced stuff
 import 'widgets/homepage_alarm_overview.dart'; // widget for the homepage
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 
 /// Main method
@@ -47,6 +48,14 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       navigatorKey: MyApp.navigatorKey,
       title: 'Alarm Clock App',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', ''), // English, no country code
+      ],
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),

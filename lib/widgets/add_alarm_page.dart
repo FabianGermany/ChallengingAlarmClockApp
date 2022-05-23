@@ -71,6 +71,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
   void _selectDate() async {
     final DateTime? newDate = await showDatePicker(
       context: context,
+      locale: const Locale('en', 'GB'), // start week on Monday instead of Sunday
       initialDate: _chosenDate,
       firstDate: DateTime.now(),
       // today;
