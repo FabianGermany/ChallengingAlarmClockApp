@@ -172,6 +172,16 @@ String weekdayBoolListToString(List<bool> weekdays)
 }
 
 
+/// Conversion of 12h AM/PM format to 24h format with TimeOfDay
+extension TimeOfDayConverter on TimeOfDay {
+  String to24hours() {
+    final hour = this.hour.toString().padLeft(2, "0");
+    final min = this.minute.toString().padLeft(2, "0");
+    return "$hour:$min";
+  }
+}
+
+
 /// Play audio function
 void playAlarmSound(double volume)
 {

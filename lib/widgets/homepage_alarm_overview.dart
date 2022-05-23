@@ -335,7 +335,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
                                         Text(
-                                          "${listOfSavedAlarms[i]?.alarmTime.hour.toString().padLeft(2, '0')}:${listOfSavedAlarms[i]?.alarmTime.minute.toString().padLeft(2, '0')}",
+                                          "${listOfSavedAlarms[i]?.alarmTime.to24hours()}",
                                           style: TextStyle(
                                               color: (listOfSavedAlarms[i]
                                                   ?.isActive ==

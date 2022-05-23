@@ -59,6 +59,13 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _chosenTime,
+        builder: (context, childWidget) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                  alwaysUse24HourFormat: true //24hr instead of 12hr AM/PM Format
+              ),
+              child: childWidget!);
+        },
     );
     if (newTime != null) {
       setState(() {
@@ -142,7 +149,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    _chosenTime.format(context),
+                                    _chosenTime.to24hours(), //.format(context)
                                     style: Theme.of(context)
                                         .textTheme
                                         .headline6, //textTheme.subtitle1

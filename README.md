@@ -78,7 +78,7 @@ I used [this website](https://online-video-cutter.com/de/).
   - It does not work yet when the app is terminated
   - No wake up notification yet
 - Autoformat (add comma after every bracket etc.)
-
+- Replace TimeOfDay by DateTime
 
 ## General Remarks
 - Don't use ```print``` in production code, it's better to use ``` debugPrint```  or ``` log``` is even more powerful.
