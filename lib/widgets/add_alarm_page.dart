@@ -334,7 +334,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
             Row(
               // Add some space
               children: <Widget>[
-                SizedBox(height: 30),
+                SizedBox(height: 50),
               ],
             ),
             Row(
@@ -344,7 +344,7 @@ class _MyAddAlarmPageState extends State<AddAlarmPage> {
                 Expanded(
                   flex: 30,
                   child: Center(
-                    child: OutlinedButton(
+                    child: TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
