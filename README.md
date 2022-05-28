@@ -80,8 +80,7 @@ I used [this website](https://online-video-cutter.com/de/).
 - Autoformat (add comma after every bracket etc.)
 - Replace TimeOfDay by DateTime
 - Bad UX at when displaying current score 4/5 (no 5/5 etc.), e.g. via success page
-- Cancel/Save button different color/elevation
-- Current time presentation looks ugly (cf. Jannik image)
+- Current time presentation can be done better, e.g. like this: https://pub.dev/packages/slide_digital_clock
 
 ## General Remarks
 - Don't use ```print``` in production code, it's better to use ``` debugPrint```  or ``` log``` is even more powerful.

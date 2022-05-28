@@ -14,7 +14,9 @@ import 'add_alarm_page.dart'; // widget for the alarm adding
 import 'package:alarm_clock_app/components.dart';
 
 class HomePageAlarmOverview extends StatefulWidget {
-  const HomePageAlarmOverview({Key? key, required this.title}) : super(key: key);
+  const HomePageAlarmOverview({Key? key, required this.title})
+      : super(key: key);
+
   // This widget is the homepage of the app. It has different states.
   final String title;
 
@@ -37,7 +39,8 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
   /// refresh the presented strings for the current time etc.
   void _updateTime() {
-    setState(() { // setState causes the rerun of the build method
+    setState(() {
+      // setState causes the rerun of the build method
       _now = DateTime.now();
       _dateString = DateFormat("MMMM dd, yyyy").format(_now);
       _timeString = DateFormat("HH:mm:ss").format(_now);
@@ -47,32 +50,36 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
   /// check whether one of the alarms is triggered
   _alarmChecker(List<CustomAlarm?> currentAlarmList) {
     setState(() {
-
       // check whether there is any alarm that is the past and is not set to isRinging=False yet
       for (int i = 0; i < currentAlarmList.length; i++) {
-
         // first check whether the alarm is active
         if (currentAlarmList[i]!.isActive == true) {
-
           // case 1: single time alarm
           if (currentAlarmList[i]!.isRecurrent == false) {
-
             // the day has passed
             // +1 day because also the same day should be included
             if (currentAlarmList[i]!.alarmDate.isBefore(DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
                 DateTime.now().day + 1))) {
-
               // the time has passed (but not too long time ago, like 3 seconds)
-              alarmTimeAsDateTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute);
-              threeSecondsAfterAlarm = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute, 5);
+              alarmTimeAsDateTime = DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  currentAlarmList[i]!.alarmTime.hour,
+                  currentAlarmList[i]!.alarmTime.minute);
+              threeSecondsAfterAlarm = DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  currentAlarmList[i]!.alarmTime.hour,
+                  currentAlarmList[i]!.alarmTime.minute,
+                  5);
               if ((DateTime.now().isAfter(alarmTimeAsDateTime)) &&
-                  (DateTime.now().isBefore(threeSecondsAfterAlarm))){
-
+                  (DateTime.now().isBefore(threeSecondsAfterAlarm))) {
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
-
                   // start the alarm
                   alarmReaction(currentAlarmList[i], i, context, 'Single');
                   break; // break first for letting ring only one alarm if there are multiple
@@ -84,20 +91,28 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
           // case 2: recurring alarm
           else if (currentAlarmList[i]!.isRecurrent == true) {
-
             // check whether today is one of the recurring days
-            if (currentAlarmList[i]!.weekdayRecurrence[dateTimeRemapper(DateTime
-                .now().weekday)] == true) {
-
+            if (currentAlarmList[i]!.weekdayRecurrence[
+                    dateTimeRemapper(DateTime.now().weekday)] ==
+                true) {
               // the time has passed (but not too long time ago, like 3 seconds)
-              alarmTimeAsDateTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute);
-              threeSecondsAfterAlarm = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, currentAlarmList[i]!.alarmTime.hour, currentAlarmList[i]!.alarmTime.minute, 5);
+              alarmTimeAsDateTime = DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  currentAlarmList[i]!.alarmTime.hour,
+                  currentAlarmList[i]!.alarmTime.minute);
+              threeSecondsAfterAlarm = DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  currentAlarmList[i]!.alarmTime.hour,
+                  currentAlarmList[i]!.alarmTime.minute,
+                  5);
               if ((DateTime.now().isAfter(alarmTimeAsDateTime)) &&
-                  (DateTime.now().isBefore(threeSecondsAfterAlarm))){
-
+                  (DateTime.now().isBefore(threeSecondsAfterAlarm))) {
                 //only if isRinging is still false, build the next page; otherwise it would be done several times leading to glitches
                 if (currentAlarmList[i]!.isRinging == false) {
-
                   // start the alarm
                   alarmReaction(currentAlarmList[i], i, context, 'Recurrent');
                   break; // break first for letting ring only one alarm if there are multiple
@@ -109,7 +124,6 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
       }
     });
   }
-
 
   @override
   void initState() {
@@ -127,7 +141,6 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
     stopAlarmSound(); // turn off sound from last start
     super.initState();
   }
-
 
   /// Loading the current alarm list on start
   Future<void> loadData() async {
@@ -179,50 +192,88 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                       Expanded(
                         // Col/Expanded for showing the current time and date
                         flex: 7, // 70%
-                        child:
-                        GestureDetector( // longpress here to reset the app (debugging purposes first)
-                          onLongPress: () {
-                            debugMode ? // if debug mode start dialog for reset
-                              showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                DialogResetApp(), //Start dialog to reset app
-                              )
-                            : null; //if not debug mode don't do anything
-                          },
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            // longpress here to reset the app (debugging purposes first)
+                            onLongPress: () {
+                              debugMode
+                                  ? // if debug mode start dialog for reset
+                                  showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          DialogResetApp(), //Start dialog to reset app
+                                    )
+                                  : null; //if not debug mode don't do anything
+                            },
 
-
-                        child: Center(
-                          child: Column(
-                            // Column is also a layout widget
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            //center vertically
-                            children: <Widget>[
-                              const Text(
-                                'The current time is:',
-                              ),
-                              Text(
-                                _timeString,
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                              const Text(
-                                'The current date is:',
-                              ),
-                              Text(
-                                _dateString,
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                              // Already set alarms
-                            ],
+                            child: Column(
+                              //mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 4,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: const Text(
+                                          'Current time:',
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 6,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          _timeString,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: <Widget>[SizedBox(height: 15)],
+                                ),
+                                // Add some distance between the next row
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 4,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: const Text(
+                                          'Current date:',
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 6,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          _dateString,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      ),
                       Expanded(
-                        // Col/Expanded for adding some space
+                          // Col/Expanded for adding some space
                           flex: 1, // 10%
                           child: Text('') //empty
-                      ),
+                          ),
                       Expanded(
                         // Col/Expanded for the add alarm button
                         flex: 2, // 20%
@@ -238,7 +289,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                      const AddAlarmPage()),
+                                          const AddAlarmPage()),
                                 );
                               }),
                         ),
@@ -253,7 +304,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
 
                   // List of alarms (for loop)
                   for (int i = 0; i < listOfSavedAlarms.length; i++)
-                  //for (final alarm_element in listOfSavedAlarms)
+                    //for (final alarm_element in listOfSavedAlarms)
                     Row(
                       // Row for the set alarms I
                       children: <Widget>[
@@ -282,32 +333,34 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                             "${listOfSavedAlarms[i]?.nameOfAlarm}",
                                             style: TextStyle(
                                                 color: (listOfSavedAlarms[i]
-                                                    ?.isActive ==
-                                                    true)
+                                                            ?.isActive ==
+                                                        true)
                                                     ? Colors.black
                                                     : Colors.black38,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight
                                                     .w500 //, spacing...: 0.15
-                                            ),
+                                                ),
                                           ),
                                         ),
 
                                         //Delete the alarm
                                         IconButton(
                                           icon:
-                                          const Icon(Icons.delete_outlined),
+                                              const Icon(Icons.delete_outlined),
                                           tooltip: 'Delete the alarm',
                                           color:
-                                          (listOfSavedAlarms[i]?.isActive ==
-                                              true)
-                                              ? Colors.black38
-                                              : Colors.black26,
+                                              (listOfSavedAlarms[i]?.isActive ==
+                                                      true)
+                                                  ? Colors.black38
+                                                  : Colors.black26,
                                           iconSize: 20.0,
                                           onPressed: () => showDialog<String>(
                                             context: context,
                                             builder: (BuildContext context) =>
-                                            DialogResetAlarm(index: i), // show dialog for deleting the alarm
+                                                DialogResetAlarm(
+                                                    index:
+                                                        i), // show dialog for deleting the alarm
                                           ),
                                         ),
                                       ],
@@ -323,7 +376,7 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                               // some space
                               Row(
                                 children: <Widget>[
-                                  SizedBox(height: 5),
+                                  SizedBox(height: 3),
                                 ],
                               ),
                               Row(
@@ -338,49 +391,49 @@ class _HomePageAlarmOverviewState extends State<HomePageAlarmOverview> {
                                           "${listOfSavedAlarms[i]?.alarmTime.to24hours()}",
                                           style: TextStyle(
                                               color: (listOfSavedAlarms[i]
-                                                  ?.isActive ==
-                                                  true)
+                                                          ?.isActive ==
+                                                      true)
                                                   ? Colors.black
                                                   : Colors.black38,
                                               fontSize: 20,
                                               fontWeight: FontWeight
                                                   .w500 //, spacing...: 0.15
-                                          ),
+                                              ),
                                         ),
                                         Text("  "),
                                         // add some space
 
                                         //Display the date / the recurring weekdays
                                         (listOfSavedAlarms[i]?.isRecurrent ==
-                                            true)
+                                                true)
                                             ? // check for the mode via a?b:c
 
-                                        // case one: recurrence mode
-                                        Text(
-                                          weekdayBoolListToString(
-                                              listOfSavedAlarms[i]!
-                                                  .weekdayRecurrence),
-                                          style: TextStyle(
-                                              color: (listOfSavedAlarms[i]
-                                                  ?.isActive ==
-                                                  true)
-                                                  ? Colors.black
-                                                  : Colors.black38),
-                                        )
+                                            // case one: recurrence mode
+                                            Text(
+                                                weekdayBoolListToString(
+                                                    listOfSavedAlarms[i]!
+                                                        .weekdayRecurrence),
+                                                style: TextStyle(
+                                                    color: (listOfSavedAlarms[i]
+                                                                ?.isActive ==
+                                                            true)
+                                                        ? Colors.black
+                                                        : Colors.black38),
+                                              )
                                             :
 
-                                        // case two: date mode
-                                        Text(
-                                          DateFormat('EEE, d MMM').format(
-                                              listOfSavedAlarms[i]!
-                                                  .alarmDate),
-                                          style: TextStyle(
-                                              color: (listOfSavedAlarms[i]
-                                                  ?.isActive ==
-                                                  true)
-                                                  ? Colors.black
-                                                  : Colors.black38),
-                                        ),
+                                            // case two: date mode
+                                            Text(
+                                                DateFormat('EEE, d MMM').format(
+                                                    listOfSavedAlarms[i]!
+                                                        .alarmDate),
+                                                style: TextStyle(
+                                                    color: (listOfSavedAlarms[i]
+                                                                ?.isActive ==
+                                                            true)
+                                                        ? Colors.black
+                                                        : Colors.black38),
+                                              ),
                                       ],
                                     ),
                                   ),
