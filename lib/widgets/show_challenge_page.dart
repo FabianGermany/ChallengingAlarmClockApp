@@ -2,6 +2,7 @@
 // This is the fourth page for the challenge
 // *********************************
 
+import 'package:alarm_clock_app/widgets/success_page.dart';
 import 'package:flutter/material.dart'; //Google Material Design assets
 import 'dart:developer' as dev;
 import '../alarm.dart'; // functions and more for the alarm
@@ -23,7 +24,7 @@ class ShowChallengePage extends StatefulWidget {
 
 class _MyShowChallengePageState extends State<ShowChallengePage> {
   int _currentScore = 0; //init the current score to 0;
-  final int _targetScore = 5;
+  final int _targetScore = targetScore;
   String _userInput = '';
   late bool _answerCorrect;
   late bool _quizPassed;
@@ -67,10 +68,11 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
     _quizPassed = _score[1];
     if (_quizPassed) {
       _deactivateAlarm(widget.triggeredAlarm, widget.alarmNumber);
+      // show success page first for a short time before going back to homepage
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const HomePageAlarmOverview(title: appTitleHome)),
+            builder: (context) => const ShowSuccessPage()),
       );
       _generateNewQuizQuestion(); // generate new question for next time
     }
@@ -127,7 +129,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                   children: <Widget>[SizedBox(height: 50)],
                 ),
                 Row(
-                  // Time selector
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
@@ -144,7 +145,6 @@ class _MyShowChallengePageState extends State<ShowChallengePage> {
                   children: <Widget>[SizedBox(height: 100)],
                 ),
                 Row(
-                  // Time selector
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
