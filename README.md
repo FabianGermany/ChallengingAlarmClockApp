@@ -35,14 +35,13 @@ Preview         |  Information
 :-------------------------:|:-------------------------:
 ![](project/app/08_Video.gif)  |  This and the following assets are showing a preview of a specific development status. The app is still in progress.
 
-
-
-
 Alarm Overview          |  Adding Alarm
 :-------------------------:|:-------------------------:
 ![](project/app/01_Alarm_Overview.png)  |  ![](project/app/02_Add_Alarm.png)
+
 Ringing Alarm         |  Notification
 ![](project/app/03_Alarm_Ringing.png)  |  ![](project/app/07_Notification.png)
+
 Challenge Example 1         |  Challenge Example 2
 ![](project/app/05_Challenge_Example_2.png)  |  ![](project/app/04_Challenge_Example_1.png)
 
@@ -54,32 +53,34 @@ To record the prototype in Figma and Android Studio, I used the Windows Recorder
 I used [this website](https://online-video-cutter.com/de/).
 
 ## To Do Long-Term
-- Use Expanded etc. to avoid text overflow
 - Handle time zone issue
-- For change the menu, there are also some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).
-- Design Changes (e.g. display weekdays etc on both pages)
-- Exceptions: e.g. Text Input too long for displaying it etc.
-- Edit alarm via GestureDetector; I tried this in another branch, but it's a lot of work, so I didn't implement it in the main branch
+- For changing the page, there are some nice animations like described in [here](https://github.com/flutter/packages/tree/master/packages/animations).
+- Edit alarm fuction (e.g. via "GestureDetector" class); I tried this in another branch, 
+  but it's a lot of work, so I didn't implement it in the main branch
 - Snooze function
-- Functions to change alarm sound, vibration pattern, volume, snooze etc. (and integrate in CustomAlarm class)
-- Sort alarms via date (I currently sort via dataframe index) via regularly called function _sortDatafrane
-- The app is not really responsive so far; heights etc. are partially absolute; use more Flexible/Expanded etc. to avoid overflows and to make the app work on every device
-- Use bloclibrary.dev for states
+- Functions to change alarm sound, vibration pattern, volume, snooze etc. 
+  (and integrate in all into the CustomAlarm class)
+- Sort alarms via date (I currently sort via dataframe index) 
+  via a regularly called function _sortDatafrane
+- UI/UX improvements 
+    - Improve graphical design (whitespace, fonts, ...)
+    - The app is not really responsive so far; 
+      heights etc. are partially absolute; 
+      use more "Flexible"/"Expanded" classes etc. to avoid text overflows 
+      and to make the app work on every device
+    - by making a friendly dialogue for requestPermissionToSendNotifications
+    - chose time via "now" field etc.
+- Maybe use bloclibrary.dev for states
 - Different challenge modes (quiz, mathematical problem etc.)
   - Quiz can be done via some API like [this](https://the-trivia-api.com/)
   - Mathematical questions are probably easier without API
 - Challenge should be adapted to the user's cognitive characteristics (e.g. easier challenge for children etc.)
-- Better UX 
-  - by making a friendly dialogue for requestPermissionToSendNotifications
-  - chose time via "now" field etc.
-  - Quiz score 5/5 is not apparent right now
 - Improve alarm notification
   - It works when app is active, when app is in background, when the screen is off
   - It does not work yet when the app is terminated
   - No wake up notification yet
 - Autoformat (add comma after every bracket etc.)
 - Replace TimeOfDay by DateTime
-- Bad UX at when displaying current score 4/5 (no 5/5 etc.), e.g. via success page
 - Current time presentation can be done better, e.g. like this: https://pub.dev/packages/slide_digital_clock
 
 ## General Remarks
