@@ -40,9 +40,11 @@ Alarm Overview          |  Adding Alarm
 ![](project/app/01_Alarm_Overview.png)  |  ![](project/app/02_Add_Alarm.png)
 
 Ringing Alarm         |  Notification
+:-------------------------:|:-------------------------:
 ![](project/app/03_Alarm_Ringing.png)  |  ![](project/app/07_Notification.png)
 
 Challenge Example 1         |  Challenge Example 2
+:-------------------------:|:-------------------------:
 ![](project/app/05_Challenge_Example_2.png)  |  ![](project/app/04_Challenge_Example_1.png)
 
 
